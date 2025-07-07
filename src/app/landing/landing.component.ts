@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-
+import * as AOS from 'aos';
 @Component({
   selector: 'app-landing',
   standalone: true,
@@ -302,7 +302,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 
       <!-- Stats Section -->
       <section
-        class="bg-gradient-to-r from-yellow-600 to-yellow-700 text-black py-12 md:py-16 animate-fade-in"
+        class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black py-12 md:py-16 animate-fade-in"
       >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
@@ -337,31 +337,45 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       </section>
 
       <!-- Features Section -->
-      <section id="features" class="py-16 md:py-24 bg-gray-900 animate-fade-in">
+      <section id="features" class="py-16 md:py-24 bg-black overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-12 md:mb-16">
-            <h2 class="text-3xl font-bold text-yellow-400 mb-4">
-              Recursos Exclusivos
-            </h2>
-            <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
-              Tudo que você precisa para administrar seu shopping ou centro
-              comercial com eficiência
-            </p>
+          <div class="text-center mb-16 md:mb-20" data-aos="fade-up">
+            <div class="max-w-2xl mx-auto">
+              <!-- Container adicional para melhor controle -->
+              <h2
+                class="text-4xl font-bold text-yellow-400 mb-4 relative inline-block"
+              >
+                <span class="relative z-10">Recursos Exclusivos</span>
+                <span
+                  class="absolute -bottom-1 left-0 w-full h-1 bg-yellow-500 transform scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100"
+                ></span>
+              </h2>
+              <p
+                class="text-xl text-gray-300 leading-relaxed"
+                data-aos="fade-up"
+                data-aos-delay="100"
+              >
+                Tecnologia avançada para gestão inteligente de shopping
+                centers<br class="hidden sm:block" />
+                e centros comerciais
+              </p>
+            </div>
           </div>
-
           <div
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10"
           >
             <!-- Feature 1 -->
             <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 transition transform hover:-translate-y-2"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10"
+              data-aos="fade-up"
+              data-aos-delay="150"
             >
               <div
-                class="w-12 h-12 md:w-14 md:h-14 bg-yellow-500/10 rounded-lg flex items-center justify-center mb-4 md:mb-6 text-yellow-400"
+                class="icon-container w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 md:h-8 md:w-8"
+                  class="h-8 w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -374,25 +388,36 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
                   />
                 </svg>
               </div>
-              <h3 class="text-xl font-semibold text-yellow-400 mb-3 md:mb-4">
+              <h3
+                class="text-2xl font-semibold text-white mb-4 group-hover:text-yellow-400 transition-colors duration-300"
+              >
                 Gestão de Contratos
               </h3>
-              <p class="text-gray-300 text-sm md:text-base">
-                Crie, renove e gerencie contratos de locação com alertas
-                automáticos para vencimentos e reajustes.
+              <p class="text-gray-300 text-base leading-relaxed">
+                Controle completo de contratos com alertas inteligentes para
+                vencimentos, reajustes automáticos e histórico de renovações.
               </p>
+              <div class="mt-6">
+                <span
+                  class="inline-block px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-400 rounded-full"
+                >
+                  Automatizado
+                </span>
+              </div>
             </div>
 
             <!-- Feature 2 -->
             <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 transition transform hover:-translate-y-2"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10"
+              data-aos="fade-up"
+              data-aos-delay="200"
             >
               <div
-                class="w-12 h-12 md:w-14 md:h-14 bg-yellow-500/10 rounded-lg flex items-center justify-center mb-4 md:mb-6 text-yellow-400"
+                class="icon-container w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 md:h-8 md:w-8"
+                  class="h-8 w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -405,25 +430,79 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
                   />
                 </svg>
               </div>
-              <h3 class="text-xl font-semibold text-yellow-400 mb-3 md:mb-4">
+              <h3
+                class="text-2xl font-semibold text-white mb-4 group-hover:text-yellow-400 transition-colors duration-300"
+              >
                 Cobrança Automatizada
               </h3>
-              <p class="text-gray-300 text-sm md:text-base">
-                Emissão de boletos, notificações e acompanhamento de pagamentos
-                com integração bancária.
+              <p class="text-gray-300 text-base leading-relaxed">
+                Sistema completo de cobrança com emissão de boletos,
+                notificações personalizadas e acompanhamento de pagamentos em
+                tempo real.
               </p>
+              <div class="mt-6">
+                <span
+                  class="inline-block px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-400 rounded-full"
+                >
+                  Integração bancária
+                </span>
+              </div>
             </div>
 
-            <!-- Feature 3 -->
+            <!-- Feature 3 - Integração PIX (nova) -->
             <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 transition transform hover:-translate-y-2"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10"
+              data-aos="fade-up"
+              data-aos-delay="250"
             >
               <div
-                class="w-12 h-12 md:w-14 md:h-14 bg-yellow-500/10 rounded-lg flex items-center justify-center mb-4 md:mb-6 text-yellow-400"
+                class="icon-container w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 md:h-8 md:w-8"
+                  class="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  />
+                </svg>
+              </div>
+              <h3
+                class="text-2xl font-semibold text-white mb-4 group-hover:text-yellow-400 transition-colors duration-300"
+              >
+                Integração PIX
+              </h3>
+              <p class="text-gray-300 text-base leading-relaxed">
+                Receba pagamentos instantâneos via PIX com geração automática de
+                QR Codes e conciliação financeira integrada.
+              </p>
+              <div class="mt-6">
+                <span
+                  class="inline-block px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-400 rounded-full"
+                >
+                  Pagamentos instantâneos
+                </span>
+              </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <div
+                class="icon-container w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400 transform transition-transform duration-500 group-hover:rotate-6"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-8 w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -436,56 +515,36 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
                   />
                 </svg>
               </div>
-              <h3 class="text-xl font-semibold text-yellow-400 mb-3 md:mb-4">
+              <h3
+                class="text-2xl font-semibold text-white mb-4 group-hover:text-yellow-400 transition-colors duration-300"
+              >
                 Dashboard Analítico
               </h3>
-              <p class="text-gray-300 text-sm md:text-base">
-                Visualização em tempo real de ocupação, faturamento e
-                performance de lojas.
+              <p class="text-gray-300 text-base leading-relaxed">
+                Painel com métricas em tempo real, gráficos interativos e
+                relatórios personalizados para tomada de decisão estratégica.
               </p>
-            </div>
-
-            <!-- Feature 4 -->
-            <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 transition transform hover:-translate-y-2"
-            >
-              <div
-                class="w-12 h-12 md:w-14 md:h-14 bg-yellow-500/10 rounded-lg flex items-center justify-center mb-4 md:mb-6 text-yellow-400"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 md:h-8 md:w-8"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+              <div class="mt-6">
+                <span
+                  class="inline-block px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-400 rounded-full"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+                  Business Intelligence
+                </span>
               </div>
-              <h3 class="text-xl font-semibold text-yellow-400 mb-3 md:mb-4">
-                Mapa de Ocupação
-              </h3>
-              <p class="text-gray-300 text-sm md:text-base">
-                Visualização gráfica da disposição das lojas com filtros por
-                segmento, tamanho e valor.
-              </p>
             </div>
 
             <!-- Feature 5 -->
             <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 transition transform hover:-translate-y-2"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10"
+              data-aos="fade-up"
+              data-aos-delay="350"
             >
               <div
-                class="w-12 h-12 md:w-14 md:h-14 bg-yellow-500/10 rounded-lg flex items-center justify-center mb-4 md:mb-6 text-yellow-400"
+                class="icon-container w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 md:h-8 md:w-8"
+                  class="h-8 w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -498,25 +557,36 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
                   />
                 </svg>
               </div>
-              <h3 class="text-xl font-semibold text-yellow-400 mb-3 md:mb-4">
+              <h3
+                class="text-2xl font-semibold text-white mb-4 group-hover:text-yellow-400 transition-colors duration-300"
+              >
                 Portal do Lojista
               </h3>
-              <p class="text-gray-300 text-sm md:text-base">
-                Área exclusiva para lojistas acessarem contratos, boletos e
-                comunicados.
+              <p class="text-gray-300 text-base leading-relaxed">
+                Plataforma self-service para lojistas com acesso a documentos
+                financeiros, contratos e comunicação direta.
               </p>
+              <div class="mt-6">
+                <span
+                  class="inline-block px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-400 rounded-full"
+                >
+                  Autoatendimento
+                </span>
+              </div>
             </div>
 
             <!-- Feature 6 -->
             <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 transition transform hover:-translate-y-2"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10"
+              data-aos="fade-up"
+              data-aos-delay="400"
             >
               <div
-                class="w-12 h-12 md:w-14 md:h-14 bg-yellow-500/10 rounded-lg flex items-center justify-center mb-4 md:mb-6 text-yellow-400"
+                class="icon-container w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6 md:h-8 md:w-8"
+                  class="h-8 w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -529,56 +599,112 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
                   />
                 </svg>
               </div>
-              <h3 class="text-xl font-semibold text-yellow-400 mb-3 md:mb-4">
+              <h3
+                class="text-2xl font-semibold text-white mb-4 group-hover:text-yellow-400 transition-colors duration-300"
+              >
                 Aplicativo Móvel
               </h3>
-              <p class="text-gray-300 text-sm md:text-base">
-                Acompanhe seu shopping de qualquer lugar com notificações em
-                tempo real.
+              <p class="text-gray-300 text-base leading-relaxed">
+                Controle total na palma da sua mão com notificações push,
+                alertas personalizados e acesso a todos os recursos.
               </p>
+              <div class="mt-6">
+                <span
+                  class="inline-block px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-400 rounded-full"
+                >
+                  iOS & Android
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </section>
-
-      <!-- Video Demo Section -->
-      <section class="py-16 md:py-24 bg-black relative overflow-hidden">
-        <div class="absolute inset-0 z-0">
+      <!-- CTA Section -->
+      <section
+        class="relative py-10 md:py-15 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black"
+      >
+        <!-- Elementos decorativos de fundo -->
+        <div class="absolute inset-0 overflow-hidden">
           <div
-            class="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black opacity-90"
+            class="absolute top-1/4 -left-20 w-64 h-64 bg-yellow-400 rounded-full opacity-10 blur-3xl"
           ></div>
-          <video
-            autoplay
-            loop
-            muted
-            playsinline
-            class="w-full h-full object-cover"
-          >
-            <source
-              src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-data-dashboard-1494-large.mp4"
-              type="video/mp4"
-            />
-          </video>
+          <div
+            class="absolute bottom-1/4 -right-20 w-72 h-72 bg-yellow-300 rounded-full opacity-10 blur-3xl"
+          ></div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div class="text-center">
-            <h2 class="text-3xl font-bold text-yellow-400 mb-6">
-              Veja Nossa Plataforma em Ação
-            </h2>
-            <p class="text-xl text-gray-300 max-w-3xl mx-auto mb-10">
-              Descubra como o InadiZero pode transformar a gestão do seu
-              shopping
-            </p>
-            <a
-              href="#demo"
-              class="inline-block bg-yellow-500 text-black font-medium py-3 px-8 rounded-md hover:bg-yellow-400 transition shadow-lg transform hover:scale-105 hover:shadow-yellow-500/30"
+
+        <div class="relative max-w-4xl mx-auto px-6 sm:px-8">
+          <div class="flex flex-col items-center text-center space-y-8">
+            <!-- Título -->
+            <div class="w-full" data-aos="fade-up">
+              <h2
+                class="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight"
+              >
+                <span class="block"
+                  >Pronto para Transformar
+                  <span class=" text-yellow-900 mt-2 md:mt-3"
+                    >seu Shopping Center?</span
+                  ></span
+                >
+              </h2>
+            </div>
+
+            <!-- Descrição -->
+            <div
+              class="w-full max-w-2xl mx-auto"
+              data-aos="fade-up"
+              data-aos-delay="50"
             >
-              Assistir Demonstração
-            </a>
+              <p class="text-lg md:text-xl text-yellow-900/90 leading-relaxed">
+                Comece sua jornada com o InadiZero hoje mesmo e experimente a
+                revolução na gestão comercial.
+              </p>
+            </div>
+
+            <!-- Botões -->
+            <div
+              class="w-full flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6 pt-2"
+              data-aos="fade-up"
+              data-aos-delay="150"
+            >
+              <a
+                routerLink="/register"
+                class="w-full sm:w-auto flex justify-center items-center bg-black text-yellow-400 font-semibold py-3 px-8 rounded-lg hover:bg-gray-900 transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95"
+              >
+                Experimente Grátis
+              </a>
+
+              <a
+                href="#demo"
+                class="w-full sm:w-auto flex justify-center items-center bg-white text-gray-900 font-semibold py-3 px-8 rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95"
+              >
+                Agendar Demonstração
+              </a>
+            </div>
+
+            <!-- Rodapé -->
+            <div class="w-full pt-4" data-aos="fade-up" data-aos-delay="200">
+              <div
+                class="inline-flex items-center justify-center gap-2 text-yellow-900/80 font-medium"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span>Suporte dedicado para sua equipe</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
-
       <!-- Solutions Section -->
       <section
         id="solutions"
@@ -1277,35 +1403,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         </div>
       </section>
 
-      <!-- CTA Section -->
-      <section
-        class="py-16 md:py-24 bg-gradient-to-r from-yellow-600 to-yellow-700 text-black animate-fade-in"
-      >
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 class="text-3xl font-bold mb-6">
-            Pronto para Transformar seu Shopping?
-          </h2>
-          <p class="text-xl mb-8 max-w-3xl mx-auto">
-            Comece sua jornada com o InadiZero hoje mesmo e experimente a gestão
-            comercial do futuro.
-          </p>
-          <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <a
-              routerLink="/register"
-              class="bg-black text-yellow-400 font-medium py-3 px-8 rounded-md hover:bg-gray-900 transition shadow-lg transform hover:scale-105"
-            >
-              Experimente Grátis
-            </a>
-            <a
-              href="#demo"
-              class="bg-white text-black font-medium py-3 px-8 rounded-md hover:bg-gray-100 transition shadow-lg transform hover:scale-105"
-            >
-              Agendar Demonstração
-            </a>
-          </div>
-        </div>
-      </section>
-
       <!-- Contact Section -->
       <section id="contact" class="py-16 md:py-24 bg-gray-900 animate-fade-in">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1677,7 +1774,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     </div>
   `,
 })
-export class LandingComponent {
+export class LandingComponent implements AfterViewInit {
   isMenuOpen = false;
   particles = Array.from({ length: 15 }, () => ({
     x: Math.random() * 100,
@@ -1686,7 +1783,22 @@ export class LandingComponent {
     duration: Math.random() * 10 + 5,
     delay: Math.random() * 5,
   }));
+  ngAfterViewInit(): void {
+    this.initAOS();
+  }
 
+  private initAOS(): void {
+    AOS.init({
+      duration: 800, // Duração da animação em ms
+      easing: 'ease-in-out', // Tipo de easing
+      once: true, // Se as animações devem acontecer apenas uma vez
+      offset: 100, // Distância em px do elemento ao bottom da viewport
+      delay: 100, // Atraso entre as animações em ms
+    });
+
+    // Recarregar AOS quando o conteúdo for carregado dinamicamente
+    AOS.refresh();
+  }
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
