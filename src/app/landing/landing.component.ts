@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import * as AOS from 'aos';
+import { RouterLink } from '@angular/router';
+import AOS from 'aos';
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule],
+  imports: [RouterLink, CommonModule],
   template: `
     <div
       class="min-h-screen bg-gray-900 text-white font-sans overflow-x-hidden"
@@ -655,7 +655,7 @@ import * as AOS from 'aos';
               data-aos="fade-up"
               data-aos-delay="50"
             >
-              <p class="text-lg md:text-xl text-yellow-900/90 leading-relaxed">
+              <p class="text-lg md:text-xl text-black leading-relaxed">
                 Comece sua jornada com o InadiZero hoje mesmo e experimente a
                 revolução na gestão comercial.
               </p>
@@ -705,137 +705,183 @@ import * as AOS from 'aos';
           </div>
         </div>
       </section>
-      <!-- Solutions Section -->
-      <section
-        id="solutions"
-        class="py-16 md:py-24 bg-gray-900 animate-fade-in"
-      >
+      <!-- Solutions Section - Redesigned -->
+      <section id="solutions" class="py-16 md:py-24 bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-12 md:mb-16">
-            <h2 class="text-3xl font-bold text-yellow-400 mb-4">
-              Soluções para Cada Necessidade
+          <div class="text-center mb-16">
+            <span class="inline-block text-yellow-400 font-medium mb-3"
+              >Nossas Soluções</span
+            >
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-5">
+              Tecnologia Adaptada para
+              <span class="text-yellow-400">Seu Shopping</span>
             </h2>
-            <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
-              Adaptamos nossa plataforma para diferentes tipos de centros
-              comerciais
-            </p>
+            <div class="max-w-2xl mx-auto">
+              <p class="text-lg text-gray-300">
+                Oferecemos sistemas personalizados para diferentes formatos de
+                centros comerciais
+              </p>
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Solution Card 1 -->
             <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 transition transform hover:-translate-y-2 group"
+              class="relative overflow-hidden bg-gray-800 rounded-2xl border border-gray-700 group transition-all duration-300 hover:border-yellow-400"
             >
               <div
-                class="w-14 h-14 md:w-16 md:h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mb-6 mx-auto text-yellow-400 group-hover:bg-yellow-500/20 transition"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-8 w-8"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              ></div>
+              <div class="p-8 relative z-10">
+                <div
+                  class="w-16 h-16 rounded-lg bg-yellow-400/10 flex items-center justify-center mb-6 text-yellow-400"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-              </div>
-              <h3
-                class="text-xl font-semibold text-yellow-400 mb-4 text-center"
-              >
-                Shoppings Centers
-              </h3>
-              <p class="text-gray-300 text-center text-sm md:text-base">
-                Gestão completa para grandes shoppings com múltiplas torres e
-                centenas de lojas.
-              </p>
-              <div class="mt-6 text-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-4">
+                  Shoppings Centers
+                </h3>
+                <p class="text-gray-300 mb-6">
+                  Gestão completa para grandes shoppings com múltiplas torres e
+                  centenas de lojas.
+                </p>
                 <a
                   href="#"
-                  class="text-yellow-400 text-sm font-medium hover:underline"
-                  >Saiba mais →</a
+                  class="inline-flex items-center text-yellow-400 font-medium hover:text-yellow-300 transition-colors"
                 >
+                  Explorar solução
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
               </div>
             </div>
 
+            <!-- Solution Card 2 -->
             <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 transition transform hover:-translate-y-2 group"
+              class="relative overflow-hidden bg-gray-800 rounded-2xl border border-gray-700 group transition-all duration-300 hover:border-yellow-400"
             >
               <div
-                class="w-14 h-14 md:w-16 md:h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mb-6 mx-auto text-yellow-400 group-hover:bg-yellow-500/20 transition"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-8 w-8"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              ></div>
+              <div class="p-8 relative z-10">
+                <div
+                  class="w-16 h-16 rounded-lg bg-yellow-400/10 flex items-center justify-center mb-6 text-yellow-400"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-              </div>
-              <h3
-                class="text-xl font-semibold text-yellow-400 mb-4 text-center"
-              >
-                Galeria Comerciais
-              </h3>
-              <p class="text-gray-300 text-center text-sm md:text-base">
-                Solução ideal para galerias e pequenos centros com gestão
-                simplificada.
-              </p>
-              <div class="mt-6 text-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-4">
+                  Galeria Comerciais
+                </h3>
+                <p class="text-gray-300 mb-6">
+                  Solução ideal para galerias e pequenos centros com gestão
+                  simplificada.
+                </p>
                 <a
                   href="#"
-                  class="text-yellow-400 text-sm font-medium hover:underline"
-                  >Saiba mais →</a
+                  class="inline-flex items-center text-yellow-400 font-medium hover:text-yellow-300 transition-colors"
                 >
+                  Explorar solução
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
               </div>
             </div>
 
+            <!-- Solution Card 3 -->
             <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-500/20 transition transform hover:-translate-y-2 group"
+              class="relative overflow-hidden bg-gray-800 rounded-2xl border border-gray-700 group transition-all duration-300 hover:border-yellow-400"
             >
               <div
-                class="w-14 h-14 md:w-16 md:h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mb-6 mx-auto text-yellow-400 group-hover:bg-yellow-500/20 transition"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-8 w-8"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              ></div>
+              <div class="p-8 relative z-10">
+                <div
+                  class="w-16 h-16 rounded-lg bg-yellow-400/10 flex items-center justify-center mb-6 text-yellow-400"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-              </div>
-              <h3
-                class="text-xl font-semibold text-yellow-400 mb-4 text-center"
-              >
-                Outlets
-              </h3>
-              <p class="text-gray-300 text-center text-sm md:text-base">
-                Controle especializado para outlets com gestão de promoções e
-                temporadas.
-              </p>
-              <div class="mt-6 text-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-4">Outlets</h3>
+                <p class="text-gray-300 mb-6">
+                  Controle especializado para outlets com gestão de promoções e
+                  temporadas.
+                </p>
                 <a
                   href="#"
-                  class="text-yellow-400 text-sm font-medium hover:underline"
-                  >Saiba mais →</a
+                  class="inline-flex items-center text-yellow-400 font-medium hover:text-yellow-300 transition-colors"
                 >
+                  Explorar solução
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
               </div>
             </div>
           </div>
