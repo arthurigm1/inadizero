@@ -706,182 +706,241 @@ import AOS from 'aos';
         </div>
       </section>
       <!-- Solutions Section - Redesigned -->
-      <section id="solutions" class="py-16 md:py-24 bg-gray-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-16">
-            <span class="inline-block text-yellow-400 font-medium mb-3"
-              >Nossas Soluções</span
+      <section
+        id="solutions"
+        class="py-20 md:py-32 bg-gray-900 relative overflow-hidden"
+      >
+        <!-- Efeito de background decorativo -->
+        <div class="absolute inset-0 opacity-10">
+          <div
+            class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-yellow-400/20 via-transparent to-transparent"
+            style="background-size: 80% 80%; background-position: -20% -20%;"
+          ></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div class="text-center mb-20">
+            <span
+              class="inline-block px-4 py-1.5 rounded-full bg-yellow-400/10 text-yellow-300 font-medium text-sm tracking-wider mb-6"
             >
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-5">
-              Tecnologia Adaptada para
-              <span class="text-yellow-400">Seu Shopping</span>
+              NOSSAS SOLUÇÕES
+            </span>
+            <h2
+              class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight"
+            >
+              Tecnologia Sob Medida para
+              <span
+                class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500"
+                >Seu Negócio</span
+              >
             </h2>
             <div class="max-w-2xl mx-auto">
-              <p class="text-lg text-gray-300">
-                Oferecemos sistemas personalizados para diferentes formatos de
-                centros comerciais
+              <p class="text-xl text-gray-300/80 leading-relaxed">
+                Sistemas inteligentes adaptados para cada formato de shopping,
+                com tecnologia de ponta e design intuitivo.
               </p>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Solution Card 1 -->
-            <div
-              class="relative overflow-hidden bg-gray-800 rounded-2xl border border-gray-700 group transition-all duration-300 hover:border-yellow-400"
-            >
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Card 1 - Shoppings Centers -->
+            <div class="group perspective-1000">
               <div
-                class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              ></div>
-              <div class="p-8 relative z-10">
+                class="relative h-full transform transition-all duration-700 group-hover:rotate-y-12"
+              >
                 <div
-                  class="w-16 h-16 rounded-lg bg-yellow-400/10 flex items-center justify-center mb-6 text-yellow-400"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-8 w-8"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                  class="absolute inset-0 rounded-3xl bg-gradient-to-br from-gray-800/70 to-gray-900/90 border border-gray-700/50 shadow-2xl backdrop-blur-sm transition-all duration-500 group-hover:border-yellow-400/30 group-hover:shadow-yellow-400/10"
+                ></div>
+
+                <div class="relative p-8 h-full flex flex-col">
+                  <div
+                    class="w-20 h-20 rounded-xl bg-gradient-to-br from-yellow-400/10 to-yellow-600/10 flex items-center justify-center mb-8 text-yellow-400 group-hover:scale-110 transition-transform duration-500"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                    />
-                  </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-10 w-10"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                      />
+                    </svg>
+                  </div>
+
+                  <h3 class="text-2xl font-bold text-white mb-4 tracking-tight">
+                    Shoppings Centers
+                  </h3>
+
+                  <p class="text-gray-300/80 mb-8 flex-grow leading-relaxed">
+                    Gestão completa para grandes empreendimentos com múltiplas
+                    torres, centenas de lojas e fluxos complexos.
+                  </p>
+
+                  <div class="mt-auto">
+                    <a
+                      href="#"
+                      class="inline-flex items-center text-yellow-400 font-medium group-hover:text-white transition-colors duration-300"
+                    >
+                      <span class="relative">
+                        <span
+                          class="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"
+                        ></span>
+                        Explorar solução
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-4">
-                  Shoppings Centers
-                </h3>
-                <p class="text-gray-300 mb-6">
-                  Gestão completa para grandes shoppings com múltiplas torres e
-                  centenas de lojas.
-                </p>
-                <a
-                  href="#"
-                  class="inline-flex items-center text-yellow-400 font-medium hover:text-yellow-300 transition-colors"
-                >
-                  Explorar solução
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 ml-2"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </a>
               </div>
             </div>
 
-            <!-- Solution Card 2 -->
-            <div
-              class="relative overflow-hidden bg-gray-800 rounded-2xl border border-gray-700 group transition-all duration-300 hover:border-yellow-400"
-            >
+            <!-- Card 2 - Galerias Comerciais -->
+            <div class="group perspective-1000">
               <div
-                class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              ></div>
-              <div class="p-8 relative z-10">
+                class="relative h-full transform transition-all duration-700 group-hover:-rotate-y-6"
+              >
                 <div
-                  class="w-16 h-16 rounded-lg bg-yellow-400/10 flex items-center justify-center mb-6 text-yellow-400"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-8 w-8"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                  class="absolute inset-0 rounded-3xl bg-gradient-to-br from-gray-800/70 to-gray-900/90 border border-gray-700/50 shadow-2xl backdrop-blur-sm transition-all duration-500 group-hover:border-yellow-400/30 group-hover:shadow-yellow-400/10"
+                ></div>
+
+                <div class="relative p-8 h-full flex flex-col">
+                  <div
+                    class="w-20 h-20 rounded-xl bg-gradient-to-br from-yellow-400/10 to-yellow-600/10 flex items-center justify-center mb-8 text-yellow-400 group-hover:scale-110 transition-transform duration-500"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                    />
-                  </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-10 w-10"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"
+                      />
+                    </svg>
+                  </div>
+
+                  <h3 class="text-2xl font-bold text-white mb-4 tracking-tight">
+                    Galerias Comerciais
+                  </h3>
+
+                  <p class="text-gray-300/80 mb-8 flex-grow leading-relaxed">
+                    Solução ideal para galerias e pequenos centros com gestão
+                    simplificada e relatórios inteligentes.
+                  </p>
+
+                  <div class="mt-auto">
+                    <a
+                      href="#"
+                      class="inline-flex items-center text-yellow-400 font-medium group-hover:text-white transition-colors duration-300"
+                    >
+                      <span class="relative">
+                        <span
+                          class="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"
+                        ></span>
+                        Explorar solução
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-4">
-                  Galeria Comerciais
-                </h3>
-                <p class="text-gray-300 mb-6">
-                  Solução ideal para galerias e pequenos centros com gestão
-                  simplificada.
-                </p>
-                <a
-                  href="#"
-                  class="inline-flex items-center text-yellow-400 font-medium hover:text-yellow-300 transition-colors"
-                >
-                  Explorar solução
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 ml-2"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </a>
               </div>
             </div>
 
-            <!-- Solution Card 3 -->
-            <div
-              class="relative overflow-hidden bg-gray-800 rounded-2xl border border-gray-700 group transition-all duration-300 hover:border-yellow-400"
-            >
+            <!-- Card 3 - Outlets -->
+            <div class="group perspective-1000">
               <div
-                class="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              ></div>
-              <div class="p-8 relative z-10">
+                class="relative h-full transform transition-all duration-700 group-hover:rotate-x-8"
+              >
                 <div
-                  class="w-16 h-16 rounded-lg bg-yellow-400/10 flex items-center justify-center mb-6 text-yellow-400"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-8 w-8"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                  class="absolute inset-0 rounded-3xl bg-gradient-to-br from-gray-800/70 to-gray-900/90 border border-gray-700/50 shadow-2xl backdrop-blur-sm transition-all duration-500 group-hover:border-yellow-400/30 group-hover:shadow-yellow-400/10"
+                ></div>
+
+                <div class="relative p-8 h-full flex flex-col">
+                  <div
+                    class="w-20 h-20 rounded-xl bg-gradient-to-br from-yellow-400/10 to-yellow-600/10 flex items-center justify-center mb-8 text-yellow-400 group-hover:scale-110 transition-transform duration-500"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                    />
-                  </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-10 w-10"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                      />
+                    </svg>
+                  </div>
+
+                  <h3 class="text-2xl font-bold text-white mb-4 tracking-tight">
+                    Outlets
+                  </h3>
+
+                  <p class="text-gray-300/80 mb-8 flex-grow leading-relaxed">
+                    Controle especializado para outlets com gestão de promoções,
+                    temporadas e liquidações estratégicas.
+                  </p>
+
+                  <div class="mt-auto">
+                    <a
+                      href="#"
+                      class="inline-flex items-center text-yellow-400 font-medium group-hover:text-white transition-colors duration-300"
+                    >
+                      <span class="relative">
+                        <span
+                          class="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"
+                        ></span>
+                        Explorar solução
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-4">Outlets</h3>
-                <p class="text-gray-300 mb-6">
-                  Controle especializado para outlets com gestão de promoções e
-                  temporadas.
-                </p>
-                <a
-                  href="#"
-                  class="inline-flex items-center text-yellow-400 font-medium hover:text-yellow-300 transition-colors"
-                >
-                  Explorar solução
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 ml-2"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </a>
               </div>
             </div>
           </div>
