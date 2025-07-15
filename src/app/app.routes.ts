@@ -13,12 +13,18 @@ export const routes: Routes = [
       import('./auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'registro',
+    loadComponent: () =>
+      import('./auth/registro/registro.component').then(
+        (m) => m.RegisterComponent
+      ),
+  },
+  {
     path: '',
     loadComponent: () =>
       import('./core/layout/main-layout.component').then(
         (m) => m.MainLayoutComponent
       ),
-    canActivate: [authGuard],
     children: [
       {
         path: 'dashboard',
