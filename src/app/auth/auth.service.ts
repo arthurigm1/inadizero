@@ -27,6 +27,22 @@ interface RegisterData {
   nome: string;
   email: string;
   senha: string;
+  empresaId?: string;
+}
+
+export interface Empresa {
+  id: string;
+  nome: string;
+  cnpj?: string;
+  criadoEm?: string;
+  _count?: {
+    usuarios: number;
+  };
+}
+
+interface EmpresasResponse {
+  sucesso: boolean;
+  empresas: Empresa[];
 }
 
 @Injectable({
@@ -36,6 +52,7 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
   private apiUrl = 'http://localhost:3010/api/usuario'; // Ajuste para sua URL
+  private empresaApiUrl = 'http://localhost:3010/api/empresa'; // URL para empresas
 
   constructor(private http: HttpClient, private router: Router) {
     this.currentUserSubject = new BehaviorSubject<User | null>(
@@ -74,7 +91,7 @@ export class AuthService {
   }
 
   register(userData: RegisterData): Observable<User> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}`, userData).pipe(
+    return this.http.post<LoginResponse>(`${this.apiUrl}/registro`, userData).pipe(
       map((response) => {
         const user = { ...response.user, token: response.token };
         localStorage.setItem('currentUser', JSON.stringify(user));
@@ -107,5 +124,17 @@ export class AuthService {
       return role.includes(this.currentUserValue.role);
     }
     return this.currentUserValue.role === role;
+  }
+
+  getEmpresas(): Observable<Empresa[]> {
+    return this.http.get<EmpresasResponse>(`${this.empresaApiUrl}/listar`).pipe(
+      map((response) => response.empresas),
+      catchError((error) => {
+        console.error('Erro ao buscar empresas:', error);
+        return throwError(
+          () => new Error('Falha ao carregar empresas.')
+        );
+      })
+    );
   }
 }

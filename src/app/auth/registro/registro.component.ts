@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { AuthService } from '../auth.service';
+import { AuthService, Empresa } from '../auth.service';
 
 @Component({
   selector: 'app-register',
@@ -151,6 +151,45 @@ import { AuthService } from '../auth.service';
 
           <div>
             <label
+              for="empresa"
+              class="block text-sm font-medium text-gray-300 mb-1"
+              >Empresa</label
+            >
+            <select
+              id="empresa"
+              name="empresa"
+              formControlName="empresa"
+              required
+              class="w-full px-4 py-3 bg-gray-800 bg-opacity-70 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition duration-300"
+              [class.invalid]="
+                registerForm.get('empresa')?.invalid &&
+                registerForm.get('empresa')?.touched
+              "
+            >
+              <option value="" disabled>Selecione uma empresa</option>
+              <option *ngFor="let empresa of empresas" [value]="empresa.id">
+                {{ empresa.nome }}
+              </option>
+            </select>
+            <div
+              *ngIf="loadingEmpresas"
+              class="text-yellow-400 text-xs mt-1"
+            >
+              Carregando empresas...
+            </div>
+            <div
+              *ngIf="
+                registerForm.get('empresa')?.invalid &&
+                registerForm.get('empresa')?.touched
+              "
+              class="text-red-400 text-xs mt-1"
+            >
+              Empresa é obrigatória
+            </div>
+          </div>
+
+          <div>
+            <label
               for="password"
               class="block text-sm font-medium text-gray-300 mb-1"
               >Senha</label
@@ -285,6 +324,8 @@ import { AuthService } from '../auth.service';
 })
 export class RegisterComponent {
   registerForm: FormGroup;
+  empresas: Empresa[] = [];
+  loadingEmpresas = false;
 
   constructor(
     private fb: FormBuilder,
@@ -298,10 +339,13 @@ export class RegisterComponent {
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', Validators.required],
+        empresa: ['', Validators.required],
         terms: [false, Validators.requiredTrue],
       },
       { validator: this.passwordMatchValidator }
     );
+    
+    this.loadEmpresas();
   }
 
   passwordMatchValidator(formGroup: FormGroup) {
@@ -310,14 +354,29 @@ export class RegisterComponent {
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
+  loadEmpresas() {
+    this.loadingEmpresas = true;
+    this.authservice.getEmpresas().subscribe({
+      next: (empresas) => {
+        this.empresas = empresas;
+        this.loadingEmpresas = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar empresas:', err);
+        this.loadingEmpresas = false;
+      },
+    });
+  }
+
   onSubmit() {
     if (this.registerForm.valid) {
-      const { firstName, lastName, email, password } = this.registerForm.value;
+      const { firstName, lastName, email, password, empresa } = this.registerForm.value;
 
       const userData = {
         nome: `${firstName} ${lastName}`,
         email,
         senha: password,
+        empresaId: empresa,
       };
 
       this.authservice.register(userData).subscribe({
