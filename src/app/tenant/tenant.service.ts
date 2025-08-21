@@ -29,14 +29,14 @@ export interface Tenant {
 
 export interface TenantLoginData {
   email: string;
-  password: string;
+  senha: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class TenantService {
-  private apiUrl = 'http://localhost:3010/api/inquilino';
+  private apiUrl = 'http://localhost:3010/api/usuario';
   private currentTenantSubject = new BehaviorSubject<Tenant | null>(null);
   public currentTenant$ = this.currentTenantSubject.asObservable();
 
@@ -49,7 +49,7 @@ export class TenantService {
   }
 
   login(loginData: TenantLoginData): Observable<Tenant> {
-    return this.http.post<any>(`${this.apiUrl}/login`, loginData).pipe(
+    return this.http.post<any>(`${this.apiUrl}/login-inquilino`, loginData).pipe(
       map((response) => {
         const tenant = response.inquilino || response;
         if (tenant && response.token) {

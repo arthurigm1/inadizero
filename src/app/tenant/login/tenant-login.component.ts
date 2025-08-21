@@ -53,20 +53,20 @@ import { TenantService } from '../tenant.service';
             </div>
 
             <div>
-              <label for="password" class="block text-sm font-medium text-white mb-2">
+              <label for="senha" class="block text-sm font-medium text-white mb-2">
                 Senha
               </label>
               <input
-                id="password"
-                name="password"
-                type="password"
-                formControlName="password"
+                id="senha"
+                name="senha"
+                type="senha"
+                formControlName="senha"
                 required
                 class="appearance-none relative block w-full px-3 py-3 border border-white/30 placeholder-gray-400 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/90 backdrop-blur-sm transition-all duration-300"
                 placeholder="Digite sua senha"
               />
-              <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="mt-1 text-red-300 text-sm">
-                <span *ngIf="loginForm.get('password')?.errors?.['required']">
+              <div *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched" class="mt-1 text-red-300 text-sm">
+                <span *ngIf="loginForm.get('senha')?.errors?.['required']">
                   Senha é obrigatória
                 </span>
               </div>
@@ -116,16 +116,16 @@ export class TenantLoginComponent {
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
+      senha: ['', [Validators.required]],
     });
   }
 
   onSubmit() {
     if (this.loginForm.valid) {
       this.isLoading = true;
-      const { email, password } = this.loginForm.value;
+      const { email, senha } = this.loginForm.value;
 
-      this.tenantService.login({ email, password }).subscribe({
+      this.tenantService.login({ email, senha }).subscribe({
         next: (tenant) => {
           console.log('Inquilino logado com sucesso:', tenant);
           this.router.navigate(['/tenant/portal']);
