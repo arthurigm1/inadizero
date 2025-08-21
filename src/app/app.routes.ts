@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './auth/auth.guard';
+import { tenantGuard } from './tenant/tenant.guard';
 
 export const routes: Routes = [
   {
@@ -34,6 +35,21 @@ export const routes: Routes = [
           ),
       },
     ],
+  },
+  {
+    path: 'tenant/login',
+    loadComponent: () =>
+      import('./tenant/login/tenant-login.component').then(
+        (m) => m.TenantLoginComponent
+      ),
+  },
+  {
+    path: 'tenant/portal',
+    loadComponent: () =>
+      import('./tenant/portal/tenant-portal.component').then(
+        (m) => m.TenantPortalComponent
+      ),
+    canActivate: [tenantGuard],
   },
   { path: '**', redirectTo: '' },
 ];
