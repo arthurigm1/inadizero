@@ -108,12 +108,49 @@ import { SettingsComponent } from '../settings/settings.component';
                   </svg>
                 </div>
                 
-                <button class="p-2 rounded-lg text-gray-400 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all duration-200 relative">
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h10a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                  </svg>
-                  <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-                </button>
+                <div class="relative">
+                  <button (click)="toggleNotifications()" class="p-2 rounded-lg text-gray-400 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all duration-200 relative">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h10a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <span *ngIf="getUnreadCount() > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">{{ getUnreadCount() }}</span>
+                  </button>
+                  
+                  <div *ngIf="showNotifications" class="absolute right-0 mt-2 w-80 bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 rounded-xl shadow-xl z-50">
+                    <div class="p-4 border-b border-gray-700">
+                      <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-white">Notificações</h3>
+                        <button (click)="openNotificationDialog()" class="text-yellow-400 hover:text-yellow-300 text-sm">
+                          Ver importantes
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="max-h-96 overflow-y-auto">
+                      <div *ngFor="let notification of notifications.slice(0, 5)" class="p-4 border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
+                        <div class="flex items-start space-x-3">
+                          <div [class]="getNotificationBgColor(notification.type)" class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg [class]="getNotificationColor(notification.type)" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getNotificationIcon(notification.type)"/>
+                            </svg>
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-white font-medium text-sm truncate">{{ notification.title }}</p>
+                            <p class="text-gray-400 text-xs mt-1 line-clamp-2">{{ notification.message }}</p>
+                            <p class="text-gray-500 text-xs mt-1">{{ notification.time }}</p>
+                          </div>
+                          <div *ngIf="!notification.read" class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="p-4 border-t border-gray-700">
+                      <button (click)="markAllAsRead()" class="w-full text-center text-yellow-400 hover:text-yellow-300 text-sm font-medium">
+                        Marcar todas como lidas
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -328,11 +365,70 @@ import { SettingsComponent } from '../settings/settings.component';
 export class DashboardComponent implements OnInit {
   sidebarOpen = true;
   currentSection = 'dashboard';
+  showNotifications = false;
+  showNotificationDialog = false;
+  
+  notifications = [
+    {
+      id: 1,
+      title: 'Pagamento em Atraso - Crítico',
+      message: 'João Silva (Loja 15A) está com pagamento em atraso há 5 dias. Valor: R$ 2.500,00. Ação imediata necessária para evitar inadimplência.',
+      type: 'error',
+      important: true,
+      time: '2 min atrás',
+      read: false
+    },
+    {
+      id: 2,
+      title: 'Manutenção Urgente Solicitada',
+      message: 'Problema elétrico crítico na Loja 8C. Inquilino reportou queda de energia. Técnico deve ser acionado imediatamente.',
+      type: 'warning',
+      important: true,
+      time: '15 min atrás',
+      read: false
+    },
+    {
+      id: 3,
+      title: 'Vencimento de Contrato Próximo',
+      message: 'Contrato da Loja 12A (Maria Santos) vence em 7 dias. Necessário contato para renovação ou desocupação.',
+      type: 'warning',
+      important: true,
+      time: '1 hora atrás',
+      read: false
+    },
+    {
+      id: 4,
+      title: 'Novo Contrato Assinado',
+      message: 'Carlos Oliveira assinou contrato para Loja 23B. Início: 01/02/2024. Valor: R$ 3.200,00/mês.',
+      type: 'success',
+      important: false,
+      time: '2 horas atrás',
+      read: false
+    },
+    {
+      id: 5,
+      title: 'Pagamento Recebido',
+      message: 'Ana Costa (Loja 7A) efetuou pagamento de R$ 1.800,00 via PIX.',
+      type: 'success',
+      important: false,
+      time: '3 horas atrás',
+      read: true
+    },
+    {
+      id: 6,
+      title: 'Solicitação de Reparo',
+      message: 'Loja 19C solicitou reparo no ar-condicionado. Prioridade: Média.',
+      type: 'info',
+      important: false,
+      time: '4 horas atrás',
+      read: true
+    }
+  ];
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    // TODO: Implementar carregamento de dados do dashboard
+    this.simulateNewNotifications();
   }
 
   toggleSidebar() {
@@ -351,5 +447,89 @@ export class DashboardComponent implements OnInit {
       case 'settings': return 'Configurações';
       default: return 'Dashboard';
     }
+  }
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+  }
+
+  openNotificationDialog() {
+    this.showNotificationDialog = true;
+    this.showNotifications = false;
+  }
+
+  closeNotificationDialog() {
+    this.showNotificationDialog = false;
+  }
+
+  markAsRead(notificationId: number) {
+    const notification = this.notifications.find(n => n.id === notificationId);
+    if (notification) {
+      notification.read = true;
+    }
+  }
+
+  markAllAsRead() {
+    this.notifications.forEach(n => n.read = true);
+    this.showNotifications = false;
+  }
+
+  getUnreadCount(): number {
+    return this.notifications.filter(n => !n.read).length;
+  }
+
+  getImportantNotifications() {
+    return this.notifications.filter(n => n.important && !n.read);
+  }
+
+  getNotificationIcon(type: string): string {
+    switch (type) {
+      case 'error': return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z';
+      case 'warning': return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z';
+      case 'success': return 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z';
+      case 'info': return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+      default: return 'M15 17h5l-5 5v-5zM4 19h10a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z';
+    }
+  }
+
+  getNotificationColor(type: string): string {
+    switch (type) {
+      case 'error': return 'text-red-400';
+      case 'warning': return 'text-yellow-400';
+      case 'success': return 'text-green-400';
+      case 'info': return 'text-blue-400';
+      default: return 'text-gray-400';
+    }
+  }
+
+  getNotificationBgColor(type: string): string {
+    switch (type) {
+      case 'error': return 'bg-red-500/20';
+      case 'warning': return 'bg-yellow-500/20';
+      case 'success': return 'bg-green-500/20';
+      case 'info': return 'bg-blue-500/20';
+      default: return 'bg-gray-500/20';
+    }
+  }
+
+  private simulateNewNotifications() {
+    setInterval(() => {
+      if (Math.random() > 0.7) {
+        const newNotification = {
+          id: Date.now(),
+          title: 'Nova Notificação',
+          message: 'Uma nova atividade foi registrada no sistema.',
+          type: 'info',
+          important: Math.random() > 0.8,
+          time: 'Agora',
+          read: false
+        };
+        this.notifications.unshift(newNotification);
+        
+        if (this.notifications.length > 20) {
+          this.notifications = this.notifications.slice(0, 20);
+        }
+      }
+    }, 30000);
   }
 }
