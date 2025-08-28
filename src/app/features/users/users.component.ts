@@ -1,11 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { AuthService } from '../../auth/auth.service';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+
+// Schema de validação para criar inquilino
+interface CriarInquilinoData {
+  nome: string;
+  email: string;
+  senha: string;
+}
+
+enum TipoUsuario {
+  ADMIN_EMPRESA = 'ADMIN_EMPRESA',    // Usuário principal da empresa que pode criar outros usuários
+  FUNCIONARIO = 'FUNCIONARIO',        // Funcionário da empresa
+  INQUILINO = 'INQUILINO',            // Inquilino (pode ser criado por usuários da empresa)
+  VISITANTE = 'VISITANTE'             // Visitante
+}
+
+type UserRole = TipoUsuario;
+
+interface Usuario {
+  id: number;
+  name: string;
+  email: string;
+  type: TipoUsuario;
+  status: 'active' | 'inactive' | 'pending';
+  lastAccess: string;
+}
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
@@ -28,12 +58,123 @@ import { trigger, transition, style, animate } from '@angular/animations';
         <p class="text-gray-300">Gerencie todos os usuários do sistema</p>
       </div>
 
+      <!-- Modal para Criar Inquilino -->
+      <div *ngIf="showCreateTenantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
+        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-yellow-400">Criar Novo Inquilino</h2>
+            <button (click)="closeCreateTenantModal()" class="text-gray-400 hover:text-white transition-colors">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+          
+          <form [formGroup]="createTenantForm" (ngSubmit)="onCreateTenant()">
+            <!-- Nome -->
+            <div class="mb-4">
+              <label for="nome" class="block text-sm font-medium text-gray-300 mb-2">Nome</label>
+              <input
+                id="nome"
+                type="text"
+                formControlName="nome"
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20"
+                placeholder="Nome completo do inquilino"
+              >
+              <div *ngIf="createTenantForm.get('nome')?.invalid && createTenantForm.get('nome')?.touched" class="text-red-400 text-sm mt-1">
+                <span *ngIf="createTenantForm.get('nome')?.errors?.['required']">Nome é obrigatório!</span>
+              </div>
+            </div>
+            
+            <!-- Email -->
+            <div class="mb-4">
+              <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20"
+                placeholder="email@exemplo.com"
+              >
+              <div *ngIf="createTenantForm.get('email')?.invalid && createTenantForm.get('email')?.touched" class="text-red-400 text-sm mt-1">
+                <span *ngIf="createTenantForm.get('email')?.errors?.['required']">Email é obrigatório!</span>
+                <span *ngIf="createTenantForm.get('email')?.errors?.['email']">Email inválido</span>
+              </div>
+            </div>
+            
+            <!-- Senha -->
+            <div class="mb-6">
+              <label for="senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
+              <input
+                id="senha"
+                type="password"
+                formControlName="senha"
+                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20"
+                placeholder="Senha (mínimo 6 caracteres)"
+              >
+              <div *ngIf="createTenantForm.get('senha')?.invalid && createTenantForm.get('senha')?.touched" class="text-red-400 text-sm mt-1">
+                <span *ngIf="createTenantForm.get('senha')?.errors?.['required']">Senha é obrigatória!</span>
+                <span *ngIf="createTenantForm.get('senha')?.errors?.['minlength']">Senha deve ter no mínimo 6 caracteres</span>
+              </div>
+            </div>
+            
+            <!-- Botões -->
+            <div class="flex gap-3">
+              <button
+                type="button"
+                (click)="closeCreateTenantModal()"
+                class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                [disabled]="createTenantForm.invalid || isCreatingTenant"
+                class="flex-1 px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span *ngIf="!isCreatingTenant">Criar Inquilino</span>
+                <span *ngIf="isCreatingTenant" class="flex items-center justify-center">
+                  <i class="fas fa-spinner fa-spin mr-2"></i>
+                  Criando...
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Notificação -->
+      <div *ngIf="notification.show" class="fixed top-4 right-4 z-50" [@slideIn]>
+        <div [ngClass]="{
+          'bg-green-800 border-green-600': notification.type === 'success',
+          'bg-red-800 border-red-600': notification.type === 'error',
+          'bg-blue-800 border-blue-600': notification.type === 'info'
+        }" class="border rounded-lg p-4 shadow-lg max-w-sm">
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <i [ngClass]="{
+                'fas fa-check-circle text-green-400': notification.type === 'success',
+                'fas fa-exclamation-circle text-red-400': notification.type === 'error',
+                'fas fa-info-circle text-blue-400': notification.type === 'info'
+              }"></i>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-white">{{ notification.title }}</p>
+              <p class="text-sm text-gray-300 mt-1">{{ notification.message }}</p>
+            </div>
+            <div class="ml-auto pl-3">
+              <button (click)="hideNotification()" class="text-gray-400 hover:text-white">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Actions Bar -->
       <div class="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center" [@slideIn]>
         <div class="flex flex-col sm:flex-row gap-4">
-          <button class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+          <button (click)="openCreateTenantModal()" class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
             <i class="fas fa-plus mr-2"></i>
-            Novo Usuário
+            Novo Inquilino
           </button>
           <button class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300">
             <i class="fas fa-download mr-2"></i>
@@ -41,21 +182,42 @@ import { trigger, transition, style, animate } from '@angular/animations';
           </button>
         </div>
         
-        <div class="flex gap-4">
-          <div class="relative">
+        <div class="flex flex-wrap gap-4">
+          <!-- Campo de busca -->
+          <div class="relative flex-1 min-w-64">
             <input 
               type="text" 
-              placeholder="Buscar usuários..."
-              class="bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 pl-10 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+              placeholder="Buscar por nome ou email..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()"
+              class="bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 pl-10 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300 w-full"
             >
             <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
           </div>
-          <select class="bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500">
-            <option value="all">Todos os tipos</option>
-            <option value="admin">Administrador</option>
-            <option value="manager">Gerente</option>
-            <option value="user">Usuário</option>
+          
+          <!-- Filtro por tipo -->
+          <select 
+            [(ngModel)]="selectedTypeFilter"
+            (change)="onTypeFilterChange()"
+            class="bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 min-w-48">
+            <option *ngFor="let type of userTypes" [value]="type.value">{{ type.label }}</option>
           </select>
+          
+          <!-- Filtro por status -->
+          <select 
+            [(ngModel)]="selectedStatusFilter"
+            (change)="onStatusFilterChange()"
+            class="bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 min-w-40">
+            <option *ngFor="let status of statusTypes" [value]="status.value">{{ status.label }}</option>
+          </select>
+          
+          <!-- Botão limpar filtros -->
+          <button 
+            (click)="clearFilters()"
+            class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
+            <i class="fas fa-times"></i>
+            Limpar
+          </button>
         </div>
       </div>
 
@@ -97,11 +259,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span [ngClass]="{
-                    'bg-red-900/50 text-red-300 border-red-500/50': user.type === 'admin',
-                    'bg-blue-900/50 text-blue-300 border-blue-500/50': user.type === 'manager',
-                    'bg-green-900/50 text-green-300 border-green-500/50': user.type === 'user'
+                    'bg-red-900/50 text-red-300 border-red-500/50': user.type === 'ADMIN_EMPRESA',
+                    'bg-blue-900/50 text-blue-300 border-blue-500/50': user.type === 'FUNCIONARIO',
+                    'bg-green-900/50 text-green-300 border-green-500/50': user.type === 'INQUILINO',
+                    'bg-purple-900/50 text-purple-300 border-purple-500/50': user.type === 'VISITANTE'
                   }" class="inline-flex px-3 py-1 text-xs font-semibold rounded-full border">
-                    {{ user.type === 'admin' ? 'Administrador' : user.type === 'manager' ? 'Gerente' : 'Usuário' }}
+                    {{ getUserTypeLabel(user.type) }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
@@ -155,47 +318,311 @@ import { trigger, transition, style, animate } from '@angular/animations';
     </div>
   `
 })
-export class UsersComponent {
-  users = [
+export class UsersComponent implements OnInit {
+  // Propriedades do formulário
+  createTenantForm: FormGroup;
+  showCreateTenantModal = false;
+  isCreatingTenant = false;
+  
+  // Propriedades da notificação
+  notification = {
+    show: false,
+    type: 'success' as 'success' | 'error' | 'info',
+    title: '',
+    message: ''
+  };
+  
+  // Propriedades de filtro
+  selectedTypeFilter: TipoUsuario | 'todos' = 'todos';
+  selectedStatusFilter: 'active' | 'inactive' | 'pending' | 'todos' = 'todos';
+  searchTerm = '';
+  
+  // Lista de usuários original e filtrada
+  allUsers: Usuario[] = [];
+  users: Usuario[] = [];
+  
+  // Tipos de usuário disponíveis
+  userTypes: { value: TipoUsuario | 'todos'; label: string }[] = [
+    { value: 'todos', label: 'Todos os tipos' },
+    { value: TipoUsuario.ADMIN_EMPRESA, label: 'Admin da Empresa' },
+    { value: TipoUsuario.FUNCIONARIO, label: 'Funcionário' },
+    { value: TipoUsuario.INQUILINO, label: 'Inquilino' },
+    { value: TipoUsuario.VISITANTE, label: 'Visitante' }
+  ];
+  
+  // Status disponíveis
+  statusTypes: { value: 'active' | 'inactive' | 'pending' | 'todos'; label: string }[] = [
+    { value: 'todos', label: 'Todos os status' },
+    { value: 'active', label: 'Ativo' },
+    { value: 'inactive', label: 'Inativo' },
+    { value: 'pending', label: 'Pendente' }
+  ];
+  
+  // Dados mock iniciais
+  private mockUsers: Usuario[] = [
     {
       id: 1,
       name: 'João Silva',
-      email: 'joao&#64;inadizero.com',
-      type: 'admin',
+      email: 'joao@inadizero.com',
+      type: TipoUsuario.ADMIN_EMPRESA,
       status: 'active',
       lastAccess: '2024-01-15 14:30'
     },
     {
       id: 2,
       name: 'Maria Santos',
-      email: 'maria&#64;inadizero.com',
-      type: 'manager',
+      email: 'maria@inadizero.com',
+      type: TipoUsuario.FUNCIONARIO,
       status: 'active',
       lastAccess: '2024-01-15 10:15'
     },
     {
       id: 3,
       name: 'Pedro Costa',
-      email: 'pedro&#64;inadizero.com',
-      type: 'user',
+      email: 'pedro@inquilino.com',
+      type: TipoUsuario.INQUILINO,
       status: 'active',
       lastAccess: '2024-01-14 16:45'
     },
     {
       id: 4,
       name: 'Ana Oliveira',
-      email: 'ana&#64;inadizero.com',
-      type: 'user',
+      email: 'ana@inadizero.com',
+      type: TipoUsuario.FUNCIONARIO,
       status: 'inactive',
       lastAccess: '2024-01-10 09:20'
     },
     {
       id: 5,
-      name: 'Carlos Ferreira',
-      email: 'carlos&#64;inadizero.com',
-      type: 'manager',
+      name: 'Carlos Visitante',
+      email: 'carlos@visitante.com',
+      type: TipoUsuario.VISITANTE,
       status: 'pending',
       lastAccess: 'Nunca'
     }
   ];
+  
+  private apiUrl = 'http://localhost:3010/api/usuario';
+  
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private authService: AuthService
+  ) {
+    this.createTenantForm = this.fb.group({
+      nome: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      senha: ['', [Validators.required, Validators.minLength(6)]]
+    });
+  }
+  
+  ngOnInit(): void {
+    this.loadUsuariosDaEmpresa();
+  }
+  
+  // Métodos de filtro
+  applyFilters() {
+    let filteredUsers = [...this.allUsers];
+    
+    // Filtro por tipo
+    if (this.selectedTypeFilter !== 'todos') {
+      filteredUsers = filteredUsers.filter(user => user.type === this.selectedTypeFilter);
+    }
+    
+    // Filtro por status
+    if (this.selectedStatusFilter !== 'todos') {
+      filteredUsers = filteredUsers.filter(user => user.status === this.selectedStatusFilter);
+    }
+    
+    // Filtro por termo de busca
+    if (this.searchTerm.trim()) {
+      const searchLower = this.searchTerm.toLowerCase();
+      filteredUsers = filteredUsers.filter(user => 
+        user.name.toLowerCase().includes(searchLower) ||
+        user.email.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    this.users = filteredUsers;
+  }
+  
+  onTypeFilterChange() {
+    this.applyFilters();
+  }
+  
+  onStatusFilterChange() {
+    this.applyFilters();
+  }
+  
+  onSearchChange() {
+    this.applyFilters();
+  }
+  
+  clearFilters() {
+    this.selectedTypeFilter = 'todos';
+    this.selectedStatusFilter = 'todos';
+    this.searchTerm = '';
+    this.applyFilters();
+  }
+  
+  // Método para obter o rótulo do tipo de usuário
+  getUserTypeLabel(type: TipoUsuario): string {
+    const typeObj = this.userTypes.find(t => t.value === type);
+    return typeObj ? typeObj.label : type;
+  }
+  
+  // Métodos para o modal
+  openCreateTenantModal(): void {
+    this.showCreateTenantModal = true;
+    this.createTenantForm.reset();
+  }
+  
+  closeCreateTenantModal(): void {
+    this.showCreateTenantModal = false;
+    this.createTenantForm.reset();
+  }
+  
+  // Método para criar inquilino
+  onCreateTenant(): void {
+    if (this.createTenantForm.invalid) {
+      this.createTenantForm.markAllAsTouched();
+      return;
+    }
+    
+    this.isCreatingTenant = true;
+    const tenantData: CriarInquilinoData = this.createTenantForm.value;
+    
+    this.criarInquilino(tenantData).subscribe({
+      next: (response) => {
+        this.isCreatingTenant = false;
+        this.closeCreateTenantModal();
+        this.showNotification('success', 'Sucesso!', 'Inquilino criado com sucesso!');
+        this.loadUsuariosDaEmpresa(); // Recarrega a lista
+      },
+      error: (error) => {
+        this.isCreatingTenant = false;
+        this.showNotification('error', 'Erro!', error.message || 'Erro ao criar inquilino');
+      }
+    });
+  }
+  
+  // Método para criar inquilino via API
+  private criarInquilino(data: CriarInquilinoData): Observable<any> {
+    try {
+      const headers = this.getAuthHeaders();
+      return this.http.post(`${this.apiUrl}/criar-inquilino`, data, { headers })
+        .pipe(
+          catchError((error) => {
+            console.error('Erro ao criar inquilino:', error);
+            if (error.status === 401) {
+              return throwError(() => new Error('Token de autenticação inválido ou expirado'));
+            }
+            return throwError(() => new Error(error.error?.message || 'Erro ao criar inquilino'));
+          })
+        );
+    } catch (error: any) {
+      return throwError(() => error);
+    }
+  }
+  
+  // Método para listar usuários da empresa
+  private loadUsuariosDaEmpresa(): void {
+    try {
+      const headers = this.getAuthHeaders();
+      this.http.get<any>(`${this.apiUrl}/empresa/usuarios`, { headers })
+        .pipe(
+          map((response) => {
+            // Mapeia a resposta da API para o formato esperado
+            return response.usuarios || response;
+          }),
+          catchError((error) => {
+            console.error('Erro ao carregar usuários:', error);
+            if (error.status === 401) {
+              this.showNotification('error', 'Erro de Autenticação', 'Token inválido ou expirado. Faça login novamente.');
+            } else {
+              this.showNotification('error', 'Erro!', 'Erro ao carregar usuários da empresa');
+            }
+            // Usar dados mock em caso de erro
+            return this.mockUsers;
+          })
+        )
+        .subscribe((usuarios) => {
+          if (usuarios && usuarios.length > 0) {
+            this.allUsers = usuarios.map((user: any) => ({
+              id: user.id,
+              name: user.nome || user.name,
+              email: user.email,
+              type: this.mapApiTypeToEnum(user.tipo || user.type),
+              status: user.status || 'active',
+              lastAccess: user.ultimoAcesso || user.lastAccess || 'Nunca'
+            }));
+          } else {
+            // Usar dados mock se não houver usuários
+            this.allUsers = [...this.mockUsers];
+          }
+          
+          // Aplicar filtros após carregar os dados
+          this.applyFilters();
+        });
+    } catch (error: any) {
+      this.showNotification('error', 'Erro de Autenticação', error.message);
+      // Usar dados mock em caso de erro de autenticação
+      this.allUsers = [...this.mockUsers];
+      this.applyFilters();
+    }
+  }
+  
+  // Método auxiliar para mapear tipos da API para o enum
+  private mapApiTypeToEnum(apiType: string): TipoUsuario {
+    switch (apiType?.toUpperCase()) {
+      case 'ADMIN_EMPRESA':
+      case 'ADMIN':
+        return TipoUsuario.ADMIN_EMPRESA;
+      case 'FUNCIONARIO':
+      case 'EMPLOYEE':
+        return TipoUsuario.FUNCIONARIO;
+      case 'INQUILINO':
+      case 'TENANT':
+        return TipoUsuario.INQUILINO;
+      case 'VISITANTE':
+      case 'VISITOR':
+        return TipoUsuario.VISITANTE;
+      default:
+        return TipoUsuario.VISITANTE; // Valor padrão
+    }
+  }
+  
+  // Método para obter headers de autenticação
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.token;
+    if (!token) {
+      this.showNotification('error', 'Erro de Autenticação', 'Token de acesso não encontrado. Faça login novamente.');
+      throw new Error('Token de autenticação não encontrado');
+    }
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+  
+  // Métodos para notificação
+  showNotification(type: 'success' | 'error' | 'info', title: string, message: string): void {
+    this.notification = {
+      type,
+      title,
+      message,
+      show: true
+    };
+    
+    // Auto-hide notification after 5 seconds
+    setTimeout(() => {
+      this.hideNotification();
+    }, 5000);
+  }
+  
+  hideNotification(): void {
+    this.notification.show = false;
+  }
+  
+
 }
