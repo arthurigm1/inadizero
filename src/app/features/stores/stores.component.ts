@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { trigger, transition, style, animate } from '@angular/animations';
 import { StoreService, Store, CreateStoreData, UpdateStoreData, StoreResponse, PaginationParams, Tenant, TenantsResponse } from './store.service';
 import { AuthService } from '../../auth/auth.service';
@@ -31,11 +32,13 @@ import { AuthService } from '../../auth/auth.service';
   ],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-yellow-900 p-6">
-      <!-- Header -->
-      <div class="mb-8" [@fadeIn]>
-        <h1 class="text-4xl font-bold text-yellow-400 mb-2">Gerenciamento de Lojas</h1>
-        <p class="text-gray-300">Visualize e gerencie todas as propriedades</p>
-      </div>
+      <!-- Store List View -->
+      <div *ngIf="viewMode === 'list'">
+        <!-- Header -->
+        <div class="mb-8" [@fadeIn]>
+          <h1 class="text-4xl font-bold text-yellow-400 mb-2">Gerenciamento de Lojas</h1>
+          <p class="text-gray-300">Visualize e gerencie todas as propriedades</p>
+        </div>
 
       <!-- Loading Indicator -->
       <div *ngIf="loading" class="flex justify-center items-center py-12" [@fadeIn]>
@@ -224,8 +227,9 @@ import { AuthService } from '../../auth/auth.service';
           <p class="text-gray-400">Não há lojas cadastradas para esta empresa.</p>
         </div>
         <div *ngFor="let store of stores" 
-             class="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 overflow-hidden hover:border-yellow-500/50 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl"
-             [@cardHover]>
+             class="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 overflow-hidden hover:border-yellow-500/50 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl cursor-pointer"
+             [@cardHover]
+             (click)="viewStoreDetails(store)">
           
           <!-- Store Image -->
           <div class="h-48 bg-gradient-to-br from-gray-700 to-gray-800 relative">
@@ -275,23 +279,12 @@ import { AuthService } from '../../auth/auth.service';
             <!-- Actions -->
             <div class="mt-6 flex gap-2">
               <button 
-                (click)="openEditModal(store)"
+                (click)="openEditModal(store); $event.stopPropagation()"
                 class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg font-semibold transition-colors duration-200">
                 <i class="fas fa-edit mr-2"></i>
                 Editar
               </button>
-              <button 
-                (click)="openTenantModal(store)"
-                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-200">
-                <i class="fas fa-user mr-2"></i>
-                Inquilino
-              </button>
-              <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
-                <i class="fas fa-eye"></i>
-              </button>
-              <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
-                <i class="fas fa-trash"></i>
-              </button>
+
             </div>
           </div>
         </div>
@@ -447,98 +440,132 @@ import { AuthService } from '../../auth/auth.service';
     </div>
 
     <!-- Edit Modal -->
-    <div *ngIf="showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-bold text-gray-800">Editar Loja</h2>
-          <button (click)="closeEditModal()" class="text-gray-500 hover:text-gray-700">
-            <i class="fas fa-times"></i>
+    <div *ngIf="showEditModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50" [@fadeIn]>
+      <div class="bg-gray-800/95 backdrop-blur-sm rounded-xl border border-gray-700/50 p-8 w-full max-w-lg mx-4 shadow-2xl">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+          <div class="flex items-center">
+            <div class="bg-yellow-500/20 p-3 rounded-lg mr-4">
+              <i class="fas fa-edit text-yellow-400 text-xl"></i>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold text-white">Editar Loja</h2>
+              <p class="text-gray-400 text-sm">Atualize as informações da loja</p>
+            </div>
+          </div>
+          <button 
+            (click)="closeEditModal()" 
+            class="text-gray-400 hover:text-white transition-colors p-2 hover:bg-gray-700/50 rounded-lg">
+            <i class="fas fa-times text-xl"></i>
           </button>
         </div>
         
-        <form [formGroup]="editForm" (ngSubmit)="onSubmitEdit()">
+        <form [formGroup]="editForm" (ngSubmit)="onSubmitEdit()" class="space-y-6">
           <!-- Nome -->
-          <div class="mb-4">
-            <label for="editNome" class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+          <div>
+            <label for="editNome" class="block text-sm font-semibold text-gray-300 mb-2">
+              <i class="fas fa-store text-yellow-400 mr-2"></i>
+              Nome da Loja
+            </label>
             <input
               id="editNome"
               type="text"
               formControlName="nome"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Nome da loja"
+              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+              placeholder="Digite o nome da loja"
             />
-            <div *ngIf="getEditFieldError('nome')" class="text-red-500 text-sm mt-1">
+            <div *ngIf="getEditFieldError('nome')" class="text-red-400 text-sm mt-2 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i>
               {{ getEditFieldError('nome') }}
             </div>
           </div>
 
           <!-- Número -->
-          <div class="mb-4">
-            <label for="editNumero" class="block text-sm font-medium text-gray-700 mb-2">Número</label>
+          <div>
+            <label for="editNumero" class="block text-sm font-semibold text-gray-300 mb-2">
+              <i class="fas fa-hashtag text-yellow-400 mr-2"></i>
+              Número da Loja
+            </label>
             <input
               id="editNumero"
               type="text"
               formControlName="numero"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Número da loja"
+              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+              placeholder="Digite o número da loja"
             />
-            <div *ngIf="getEditFieldError('numero')" class="text-red-500 text-sm mt-1">
+            <div *ngIf="getEditFieldError('numero')" class="text-red-400 text-sm mt-2 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i>
               {{ getEditFieldError('numero') }}
             </div>
           </div>
 
           <!-- Localização -->
-          <div class="mb-4">
-            <label for="editLocalizacao" class="block text-sm font-medium text-gray-700 mb-2">Localização</label>
+          <div>
+            <label for="editLocalizacao" class="block text-sm font-semibold text-gray-300 mb-2">
+              <i class="fas fa-map-marker-alt text-yellow-400 mr-2"></i>
+              Localização
+            </label>
             <input
               id="editLocalizacao"
               type="text"
               formControlName="localizacao"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Localização da loja"
+              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+              placeholder="Digite a localização da loja"
             />
-            <div *ngIf="getEditFieldError('localizacao')" class="text-red-500 text-sm mt-1">
+            <div *ngIf="getEditFieldError('localizacao')" class="text-red-400 text-sm mt-2 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i>
               {{ getEditFieldError('localizacao') }}
             </div>
           </div>
 
           <!-- Status -->
-          <div class="mb-6">
-            <label for="editStatus" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <div>
+            <label for="editStatus" class="block text-sm font-semibold text-gray-300 mb-2">
+              <i class="fas fa-toggle-on text-yellow-400 mr-2"></i>
+              Status da Loja
+            </label>
             <select
               id="editStatus"
               formControlName="status"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
             >
-              <option value="">Selecione o status</option>
-              <option value="ativo">Ativo</option>
-              <option value="inativo">Inativo</option>
+              <option value="" class="bg-gray-800">Selecione o status</option>
+              <option value="VAGA" class="bg-gray-800">Vaga</option>
+              <option value="OCUPADA" class="bg-gray-800">Ocupada</option>
+              <option value="MANUTENCAO" class="bg-gray-800">Manutenção</option>
             </select>
-            <div *ngIf="getEditFieldError('status')" class="text-red-500 text-sm mt-1">
+            <div *ngIf="getEditFieldError('status')" class="text-red-400 text-sm mt-2 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i>
               {{ getEditFieldError('status') }}
             </div>
           </div>
 
           <!-- Error Message -->
-          <div *ngIf="editError" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {{ editError }}
+          <div *ngIf="editError" class="bg-red-500/20 border border-red-500/50 rounded-lg p-4">
+            <div class="flex items-center text-red-300">
+              <i class="fas fa-exclamation-triangle mr-3"></i>
+              <span>{{ editError }}</span>
+            </div>
           </div>
 
           <!-- Action Buttons -->
-          <div class="flex gap-3">
+          <div class="flex gap-4 pt-4">
             <button
               type="button"
               (click)="closeEditModal()"
-              class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+              class="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 border border-gray-600"
             >
+              <i class="fas fa-times mr-2"></i>
               Cancelar
             </button>
             <button
               type="submit"
               [disabled]="editForm.invalid || editing"
-              class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              class="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:from-gray-600 disabled:to-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
             >
-              <span *ngIf="!editing">Salvar</span>
+              <i class="fas fa-save mr-2" *ngIf="!editing"></i>
+              <i class="fas fa-spinner fa-spin mr-2" *ngIf="editing"></i>
+              <span *ngIf="!editing">Salvar Alterações</span>
               <span *ngIf="editing">Salvando...</span>
             </button>
           </div>
@@ -622,7 +649,235 @@ import { AuthService } from '../../auth/auth.service';
          </div>
        </div>
      </div>
-   `
+
+     <!-- Store Details View -->
+     <div *ngIf="viewMode === 'details'">
+       <!-- Header with Back Button -->
+       <div class="mb-8" [@fadeIn]>
+         <button 
+           (click)="backToStoresList()"
+           class="mb-4 flex items-center text-yellow-400 hover:text-yellow-300 transition-colors">
+           <i class="fas fa-arrow-left mr-2"></i>
+           Voltar para Lista de Lojas
+         </button>
+         <h1 class="text-4xl font-bold text-yellow-400 mb-2">Detalhes da Loja</h1>
+         <p class="text-gray-300">Visualize e gerencie informações da loja</p>
+       </div>
+
+       <!-- Loading Store Details -->
+       <div *ngIf="loadingStoreDetails" class="flex justify-center items-center py-12" [@fadeIn]>
+         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
+         <span class="ml-3 text-gray-300">Carregando detalhes da loja...</span>
+       </div>
+
+       <!-- Store Details Content -->
+       <div *ngIf="!loadingStoreDetails && selectedStore" class="space-y-6" [@fadeIn]>
+         <!-- Store Info Card -->
+         <div class="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6">
+           <div class="flex justify-between items-start mb-6">
+             <div>
+               <h2 class="text-2xl font-bold text-white mb-2">{{ selectedStore.nome }}</h2>
+               <p class="text-gray-400">Loja #{{ selectedStore.numero }}</p>
+             </div>
+             <div class="flex items-center space-x-4">
+                <span [ngClass]="{
+                  'bg-green-500': selectedStore.status === 'OCUPADA',
+                  'bg-red-500': selectedStore.status === 'VAGA',
+                  'bg-yellow-500': selectedStore.status === 'MANUTENCAO'
+                }" class="px-4 py-2 rounded-full text-sm font-semibold text-white">
+                  {{ selectedStore.status === 'OCUPADA' ? 'Ocupada' : selectedStore.status === 'VAGA' ? 'Vaga' : 'Manutenção' }}
+                </span>
+                <div class="flex space-x-2">
+                  <button 
+                    (click)="openEditModal(selectedStore)"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-edit mr-2"></i>
+                    Editar Loja
+                  </button>
+                  <button 
+                    *ngIf="selectedStore.inquilino"
+                    (click)="openUnlinkTenantModal(selectedStore)"
+                    class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-user-times mr-2"></i>
+                    Desvincular Inquilino
+                  </button>
+                  <button 
+                    (click)="openDeactivateModal(selectedStore)"
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-ban mr-2"></i>
+                    Desativar Loja
+                  </button>
+                </div>
+              </div>
+           </div>
+
+           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div>
+               <h3 class="text-lg font-semibold text-yellow-400 mb-3">Informações Básicas</h3>
+               <div class="space-y-3">
+                 <div>
+                   <span class="text-gray-400">Nome:</span>
+                   <span class="text-white ml-2">{{ selectedStore.nome }}</span>
+                 </div>
+                 <div>
+                   <span class="text-gray-400">Número:</span>
+                   <span class="text-white ml-2">#{{ selectedStore.numero }}</span>
+                 </div>
+                 <div>
+                   <span class="text-gray-400">Localização:</span>
+                   <span class="text-white ml-2">{{ selectedStore.localizacao }}</span>
+                 </div>
+                 <div>
+                   <span class="text-gray-400">Status:</span>
+                   <span class="text-white ml-2">{{ selectedStore.status === 'OCUPADA' ? 'Ocupada' : selectedStore.status === 'VAGA' ? 'Vaga' : 'Manutenção' }}</span>
+                 </div>
+                 <div>
+                   <span class="text-gray-400">Criado em:</span>
+                   <span class="text-white ml-2">{{ selectedStore.criadoEm | date:'dd/MM/yyyy HH:mm' }}</span>
+                 </div>
+               </div>
+             </div>
+
+             <!-- Informações da Empresa -->
+             <div *ngIf="selectedStore.empresa">
+               <h3 class="text-lg font-semibold text-yellow-400 mb-3">Empresa</h3>
+               <div class="space-y-3">
+                 <div>
+                   <span class="text-gray-400">Nome:</span>
+                   <span class="text-white ml-2">{{ selectedStore.empresa.nome }}</span>
+                 </div>
+                 <div>
+                   <span class="text-gray-400">CNPJ:</span>
+                   <span class="text-white ml-2">{{ selectedStore.empresa.cnpj }}</span>
+                 </div>
+               </div>
+             </div>
+
+             <!-- Informações do Inquilino/Responsável -->
+             <div>
+               <h3 class="text-lg font-semibold text-yellow-400 mb-3">Inquilino</h3>
+               
+               <!-- Informações do Usuário (quando há usuário vinculado) -->
+               <div *ngIf="selectedStore.usuario" class="space-y-3 mb-4">
+                 <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3">
+                   <h4 class="text-sm font-medium text-blue-300 mb-2">Usuário Vinculado</h4>
+                   <div class="space-y-2">
+                     <div>
+                       <span class="text-gray-400">Nome:</span>
+                       <span class="text-white ml-2">{{ selectedStore.usuario.nome }}</span>
+                     </div>
+                     <div>
+                       <span class="text-gray-400">Email:</span>
+                       <span class="text-white ml-2">{{ selectedStore.usuario.email }}</span>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               
+               <!-- Informações do Inquilino -->
+               <div *ngIf="selectedStore.inquilino" class="space-y-3">
+                 <div>
+                   <span class="text-gray-400">Nome do Inquilino:</span>
+                   <span class="text-white ml-2">{{ selectedStore.inquilino.nome }}</span>
+                 </div>
+                 <div>
+                   <span class="text-gray-400">Email do Inquilino:</span>
+                   <span class="text-white ml-2">{{ selectedStore.inquilino.email }}</span>
+                 </div>
+                 <div *ngIf="selectedStore.inquilino.cpf">
+                   <span class="text-gray-400">CPF:</span>
+                   <span class="text-white ml-2">{{ selectedStore.inquilino.cpf }}</span>
+                 </div>
+                 <div *ngIf="selectedStore.inquilino.telefone">
+                    <span class="text-gray-400">Telefone:</span>
+                    <span class="text-white ml-2">{{ selectedStore.inquilino.telefone }}</span>
+                  </div>
+               </div>
+               
+               <div *ngIf="!selectedStore.inquilino && !selectedStore.usuario" class="text-gray-400">
+                  <p class="mb-4">Nenhum inquilino vinculado</p>
+                  <button 
+                    (click)="onAssignTenant(selectedStore)"
+                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    Vincular Inquilino
+                  </button>
+                </div>
+             </div>
+
+             <!-- Contratos -->
+             <div *ngIf="selectedStore.contratos && selectedStore.contratos.length > 0">
+               <h3 class="text-lg font-semibold text-yellow-400 mb-3">Contratos</h3>
+               <div class="space-y-2">
+                 <div *ngFor="let contrato of selectedStore.contratos" class="bg-gray-700/50 p-3 rounded-lg">
+                   <div class="text-white">Contrato #{{ contrato.id || 'N/A' }}</div>
+                   <div class="text-gray-400 text-sm">{{ contrato.descricao || 'Sem descrição' }}</div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+      </div>
+
+      <!-- Modal de Confirmação - Desativar Loja -->
+      <div *ngIf="showDeactivateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
+        <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 border border-gray-700">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-exclamation-triangle text-red-400 text-2xl mr-3"></i>
+            <h3 class="text-xl font-bold text-white">Confirmar Desativação</h3>
+          </div>
+          <p class="text-gray-300 mb-6">
+            Tem certeza que deseja desativar a loja <strong class="text-yellow-400">{{ storeToDeactivate?.nome }}</strong>?
+            Esta ação pode afetar contratos e inquilinos vinculados.
+          </p>
+          <div class="flex justify-end space-x-3">
+            <button 
+              (click)="closeDeactivateModal()"
+              [disabled]="deactivatingStore"
+              class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50">
+              Cancelar
+            </button>
+            <button 
+              (click)="confirmDeactivateStore()"
+              [disabled]="deactivatingStore"
+              class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50">
+              <span *ngIf="!deactivatingStore">Desativar</span>
+              <span *ngIf="deactivatingStore">Desativando...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal de Confirmação - Desvincular Inquilino -->
+      <div *ngIf="showUnlinkTenantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
+        <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 border border-gray-700">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-user-times text-orange-400 text-2xl mr-3"></i>
+            <h3 class="text-xl font-bold text-white">Confirmar Desvinculação</h3>
+          </div>
+          <p class="text-gray-300 mb-6">
+            Tem certeza que deseja desvincular o inquilino <strong class="text-yellow-400">{{ storeToUnlinkTenant?.inquilino?.nome }}</strong> da loja <strong class="text-yellow-400">{{ storeToUnlinkTenant?.nome }}</strong>?
+          </p>
+          <div class="flex justify-end space-x-3">
+            <button 
+              (click)="closeUnlinkTenantModal()"
+              [disabled]="unlinkingTenant"
+              class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50">
+              Cancelar
+            </button>
+            <button 
+              (click)="confirmUnlinkTenant()"
+              [disabled]="unlinkingTenant"
+              class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors disabled:opacity-50">
+              <span *ngIf="!unlinkingTenant">Desvincular</span>
+              <span *ngIf="unlinkingTenant">Desvinculando...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    `
  })
 export class StoresComponent implements OnInit {
   stores: Store[] = [];
@@ -648,6 +903,20 @@ export class StoresComponent implements OnInit {
   selectedTenant: string | null = null;
   assigningTenant = false;
   currentStoreForTenant: Store | null = null;
+
+  // Store details view properties
+  viewMode: 'list' | 'details' = 'list';
+  selectedStoreId: string | null = null;
+  selectedStore: Store | null = null;
+  loadingStoreDetails: boolean = false;
+
+  // Propriedades para modais de confirmação
+  showDeactivateModal = false;
+  showUnlinkTenantModal = false;
+  deactivatingStore = false;
+  unlinkingTenant = false;
+  storeToDeactivate: Store | null = null;
+  storeToUnlinkTenant: Store | null = null;
 
   // Propriedades para filtros
   filterForm: FormGroup;
@@ -728,6 +997,37 @@ export class StoresComponent implements OnInit {
       }
     });
   }
+
+  // Tenant unlinking methods
+  unlinkTenant(store: Store): void {
+    if (!store.inquilino) {
+      return;
+    }
+
+    // Show confirmation dialog
+    if (!confirm(`Tem certeza que deseja desvincular o inquilino ${store.inquilino.nome} da loja ${store.nome}?`)) {
+      return;
+    }
+
+    this.assigningTenant = true;
+    this.tenantError = null;
+
+    this.storeService.unlinkTenant(store.id).subscribe({
+      next: () => {
+        this.assigningTenant = false;
+        this.loadStores(); // Reload stores to show updated data
+        // Update selected store if in details view
+        if (this.viewMode === 'details' && this.selectedStore) {
+          this.loadStoreDetails(this.selectedStore.id);
+        }
+      },
+      error: (error) => {
+        this.tenantError = error.message;
+        this.assigningTenant = false;
+      }
+    });
+  }
+
 
 
   onSubmitCreate(): void {
@@ -811,6 +1111,11 @@ export class StoresComponent implements OnInit {
           this.editing = false;
           this.closeEditModal();
           this.loadStores(); // Recarrega a lista de lojas
+          
+          // Se estamos na visualização de detalhes, atualiza os dados da loja selecionada
+          if (this.viewMode === 'details' && this.selectedStore && this.selectedStore.id === this.editingStore!.id) {
+            this.loadStoreDetails(this.editingStore!.id);
+          }
         },
         error: (err) => {
           this.editing = false;
@@ -879,7 +1184,15 @@ export class StoresComponent implements OnInit {
     });
   }
 
-  onAssignTenant(): void {
+  onAssignTenant(store?: Store): void {
+    if (store) {
+      // Called from details view
+      this.currentStoreForTenant = store;
+      this.openTenantModal(store);
+      return;
+    }
+
+    // Original logic for modal
     if (!this.selectedTenant || !this.currentStoreForTenant) {
       return;
     }
@@ -898,6 +1211,10 @@ export class StoresComponent implements OnInit {
         this.assigningTenant = false;
         this.closeTenantModal();
         this.loadStores(); // Reload stores to show updated data
+        // Update selected store if in details view
+        if (this.viewMode === 'details' && this.selectedStore) {
+          this.loadStoreDetails(this.selectedStore.id);
+        }
       },
       error: (error) => {
         this.tenantError = error.message;
@@ -906,7 +1223,14 @@ export class StoresComponent implements OnInit {
     });
   }
 
-  onRemoveTenant(): void {
+  onRemoveTenant(store?: Store): void {
+    if (store) {
+      // Called from details view - use the new unlink endpoint
+      this.unlinkTenant(store);
+      return;
+    }
+
+    // Original logic for modal
     if (!this.currentStoreForTenant) {
       return;
     }
@@ -925,6 +1249,10 @@ export class StoresComponent implements OnInit {
         this.assigningTenant = false;
         this.closeTenantModal();
         this.loadStores(); // Reload stores to show updated data
+        // Update selected store if in details view
+        if (this.viewMode === 'details' && this.selectedStore) {
+          this.loadStoreDetails(this.selectedStore.id);
+        }
       },
       error: (error) => {
         this.tenantError = error.message;
@@ -1030,4 +1358,103 @@ export class StoresComponent implements OnInit {
     this.loadStores(1); // Recarregar sem filtros
   }
 
+  // Store details methods
+  viewStoreDetails(store: Store): void {
+    this.selectedStore = store;
+    this.selectedStoreId = store.id;
+    this.viewMode = 'details';
+    this.loadStoreDetails(store.id);
+  }
+
+  loadStoreDetails(storeId: string): void {
+    this.loadingStoreDetails = true;
+    this.storeService.getStoreById(storeId).subscribe({
+      next: (store: Store) => {
+        this.selectedStore = store;
+        this.loadingStoreDetails = false;
+      },
+      error: (error: any) => {
+        console.error('Erro ao carregar detalhes da loja:', error);
+        this.loadingStoreDetails = false;
+      }
+    });
+  }
+
+  backToStoresList(): void {
+    this.viewMode = 'list';
+    this.selectedStore = null;
+    this.selectedStoreId = null;
+  }
+
+  // Métodos para modal de desativar loja
+  openDeactivateModal(store: Store): void {
+    this.storeToDeactivate = store;
+    this.showDeactivateModal = true;
+  }
+
+  closeDeactivateModal(): void {
+    this.showDeactivateModal = false;
+    this.storeToDeactivate = null;
+    this.deactivatingStore = false;
+  }
+
+  confirmDeactivateStore(): void {
+    if (!this.storeToDeactivate) return;
+
+    this.deactivatingStore = true;
+    this.storeService.deactivateStore(this.storeToDeactivate.id).subscribe({
+      next: () => {
+        // Atualizar a lista de lojas
+        this.loadStores();
+        // Se estamos na visualização de detalhes da loja desativada, voltar para a lista
+        if (this.viewMode === 'details' && this.selectedStore?.id === this.storeToDeactivate?.id) {
+          this.backToStoresList();
+        }
+        // Atualizar os detalhes se ainda estamos visualizando a mesma loja
+        else if (this.viewMode === 'details' && this.selectedStore?.id === this.storeToDeactivate?.id && this.storeToDeactivate) {
+          this.loadStoreDetails(this.storeToDeactivate.id);
+        }
+        this.closeDeactivateModal();
+      },
+      error: (error) => {
+        console.error('Erro ao desativar loja:', error);
+        this.deactivatingStore = false;
+        // Aqui você pode adicionar uma notificação de erro
+      }
+    });
+  }
+
+  // Métodos para modal de desvincular inquilino
+  openUnlinkTenantModal(store: Store): void {
+    this.storeToUnlinkTenant = store;
+    this.showUnlinkTenantModal = true;
+  }
+
+  closeUnlinkTenantModal(): void {
+    this.showUnlinkTenantModal = false;
+    this.storeToUnlinkTenant = null;
+    this.unlinkingTenant = false;
+  }
+
+  confirmUnlinkTenant(): void {
+    if (!this.storeToUnlinkTenant) return;
+
+    this.unlinkingTenant = true;
+    this.storeService.unlinkTenant(this.storeToUnlinkTenant.id).subscribe({
+      next: () => {
+        // Atualizar a lista de lojas
+        this.loadStores();
+        // Atualizar os detalhes se estamos visualizando a mesma loja
+        if (this.viewMode === 'details' && this.selectedStore?.id === this.storeToUnlinkTenant?.id && this.storeToUnlinkTenant) {
+          this.loadStoreDetails(this.storeToUnlinkTenant.id);
+        }
+        this.closeUnlinkTenantModal();
+      },
+      error: (error) => {
+        console.error('Erro ao desvincular inquilino:', error);
+        this.unlinkingTenant = false;
+        // Aqui você pode adicionar uma notificação de erro
+      }
+    });
+  }
 }

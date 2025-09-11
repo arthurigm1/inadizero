@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { AuthService } from '../../auth/auth.service';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 // Schema de validação para criar inquilino
 interface CriarInquilinoData {
@@ -14,22 +14,24 @@ interface CriarInquilinoData {
   senha: string;
 }
 
+interface ApiPaginationResponse {
+  sucesso: boolean;
+  paginacao: {
+    paginaAtual: number;
+    totalPaginas: number;
+    totalUsuarios: number;
+    limite: number;
+    temProximaPagina: boolean;
+    temPaginaAnterior: boolean;
+  };
+  usuarios: any[];
+}
+
 enum TipoUsuario {
   ADMIN_EMPRESA = 'ADMIN_EMPRESA',    // Usuário principal da empresa que pode criar outros usuários
   FUNCIONARIO = 'FUNCIONARIO',        // Funcionário da empresa
   INQUILINO = 'INQUILINO',            // Inquilino (pode ser criado por usuários da empresa)
   VISITANTE = 'VISITANTE'             // Visitante
-}
-
-type UserRole = TipoUsuario;
-
-interface Usuario {
-  id: number;
-  name: string;
-  email: string;
-  type: TipoUsuario;
-  status: 'active' | 'inactive' | 'pending';
-  lastAccess: string;
 }
 
 @Component({
@@ -227,9 +229,6 @@ interface Usuario {
           <table class="w-full">
             <thead class="bg-gray-900/50">
               <tr>
-                <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">
-                  <input type="checkbox" class="rounded border-gray-600 text-yellow-500 focus:ring-yellow-500">
-                </th>
                 <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">Usuário</th>
                 <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">Email</th>
                 <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">Tipo</th>
@@ -240,9 +239,6 @@ interface Usuario {
             </thead>
             <tbody class="divide-y divide-gray-700/50">
               <tr *ngFor="let user of users" class="hover:bg-gray-700/30 transition-colors duration-200">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <input type="checkbox" class="rounded border-gray-600 text-yellow-500 focus:ring-yellow-500">
-                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
                     <div class="h-10 w-10 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 flex items-center justify-center text-black font-bold mr-4">
@@ -293,6 +289,12 @@ interface Usuario {
                   </div>
                 </td>
               </tr>
+              <tr *ngIf="users.length === 0">
+                <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                  <i class="fas fa-users-slash text-3xl mb-2"></i>
+                  <p>Nenhum usuário encontrado</p>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -301,16 +303,33 @@ interface Usuario {
       <!-- Pagination -->
       <div class="mt-6 flex flex-col sm:flex-row justify-between items-center" [@slideIn]>
         <div class="text-sm text-gray-400 mb-4 sm:mb-0">
-          Mostrando 1 a 10 de {{ users.length }} usuários
+          Mostrando {{ getDisplayRange() }} de {{ totalItems }} usuários
         </div>
-        <div class="flex space-x-2">
-          <button class="px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50" disabled>
+        <div class="flex space-x-2" *ngIf="totalPages > 1">
+          <button 
+            (click)="goToPreviousPage()" 
+            [disabled]="!hasPreviousPage"
+            class="px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50"
+            [class.disabled]="!hasPreviousPage">
             <i class="fas fa-chevron-left"></i>
           </button>
-          <button class="px-4 py-2 bg-yellow-500 text-black rounded-lg font-semibold">1</button>
-          <button class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">2</button>
-          <button class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">3</button>
-          <button class="px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">
+          
+          <button 
+            *ngFor="let page of getPageNumbers()" 
+            (click)="goToPage(page)"
+            [class.bg-yellow-500]="page === currentPage"
+            [class.text-black]="page === currentPage"
+            [class.bg-gray-700]="page !== currentPage"
+            [class.text-white]="page !== currentPage"
+            class="px-4 py-2 rounded-lg font-semibold hover:bg-gray-600 transition-colors duration-200">
+            {{ page }}
+          </button>
+          
+          <button 
+            (click)="goToNextPage()" 
+            [disabled]="!hasNextPage"
+            class="px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50"
+            [class.disabled]="!hasNextPage">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -338,8 +357,16 @@ export class UsersComponent implements OnInit {
   searchTerm = '';
   
   // Lista de usuários original e filtrada
-  allUsers: Usuario[] = [];
-  users: Usuario[] = [];
+  allUsers: any[] = [];
+  users: any[] = [];
+  
+  // Propriedades de paginação
+  currentPage: number = 1;
+  totalPages: number = 1;
+  totalItems: number = 0;
+  itemsPerPage: number = 10;
+  hasNextPage: boolean = false;
+  hasPreviousPage: boolean = false;
   
   // Tipos de usuário disponíveis
   userTypes: { value: TipoUsuario | 'todos'; label: string }[] = [
@@ -358,50 +385,6 @@ export class UsersComponent implements OnInit {
     { value: 'pending', label: 'Pendente' }
   ];
   
-  // Dados mock iniciais
-  private mockUsers: Usuario[] = [
-    {
-      id: 1,
-      name: 'João Silva',
-      email: 'joao@inadizero.com',
-      type: TipoUsuario.ADMIN_EMPRESA,
-      status: 'active',
-      lastAccess: '2024-01-15 14:30'
-    },
-    {
-      id: 2,
-      name: 'Maria Santos',
-      email: 'maria@inadizero.com',
-      type: TipoUsuario.FUNCIONARIO,
-      status: 'active',
-      lastAccess: '2024-01-15 10:15'
-    },
-    {
-      id: 3,
-      name: 'Pedro Costa',
-      email: 'pedro@inquilino.com',
-      type: TipoUsuario.INQUILINO,
-      status: 'active',
-      lastAccess: '2024-01-14 16:45'
-    },
-    {
-      id: 4,
-      name: 'Ana Oliveira',
-      email: 'ana@inadizero.com',
-      type: TipoUsuario.FUNCIONARIO,
-      status: 'inactive',
-      lastAccess: '2024-01-10 09:20'
-    },
-    {
-      id: 5,
-      name: 'Carlos Visitante',
-      email: 'carlos@visitante.com',
-      type: TipoUsuario.VISITANTE,
-      status: 'pending',
-      lastAccess: 'Nunca'
-    }
-  ];
-  
   private apiUrl = 'http://localhost:3010/api/usuario';
   
   constructor(
@@ -417,33 +400,13 @@ export class UsersComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    this.loadUsuariosDaEmpresa();
+    this.loadUsuariosDaEmpresa(1);
   }
   
   // Métodos de filtro
   applyFilters() {
-    let filteredUsers = [...this.allUsers];
-    
-    // Filtro por tipo
-    if (this.selectedTypeFilter !== 'todos') {
-      filteredUsers = filteredUsers.filter(user => user.type === this.selectedTypeFilter);
-    }
-    
-    // Filtro por status
-    if (this.selectedStatusFilter !== 'todos') {
-      filteredUsers = filteredUsers.filter(user => user.status === this.selectedStatusFilter);
-    }
-    
-    // Filtro por termo de busca
-    if (this.searchTerm.trim()) {
-      const searchLower = this.searchTerm.toLowerCase();
-      filteredUsers = filteredUsers.filter(user => 
-        user.name.toLowerCase().includes(searchLower) ||
-        user.email.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    this.users = filteredUsers;
+    this.currentPage = 1;
+    this.loadUsuariosDaEmpresa(1);
   }
   
   onTypeFilterChange() {
@@ -462,7 +425,8 @@ export class UsersComponent implements OnInit {
     this.selectedTypeFilter = 'todos';
     this.selectedStatusFilter = 'todos';
     this.searchTerm = '';
-    this.applyFilters();
+    this.currentPage = 1;
+    this.loadUsuariosDaEmpresa(1);
   }
   
   // Método para obter o rótulo do tipo de usuário
@@ -497,7 +461,7 @@ export class UsersComponent implements OnInit {
         this.isCreatingTenant = false;
         this.closeCreateTenantModal();
         this.showNotification('success', 'Sucesso!', 'Inquilino criado com sucesso!');
-        this.loadUsuariosDaEmpresa(); // Recarrega a lista
+        this.loadUsuariosDaEmpresa(this.currentPage); // Recarrega a página atual
       },
       error: (error) => {
         this.isCreatingTenant = false;
@@ -526,15 +490,28 @@ export class UsersComponent implements OnInit {
   }
   
   // Método para listar usuários da empresa
-  private loadUsuariosDaEmpresa(): void {
+  private loadUsuariosDaEmpresa(page: number = 1): void {
     try {
       const headers = this.getAuthHeaders();
-      this.http.get<any>(`${this.apiUrl}/empresa/usuarios`, { headers })
+      let params = new HttpParams()
+        .set('page', page.toString())
+        .set('limit', this.itemsPerPage.toString());
+
+      // Adicionar filtros se estiverem definidos
+      if (this.selectedTypeFilter && this.selectedTypeFilter !== 'todos') {
+        params = params.set('tipo', this.selectedTypeFilter);
+      }
+      if (this.selectedStatusFilter && this.selectedStatusFilter !== 'todos') {
+        params = params.set('status', this.selectedStatusFilter);
+      }
+      if (this.searchTerm && this.searchTerm.trim()) {
+        params = params.set('busca', this.searchTerm.trim());
+      }
+
+
+      
+      this.http.get<ApiPaginationResponse>(`${this.apiUrl}/empresa/usuarios`, { headers, params })
         .pipe(
-          map((response) => {
-            // Mapeia a resposta da API para o formato esperado
-            return response.usuarios || response;
-          }),
           catchError((error) => {
             console.error('Erro ao carregar usuários:', error);
             if (error.status === 401) {
@@ -542,34 +519,54 @@ export class UsersComponent implements OnInit {
             } else {
               this.showNotification('error', 'Erro!', 'Erro ao carregar usuários da empresa');
             }
-            // Usar dados mock em caso de erro
-            return this.mockUsers;
+            
+            // Retornar estrutura de fallback com paginação aninhada
+            return of({
+              sucesso: false,
+              paginacao: {
+                paginaAtual: 1,
+                totalPaginas: 1,
+                totalUsuarios: 0,
+                limite: this.itemsPerPage,
+                temProximaPagina: false,
+                temPaginaAnterior: false
+              },
+              usuarios: []
+            } as ApiPaginationResponse);
           })
         )
-        .subscribe((usuarios) => {
-          if (usuarios && usuarios.length > 0) {
-            this.allUsers = usuarios.map((user: any) => ({
-              id: user.id,
-              name: user.nome || user.name,
-              email: user.email,
-              type: this.mapApiTypeToEnum(user.tipo || user.type),
-              status: user.status || 'active',
-              lastAccess: user.ultimoAcesso || user.lastAccess || 'Nunca'
-            }));
-          } else {
-            // Usar dados mock se não houver usuários
-            this.allUsers = [...this.mockUsers];
-          }
+        .subscribe((response: ApiPaginationResponse) => {
+          // Atualizar propriedades de paginação
+          this.currentPage = response.paginacao.paginaAtual;
+          this.totalPages = response.paginacao.totalPaginas;
+          this.totalItems = response.paginacao.totalUsuarios;
+          this.hasNextPage = response.paginacao.temProximaPagina;
+          this.hasPreviousPage = response.paginacao.temPaginaAnterior;
           
-          // Aplicar filtros após carregar os dados
-          this.applyFilters();
+          // Mapear usuários da resposta
+           if (response.usuarios && response.usuarios.length > 0) {
+             this.users = response.usuarios.map((user: any) => ({
+               id: user.id,
+               name: user.nome || user.name,
+               email: user.email,
+               type: this.mapApiTypeToEnum(user.tipo || user.type),
+               status: user.status || 'active',
+               lastAccess: user.ultimoAcesso || user.lastAccess || 'Nunca'
+             }));
+           } else {
+             this.users = [];
+           }
         });
     } catch (error: any) {
-      this.showNotification('error', 'Erro de Autenticação', error.message);
-      // Usar dados mock em caso de erro de autenticação
-      this.allUsers = [...this.mockUsers];
-      this.applyFilters();
-    }
+       this.showNotification('error', 'Erro de Autenticação', error.message);
+       // Definir valores padrão em caso de erro
+       this.users = [];
+       this.currentPage = 1;
+       this.totalPages = 1;
+       this.totalItems = 0;
+       this.hasNextPage = false;
+       this.hasPreviousPage = false;
+     }
   }
   
   // Método auxiliar para mapear tipos da API para o enum
@@ -579,13 +576,10 @@ export class UsersComponent implements OnInit {
       case 'ADMIN':
         return TipoUsuario.ADMIN_EMPRESA;
       case 'FUNCIONARIO':
-      case 'EMPLOYEE':
         return TipoUsuario.FUNCIONARIO;
       case 'INQUILINO':
-      case 'TENANT':
         return TipoUsuario.INQUILINO;
       case 'VISITANTE':
-      case 'VISITOR':
         return TipoUsuario.VISITANTE;
       default:
         return TipoUsuario.VISITANTE; // Valor padrão
@@ -624,5 +618,48 @@ export class UsersComponent implements OnInit {
     this.notification.show = false;
   }
   
+  // Métodos de navegação de paginação
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.loadUsuariosDaEmpresa(page);
+    }
+  }
 
+  goToPreviousPage(): void {
+    if (this.hasPreviousPage) {
+      this.loadUsuariosDaEmpresa(this.currentPage - 1);
+    }
+  }
+
+  goToNextPage(): void {
+    if (this.hasNextPage) {
+      this.loadUsuariosDaEmpresa(this.currentPage + 1);
+    }
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
+  }
+
+  getDisplayRange(): string {
+    if (this.totalItems === 0) return '0';
+    
+    const start = ((this.currentPage - 1) * this.itemsPerPage) + 1;
+    const end = Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
+    
+    return `${start} a ${end}`;
+  }
 }

@@ -118,11 +118,11 @@ import AOS from 'aos';
                 </a>
                 <a
                   routerLink="/tenant/login"
-                  class="text-blue-400 font-medium hover:text-blue-300 transition-all duration-300 relative group"
+                  class="text-yellow-400 font-medium hover:text-yellow-400 transition-all duration-300 relative group"
                 >
                   Portal do Inquilino
                   <span
-                    class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"
+                    class="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"
                   ></span>
                 </a>
                 <a

@@ -13,6 +13,18 @@ export interface Store {
   empresaId: string;
   criadoEm: string;
   contratos: any[];
+  inquilino?: Tenant;
+  empresa?: {
+    id: string;
+    nome: string;
+    cnpj: string;
+  };
+  usuario?: {
+    id: string;
+    nome: string;
+    email: string;
+  };
+  usuarioId?: string;
 }
 
 export interface CreateStoreData {
@@ -113,6 +125,85 @@ export class StoreService {
           return throwError(() => new Error(errorMessage));
         })
       );
+  }
+
+  getStoreById(storeId: string): Observable<Store> {
+    const headers = this.getAuthHeaders();
+    if (!headers) {
+      return throwError(() => new Error('Token de autenticação não encontrado'));
+    }
+
+    return this.http.get<any>(`${this.apiUrl}${storeId}`, { headers }).pipe(
+      map(response => response.loja || response),
+      catchError(error => {
+        console.error('Erro ao buscar loja por ID:', error);
+        let errorMessage = 'Erro ao carregar detalhes da loja';
+        
+        if (error.status === 401) {
+          errorMessage = 'Não autorizado. Faça login novamente.';
+        } else if (error.status === 403) {
+          errorMessage = 'Acesso negado. Você não tem permissão para esta ação.';
+        } else if (error.status === 404) {
+          errorMessage = 'Loja não encontrada.';
+        } else if (error.status === 0) {
+          errorMessage = 'Erro de conexão. Verifique sua internet.';
+        }
+        
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
+  unlinkTenant(storeId: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    if (!headers) {
+      return throwError(() => new Error('Token de autenticação não encontrado'));
+    }
+
+    return this.http.delete(`${this.apiUrl}desvincular/${storeId}`, { headers }).pipe(
+      catchError(error => {
+        console.error('Erro ao desvincular inquilino:', error);
+        let errorMessage = 'Erro ao desvincular inquilino';
+        
+        if (error.status === 401) {
+          errorMessage = 'Não autorizado. Faça login novamente.';
+        } else if (error.status === 403) {
+          errorMessage = 'Acesso negado. Você não tem permissão para esta ação.';
+        } else if (error.status === 404) {
+          errorMessage = 'Loja não encontrada.';
+        } else if (error.status === 0) {
+          errorMessage = 'Erro de conexão. Verifique sua internet.';
+        }
+        
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
+  deactivateStore(storeId: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    if (!headers) {
+      return throwError(() => new Error('Token de autenticação não encontrado'));
+    }
+
+    return this.http.patch(`${this.apiUrl}desativar/${storeId}`, {}, { headers }).pipe(
+      catchError(error => {
+        console.error('Erro ao desativar loja:', error);
+        let errorMessage = 'Erro ao desativar loja';
+        
+        if (error.status === 401) {
+          errorMessage = 'Não autorizado. Faça login novamente.';
+        } else if (error.status === 403) {
+          errorMessage = 'Acesso negado. Você não tem permissão para esta ação.';
+        } else if (error.status === 404) {
+          errorMessage = 'Loja não encontrada.';
+        } else if (error.status === 0) {
+          errorMessage = 'Erro de conexão. Verifique sua internet.';
+        }
+        
+        return throwError(() => new Error(errorMessage));
+      })
+    );
   }
 
   createStore(storeData: CreateStoreData): Observable<Store> {
