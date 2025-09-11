@@ -25,7 +25,7 @@ export interface UpdateStoreData {
   nome?: string;
   numero?: string;
   localizacao?: string;
-  status?: string;
+  status?: 'VAGA' | 'OCUPADA' | 'MANUTENCAO';
   inquilinoId?: string | null;
   vincularInquilino?: {
     inquilinoId: string | null;
@@ -59,13 +59,17 @@ export interface StoreResponse {
 export interface PaginationParams {
   page?: number;
   limit?: number;
+  nome?: string;
+  status?: 'VAGA' | 'OCUPADA' | 'INATIVA';
+  numero?: string;
+  localizacao?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class StoreService {
-  private apiUrl = 'http://localhost:3010/api/loja/empresa';
+  private apiUrl = 'http://localhost:3010/api/loja/';
 
   constructor(
     private http: HttpClient,
@@ -83,6 +87,10 @@ export class StoreService {
       const queryParams = new URLSearchParams();
       if (params.page) queryParams.append('page', params.page.toString());
       if (params.limit) queryParams.append('limit', params.limit.toString());
+      if (params.nome) queryParams.append('nome', params.nome);
+      if (params.status) queryParams.append('status', params.status);
+      if (params.numero) queryParams.append('numero', params.numero);
+      if (params.localizacao) queryParams.append('localizacao', params.localizacao);
       if (queryParams.toString()) {
         url += '?' + queryParams.toString();
       }

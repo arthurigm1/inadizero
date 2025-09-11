@@ -114,7 +114,12 @@ import { AuthService } from '../../auth/auth.service';
             <i class="fas fa-plus mr-2"></i>
             Nova Loja
           </button>
-
+          <button 
+            (click)="showFilters = !showFilters" 
+            class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+            <i class="fas fa-filter mr-2"></i>
+            Filtros
+          </button>
         </div>
         
         <div class="flex gap-4">
@@ -133,6 +138,81 @@ import { AuthService } from '../../auth/auth.service';
             <option value="maintenance">Em Manutenção</option>
           </select>
         </div>
+      </div>
+
+      <!-- Seção de Filtros -->
+      <div *ngIf="showFilters && !loading && !error" class="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6 mb-6" [@slideIn]>
+        <form [formGroup]="filterForm" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Filtro por Nome -->
+            <div>
+              <label for="filterNome" class="block text-sm font-medium text-gray-300 mb-1">Nome da Loja</label>
+              <input
+                id="filterNome"
+                type="text"
+                formControlName="nome"
+                placeholder="Buscar por nome..."
+                class="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+              />
+            </div>
+
+            <!-- Filtro por Status -->
+            <div>
+              <label for="filterStatus" class="block text-sm font-medium text-gray-300 mb-1">Status</label>
+              <select
+                id="filterStatus"
+                formControlName="status"
+                class="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+              >
+                <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
+              </select>
+            </div>
+
+            <!-- Filtro por Número -->
+            <div>
+              <label for="filterNumero" class="block text-sm font-medium text-gray-300 mb-1">Número</label>
+              <input
+                id="filterNumero"
+                type="text"
+                formControlName="numero"
+                placeholder="Buscar por número..."
+                class="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+              />
+            </div>
+
+            <!-- Filtro por Localização -->
+            <div>
+              <label for="filterLocalizacao" class="block text-sm font-medium text-gray-300 mb-1">Localização</label>
+              <input
+                id="filterLocalizacao"
+                type="text"
+                formControlName="localizacao"
+                placeholder="Buscar por localização..."
+                class="w-full px-3 py-2 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+              />
+            </div>
+          </div>
+
+          <!-- Botões de Ação -->
+          <div class="flex gap-3 pt-4">
+            <button
+              type="button"
+              (click)="applyFilters()"
+              class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black px-6 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2"
+            >
+              <i class="fas fa-search"></i>
+              Buscar
+            </button>
+            <button
+              type="button"
+              (click)="clearFilters()"
+              class="bg-gray-600 hover:bg-gray-500 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2"
+            >
+              <i class="fas fa-times"></i>
+              Limpar
+            </button>
+          </div>
+        </form>
       </div>
 
       <!-- Stores Grid -->
@@ -568,6 +648,16 @@ export class StoresComponent implements OnInit {
   selectedTenant: string | null = null;
   assigningTenant = false;
   currentStoreForTenant: Store | null = null;
+
+  // Propriedades para filtros
+  filterForm: FormGroup;
+  showFilters = false;
+  statusOptions = [
+    { value: '', label: 'Todos os status' },
+    { value: 'VAGA', label: 'Vaga' },
+    { value: 'OCUPADA', label: 'Ocupada' },
+    { value: 'INATIVA', label: 'Inativa' }
+  ];
   
   // Propriedades de paginação
   currentPage = 1;
@@ -591,19 +681,27 @@ export class StoresComponent implements OnInit {
       localizacao: ['', [Validators.required, Validators.minLength(1)]],
       status: ['', [Validators.required]],
     });
+
+    this.filterForm = this.fb.group({
+      nome: [''],
+      status: [''],
+      numero: [''],
+      localizacao: ['']
+    });
   }
 
   ngOnInit(): void {
     this.loadStores();
   }
 
-  loadStores(page: number = this.currentPage): void {
+  loadStores(page: number = this.currentPage, filters?: any): void {
     this.loading = true;
     this.error = null;
 
     const params: PaginationParams = {
       page: page,
-      limit: this.itemsPerPage
+      limit: this.itemsPerPage,
+      ...filters
     };
 
     this.storeService.getStores(params).subscribe({
@@ -842,19 +940,32 @@ export class StoresComponent implements OnInit {
   // Métodos de paginação
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
-      this.loadStores(page);
+      const currentFilters = this.getCurrentFilters();
+      this.loadStores(page, currentFilters);
     }
+  }
+
+  private getCurrentFilters(): any {
+    const filters = this.filterForm.value;
+    return Object.keys(filters).reduce((acc: any, key) => {
+      if (filters[key] && filters[key].trim() !== '') {
+        acc[key] = filters[key].trim();
+      }
+      return acc;
+    }, {});
   }
 
   goToPreviousPage(): void {
     if (this.currentPage > 1) {
-      this.goToPage(this.currentPage - 1);
+      const currentFilters = this.getCurrentFilters();
+      this.loadStores(this.currentPage - 1, currentFilters);
     }
   }
 
   goToNextPage(): void {
     if (this.currentPage < this.totalPages) {
-      this.goToPage(this.currentPage + 1);
+      const currentFilters = this.getCurrentFilters();
+      this.loadStores(this.currentPage + 1, currentFilters);
     }
   }
 
@@ -890,6 +1001,33 @@ export class StoresComponent implements OnInit {
 
   getDisplayTotalItems(): number {
     return this.totalItems > 0 ? this.totalItems : this.stores.length;
+  }
+
+  // Métodos de filtros
+  applyFilters(): void {
+    const filters = this.filterForm.value;
+    
+    // Remove campos vazios do filtro
+    const cleanFilters = Object.keys(filters).reduce((acc: any, key) => {
+      if (filters[key] && filters[key].trim() !== '') {
+        acc[key] = filters[key].trim();
+      }
+      return acc;
+    }, {});
+    
+    this.currentPage = 1; // Resetar para primeira página
+    this.loadStores(1, cleanFilters);
+  }
+
+  clearFilters(): void {
+    this.filterForm.reset({
+      nome: '',
+      status: '',
+      numero: '',
+      localizacao: ''
+    });
+    this.currentPage = 1;
+    this.loadStores(1); // Recarregar sem filtros
   }
 
 }
