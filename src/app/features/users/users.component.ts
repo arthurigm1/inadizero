@@ -53,19 +53,19 @@ enum TipoUsuario {
     ])
   ],
   template: `
-    <div class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-yellow-900 p-6">
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 p-6">
       <!-- Header -->
       <div class="mb-8" [@fadeIn]>
-        <h1 class="text-4xl font-bold text-yellow-400 mb-2">Gerenciamento de Usuários</h1>
-        <p class="text-gray-300">Gerencie todos os usuários do sistema</p>
+        <h1 class="text-4xl font-bold text-blue-800 mb-2">Gerenciamento de Usuários</h1>
+        <p class="text-gray-600">Gerencie todos os usuários do sistema</p>
       </div>
 
       <!-- Modal para Criar Inquilino -->
       <div *ngIf="showCreateTenantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
-        <div class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4 border border-gray-700">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-blue-200">
           <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-yellow-400">Criar Novo Inquilino</h2>
-            <button (click)="closeCreateTenantModal()" class="text-gray-400 hover:text-white transition-colors">
+            <h2 class="text-2xl font-bold text-blue-700">Criar Novo Inquilino</h2>
+            <button (click)="closeCreateTenantModal()" class="text-gray-500 hover:text-blue-800 transition-colors">
               <i class="fas fa-times text-xl"></i>
             </button>
           </div>
@@ -73,30 +73,30 @@ enum TipoUsuario {
           <form [formGroup]="createTenantForm" (ngSubmit)="onCreateTenant()">
             <!-- Nome -->
             <div class="mb-4">
-              <label for="nome" class="block text-sm font-medium text-gray-300 mb-2">Nome</label>
+              <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
               <input
                 id="nome"
                 type="text"
                 formControlName="nome"
-                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20"
+                class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 placeholder="Nome completo do inquilino"
               >
-              <div *ngIf="createTenantForm.get('nome')?.invalid && createTenantForm.get('nome')?.touched" class="text-red-400 text-sm mt-1">
+              <div *ngIf="createTenantForm.get('nome')?.invalid && createTenantForm.get('nome')?.touched" class="text-red-500 text-sm mt-1">
                 <span *ngIf="createTenantForm.get('nome')?.errors?.['required']">Nome é obrigatório!</span>
               </div>
             </div>
             
             <!-- Email -->
             <div class="mb-4">
-              <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <input
                 id="email"
                 type="email"
                 formControlName="email"
-                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20"
+                class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 placeholder="email@exemplo.com"
               >
-              <div *ngIf="createTenantForm.get('email')?.invalid && createTenantForm.get('email')?.touched" class="text-red-400 text-sm mt-1">
+              <div *ngIf="createTenantForm.get('email')?.invalid && createTenantForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
                 <span *ngIf="createTenantForm.get('email')?.errors?.['required']">Email é obrigatório!</span>
                 <span *ngIf="createTenantForm.get('email')?.errors?.['email']">Email inválido</span>
               </div>
@@ -104,15 +104,15 @@ enum TipoUsuario {
             
             <!-- Senha -->
             <div class="mb-6">
-              <label for="senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
+              <label for="senha" class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
               <input
                 id="senha"
                 type="password"
                 formControlName="senha"
-                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20"
+                class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 placeholder="Senha (mínimo 6 caracteres)"
               >
-              <div *ngIf="createTenantForm.get('senha')?.invalid && createTenantForm.get('senha')?.touched" class="text-red-400 text-sm mt-1">
+              <div *ngIf="createTenantForm.get('senha')?.invalid && createTenantForm.get('senha')?.touched" class="text-red-500 text-sm mt-1">
                 <span *ngIf="createTenantForm.get('senha')?.errors?.['required']">Senha é obrigatória!</span>
                 <span *ngIf="createTenantForm.get('senha')?.errors?.['minlength']">Senha deve ter no mínimo 6 caracteres</span>
               </div>
@@ -123,14 +123,14 @@ enum TipoUsuario {
               <button
                 type="button"
                 (click)="closeCreateTenantModal()"
-                class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+                class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 [disabled]="createTenantForm.invalid || isCreatingTenant"
-                class="flex-1 px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span *ngIf="!isCreatingTenant">Criar Inquilino</span>
                 <span *ngIf="isCreatingTenant" class="flex items-center justify-center">
@@ -146,24 +146,24 @@ enum TipoUsuario {
       <!-- Notificação -->
       <div *ngIf="notification.show" class="fixed top-4 right-4 z-50" [@slideIn]>
         <div [ngClass]="{
-          'bg-green-800 border-green-600': notification.type === 'success',
-          'bg-red-800 border-red-600': notification.type === 'error',
-          'bg-blue-800 border-blue-600': notification.type === 'info'
+          'bg-green-100 border-green-400': notification.type === 'success',
+          'bg-red-100 border-red-400': notification.type === 'error',
+          'bg-blue-100 border-blue-400': notification.type === 'info'
         }" class="border rounded-lg p-4 shadow-lg max-w-sm">
           <div class="flex items-start">
             <div class="flex-shrink-0">
               <i [ngClass]="{
-                'fas fa-check-circle text-green-400': notification.type === 'success',
-                'fas fa-exclamation-circle text-red-400': notification.type === 'error',
-                'fas fa-info-circle text-blue-400': notification.type === 'info'
+                'fas fa-check-circle text-green-500': notification.type === 'success',
+                'fas fa-exclamation-circle text-red-500': notification.type === 'error',
+                'fas fa-info-circle text-blue-500': notification.type === 'info'
               }"></i>
             </div>
             <div class="ml-3">
-              <p class="text-sm font-medium text-white">{{ notification.title }}</p>
-              <p class="text-sm text-gray-300 mt-1">{{ notification.message }}</p>
+              <p class="text-sm font-medium text-gray-900">{{ notification.title }}</p>
+              <p class="text-sm text-gray-600 mt-1">{{ notification.message }}</p>
             </div>
             <div class="ml-auto pl-3">
-              <button (click)="hideNotification()" class="text-gray-400 hover:text-white">
+              <button (click)="hideNotification()" class="text-gray-500 hover:text-gray-700">
                 <i class="fas fa-times"></i>
               </button>
             </div>
@@ -174,11 +174,11 @@ enum TipoUsuario {
       <!-- Actions Bar -->
       <div class="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center" [@slideIn]>
         <div class="flex flex-col sm:flex-row gap-4">
-          <button (click)="openCreateTenantModal()" class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+          <button (click)="openCreateTenantModal()" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
             <i class="fas fa-plus mr-2"></i>
             Novo Inquilino
           </button>
-          <button class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300">
+          <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold transition-all duration-300">
             <i class="fas fa-download mr-2"></i>
             Exportar
           </button>
@@ -192,16 +192,16 @@ enum TipoUsuario {
               placeholder="Buscar por nome ou email..."
               [(ngModel)]="searchTerm"
               (input)="onSearchChange()"
-              class="bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 pl-10 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300 w-full"
+              class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 pl-10 text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 w-full"
             >
-            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400"></i>
           </div>
           
           <!-- Filtro por tipo -->
           <select 
             [(ngModel)]="selectedTypeFilter"
             (change)="onTypeFilterChange()"
-            class="bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 min-w-48">
+            class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 min-w-48">
             <option *ngFor="let type of userTypes" [value]="type.value">{{ type.label }}</option>
           </select>
           
@@ -209,14 +209,14 @@ enum TipoUsuario {
           <select 
             [(ngModel)]="selectedStatusFilter"
             (change)="onStatusFilterChange()"
-            class="bg-gray-800/50 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 min-w-40">
+            class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 min-w-40">
             <option *ngFor="let status of statusTypes" [value]="status.value">{{ status.label }}</option>
           </select>
           
           <!-- Botão limpar filtros -->
           <button 
             (click)="clearFilters()"
-            class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
             <i class="fas fa-times"></i>
             Limpar
           </button>
@@ -224,73 +224,73 @@ enum TipoUsuario {
       </div>
 
       <!-- Users Table -->
-      <div class="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 overflow-hidden shadow-2xl" [@fadeIn]>
+      <div class="bg-white backdrop-blur-sm rounded-xl border border-blue-200 overflow-hidden shadow-2xl" [@fadeIn]>
         <div class="overflow-x-auto">
           <table class="w-full">
-            <thead class="bg-gray-900/50">
+            <thead class="bg-blue-50">
               <tr>
-                <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">Usuário</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">Email</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">Tipo</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">Último Acesso</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-yellow-400 uppercase tracking-wider">Ações</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Usuário</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Tipo</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Último Acesso</th>
+                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-700/50">
-              <tr *ngFor="let user of users" class="hover:bg-gray-700/30 transition-colors duration-200">
+            <tbody class="divide-y divide-blue-100">
+              <tr *ngFor="let user of users" class="hover:bg-blue-50 transition-colors duration-200">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 flex items-center justify-center text-black font-bold mr-4">
+                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold mr-4">
                       {{ user.name.charAt(0).toUpperCase() }}
                     </div>
                     <div>
-                      <div class="text-sm font-medium text-white">{{ user.name }}</div>
-                      <div class="text-sm text-gray-400">ID: {{ user.id }}</div>
+                      <div class="text-sm font-medium text-blue-900">{{ user.name }}</div>
+                      <div class="text-sm text-blue-600">ID: {{ user.id }}</div>
                     </div>
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-300">{{ user.email }}</div>
+                  <div class="text-sm text-blue-700">{{ user.email }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span [ngClass]="{
-                    'bg-red-900/50 text-red-300 border-red-500/50': user.type === 'ADMIN_EMPRESA',
-                    'bg-blue-900/50 text-blue-300 border-blue-500/50': user.type === 'FUNCIONARIO',
-                    'bg-green-900/50 text-green-300 border-green-500/50': user.type === 'INQUILINO',
-                    'bg-purple-900/50 text-purple-300 border-purple-500/50': user.type === 'VISITANTE'
+                    'bg-red-100 text-red-800 border-red-200': user.type === 'ADMIN_EMPRESA',
+                    'bg-blue-100 text-blue-800 border-blue-200': user.type === 'FUNCIONARIO',
+                    'bg-green-100 text-green-800 border-green-200': user.type === 'INQUILINO',
+                    'bg-purple-100 text-purple-800 border-purple-200': user.type === 'VISITANTE'
                   }" class="inline-flex px-3 py-1 text-xs font-semibold rounded-full border">
                     {{ getUserTypeLabel(user.type) }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span [ngClass]="{
-                    'bg-green-900/50 text-green-300 border-green-500/50': user.status === 'active',
-                    'bg-red-900/50 text-red-300 border-red-500/50': user.status === 'inactive',
-                    'bg-yellow-900/50 text-yellow-300 border-yellow-500/50': user.status === 'pending'
+                    'bg-green-100 text-green-800 border-green-200': user.status === 'active',
+                    'bg-red-100 text-red-800 border-red-200': user.status === 'inactive',
+                    'bg-yellow-100 text-yellow-800 border-yellow-200': user.status === 'pending'
                   }" class="inline-flex px-3 py-1 text-xs font-semibold rounded-full border">
                     {{ user.status === 'active' ? 'Ativo' : user.status === 'inactive' ? 'Inativo' : 'Pendente' }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-700">
                   {{ user.lastAccess }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-2">
-                    <button class="text-yellow-400 hover:text-yellow-300 transition-colors duration-200" title="Editar">
+                    <button class="text-blue-600 hover:text-blue-800 transition-colors duration-200" title="Editar">
                       <i class="fas fa-edit"></i>
                     </button>
-                    <button class="text-blue-400 hover:text-blue-300 transition-colors duration-200" title="Visualizar">
+                    <button class="text-blue-500 hover:text-blue-700 transition-colors duration-200" title="Visualizar">
                       <i class="fas fa-eye"></i>
                     </button>
-                    <button class="text-red-400 hover:text-red-300 transition-colors duration-200" title="Excluir">
+                    <button class="text-red-500 hover:text-red-700 transition-colors duration-200" title="Excluir">
                       <i class="fas fa-trash"></i>
                     </button>
                   </div>
                 </td>
               </tr>
               <tr *ngIf="users.length === 0">
-                <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                <td colspan="6" class="px-6 py-8 text-center text-blue-600">
                   <i class="fas fa-users-slash text-3xl mb-2"></i>
                   <p>Nenhum usuário encontrado</p>
                 </td>
@@ -302,14 +302,14 @@ enum TipoUsuario {
 
       <!-- Pagination -->
       <div class="mt-6 flex flex-col sm:flex-row justify-between items-center" [@slideIn]>
-        <div class="text-sm text-gray-400 mb-4 sm:mb-0">
+        <div class="text-sm text-blue-600 mb-4 sm:mb-0">
           Mostrando {{ getDisplayRange() }} de {{ totalItems }} usuários
         </div>
         <div class="flex space-x-2" *ngIf="totalPages > 1">
           <button 
             (click)="goToPreviousPage()" 
             [disabled]="!hasPreviousPage"
-            class="px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50"
+            class="px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors duration-200 disabled:opacity-50"
             [class.disabled]="!hasPreviousPage">
             <i class="fas fa-chevron-left"></i>
           </button>
@@ -317,18 +317,18 @@ enum TipoUsuario {
           <button 
             *ngFor="let page of getPageNumbers()" 
             (click)="goToPage(page)"
-            [class.bg-yellow-500]="page === currentPage"
-            [class.text-black]="page === currentPage"
-            [class.bg-gray-700]="page !== currentPage"
-            [class.text-white]="page !== currentPage"
-            class="px-4 py-2 rounded-lg font-semibold hover:bg-gray-600 transition-colors duration-200">
+            [class.bg-blue-500]="page === currentPage"
+            [class.text-white]="page === currentPage"
+            [class.bg-blue-100]="page !== currentPage"
+            [class.text-blue-800]="page !== currentPage"
+            class="px-4 py-2 rounded-lg font-semibold hover:bg-blue-200 transition-colors duration-200">
             {{ page }}
           </button>
           
           <button 
             (click)="goToNextPage()" 
             [disabled]="!hasNextPage"
-            class="px-3 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50"
+            class="px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors duration-200 disabled:opacity-50"
             [class.disabled]="!hasNextPage">
             <i class="fas fa-chevron-right"></i>
           </button>
