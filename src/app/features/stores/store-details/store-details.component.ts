@@ -25,30 +25,30 @@ import { AuthService } from '../../../auth/auth.service';
     ])
   ],
   template: `
-    <div class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-yellow-900 p-6">
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 p-6">
       <!-- Header with Back Button -->
       <div class="mb-8" [@fadeIn]>
         <button 
           (click)="goBack()"
-          class="mb-4 flex items-center text-yellow-400 hover:text-yellow-300 transition-colors">
+          class="mb-4 flex items-center text-blue-600 hover:text-blue-800 transition-colors">
           <i class="fas fa-arrow-left mr-2"></i>
           Voltar para Lista de Lojas
         </button>
-        <h1 class="text-4xl font-bold text-yellow-400 mb-2">Detalhes da Loja</h1>
-        <p class="text-gray-300">Visualize e gerencie informações da loja</p>
+        <h1 class="text-4xl font-bold text-blue-800 mb-2">Detalhes da Loja</h1>
+        <p class="text-gray-600">Visualize e gerencie informações da loja</p>
       </div>
 
       <!-- Loading State -->
       <div *ngIf="loading" class="flex justify-center items-center py-12" [@fadeIn]>
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
-        <span class="ml-3 text-gray-300">Carregando detalhes da loja...</span>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <span class="ml-3 text-blue-600">Carregando detalhes da loja...</span>
       </div>
 
       <!-- Error State -->
-      <div *ngIf="error && !loading" class="bg-red-500/20 border border-red-500/50 rounded-xl p-4 mb-6" [@fadeIn]>
+      <div *ngIf="error && !loading" class="bg-red-100 border border-red-400 rounded-xl p-4 mb-6" [@fadeIn]>
         <div class="flex items-center">
-          <i class="fas fa-exclamation-triangle text-red-400 mr-3"></i>
-          <span class="text-red-300">{{ error }}</span>
+          <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+          <span class="text-red-700">{{ error }}</span>
           <button 
             (click)="loadStoreDetails()" 
             class="ml-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
@@ -61,11 +61,11 @@ import { AuthService } from '../../../auth/auth.service';
       <!-- Store Details Content -->
       <div *ngIf="!loading && !error && store" class="space-y-6" [@fadeIn]>
         <!-- Store Info Card -->
-        <div class="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6">
+        <div class="bg-white backdrop-blur-sm rounded-xl border border-blue-200 p-6">
           <div class="flex justify-between items-start mb-6">
             <div>
-              <h2 class="text-2xl font-bold text-white mb-2">{{ store.nome }}</h2>
-              <p class="text-gray-400">Loja #{{ store.numero }}</p>
+              <h2 class="text-2xl font-bold text-blue-900 mb-2">{{ store.nome }}</h2>
+              <p class="text-blue-600">Loja #{{ store.numero }}</p>
             </div>
             <div class="flex items-center space-x-4">
               <span [ngClass]="{
@@ -86,46 +86,46 @@ import { AuthService } from '../../../auth/auth.service';
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 class="text-lg font-semibold text-yellow-400 mb-3">Informações Básicas</h3>
+              <h3 class="text-lg font-semibold text-blue-700 mb-3">Informações Básicas</h3>
               <div class="space-y-3">
                 <div>
-                  <span class="text-gray-400">Nome:</span>
-                  <span class="text-white ml-2">{{ store.nome }}</span>
+                  <span class="text-gray-600">Nome:</span>
+                  <span class="text-blue-900 ml-2">{{ store.nome }}</span>
                 </div>
                 <div>
-                  <span class="text-gray-400">Número:</span>
-                  <span class="text-white ml-2">#{{ store.numero }}</span>
+                  <span class="text-gray-600">Número:</span>
+                  <span class="text-blue-900 ml-2">#{{ store.numero }}</span>
                 </div>
                 <div>
-                  <span class="text-gray-400">Localização:</span>
-                  <span class="text-white ml-2">{{ store.localizacao }}</span>
+                  <span class="text-gray-600">Localização:</span>
+                  <span class="text-blue-900 ml-2">{{ store.localizacao }}</span>
                 </div>
                 <div>
-                  <span class="text-gray-400">Status:</span>
-                  <span class="text-white ml-2">{{ getStatusLabel(store.status) }}</span>
+                  <span class="text-gray-600">Status:</span>
+                  <span class="text-blue-900 ml-2">{{ getStatusLabel(store.status) }}</span>
                 </div>
                 <div>
-                  <span class="text-gray-400">Criado em:</span>
-                  <span class="text-white ml-2">{{ store.criadoEm | date:'dd/MM/yyyy' }}</span>
+                  <span class="text-gray-600">Criado em:</span>
+                  <span class="text-blue-900 ml-2">{{ store.criadoEm | date:'dd/MM/yyyy' }}</span>
                 </div>
               </div>
             </div>
 
             <div>
-              <h3 class="text-lg font-semibold text-yellow-400 mb-3">Inquilino</h3>
+              <h3 class="text-lg font-semibold text-blue-700 mb-3">Inquilino</h3>
               
               <!-- Informações do Usuário (quando há usuário vinculado) -->
               <div *ngIf="store.usuario" class="space-y-3 mb-4">
-                <div class="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3">
-                  <h4 class="text-sm font-medium text-blue-300 mb-2">Usuário Vinculado</h4>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <h4 class="text-sm font-medium text-blue-700 mb-2">Usuário Vinculado</h4>
                   <div class="space-y-2">
                     <div>
-                      <span class="text-gray-400">Nome:</span>
-                      <span class="text-white ml-2">{{ store.usuario.nome }}</span>
+                      <span class="text-gray-600">Nome:</span>
+                      <span class="text-blue-900 ml-2">{{ store.usuario.nome }}</span>
                     </div>
                     <div>
-                      <span class="text-gray-400">Email:</span>
-                      <span class="text-white ml-2">{{ store.usuario.email }}</span>
+                      <span class="text-gray-600">Email:</span>
+                      <span class="text-blue-900 ml-2">{{ store.usuario.email }}</span>
                     </div>
                   </div>
                 </div>
@@ -134,16 +134,16 @@ import { AuthService } from '../../../auth/auth.service';
               <!-- Informações do Inquilino -->
               <div *ngIf="store.inquilino" class="space-y-3">
                 <div>
-                  <span class="text-gray-400">Nome do Inquilino:</span>
-                  <span class="text-white ml-2">{{ store.inquilino.nome }}</span>
+                  <span class="text-gray-600">Nome do Inquilino:</span>
+                  <span class="text-blue-900 ml-2">{{ store.inquilino.nome }}</span>
                 </div>
                 <div>
-                  <span class="text-gray-400">Email do Inquilino:</span>
-                  <span class="text-white ml-2">{{ store.inquilino.email }}</span>
+                  <span class="text-gray-600">Email do Inquilino:</span>
+                  <span class="text-blue-900 ml-2">{{ store.inquilino.email }}</span>
                 </div>
                 <div *ngIf="store.inquilino.telefone">
-                  <span class="text-gray-400">Telefone:</span>
-                  <span class="text-white ml-2">{{ store.inquilino.telefone }}</span>
+                  <span class="text-gray-600">Telefone:</span>
+                  <span class="text-blue-900 ml-2">{{ store.inquilino.telefone }}</span>
                 </div>
                 <div class="mt-4">
                   <button 
@@ -157,13 +157,13 @@ import { AuthService } from '../../../auth/auth.service';
                 </div>
               </div>
               
-              <div *ngIf="!store.inquilino && !store.usuario" class="text-gray-400">
+              <div *ngIf="!store.inquilino && !store.usuario" class="text-blue-600">
                 <p class="mb-4">Nenhum inquilino vinculado</p>
                 <button 
                   (click)="openTenantModal()"
                   class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
-                  <i class="fas fa-user-plus mr-2"></i>
-                  Vincular Inquilino
+                    <i class="fas fa-user-plus mr-2"></i>
+                    Vincular Inquilino
                 </button>
               </div>
             </div>
@@ -171,15 +171,15 @@ import { AuthService } from '../../../auth/auth.service';
         </div>
 
         <!-- Contracts Section -->
-        <div class="bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-6">
-          <h3 class="text-lg font-semibold text-yellow-400 mb-4">Contratos</h3>
+        <div class="bg-white backdrop-blur-sm rounded-xl border border-blue-200 p-6">
+          <h3 class="text-lg font-semibold text-blue-700 mb-4">Contratos</h3>
           <div *ngIf="store.contratos && store.contratos.length > 0; else noContracts">
             <div class="space-y-3">
-              <div *ngFor="let contrato of store.contratos" class="bg-gray-700/30 rounded-lg p-4">
+              <div *ngFor="let contrato of store.contratos" class="bg-blue-50 rounded-lg p-4">
                 <div class="flex justify-between items-start">
                   <div>
-                    <p class="text-white font-medium">Contrato #{{ contrato.id }}</p>
-                    <p class="text-gray-400 text-sm">Valor: R$ {{ contrato.valor | number:'1.2-2' }}</p>
+                    <p class="text-blue-900 font-medium">Contrato #{{ contrato.id }}</p>
+                    <p class="text-blue-600 text-sm">Valor: R$ {{ contrato.valor | number:'1.2-2' }}</p>
                   </div>
                   <span class="px-2 py-1 bg-green-500 text-white text-xs rounded-full">
                     Ativo
@@ -189,28 +189,28 @@ import { AuthService } from '../../../auth/auth.service';
             </div>
           </div>
           <ng-template #noContracts>
-            <p class="text-gray-400">Nenhum contrato encontrado para esta loja.</p>
+            <p class="text-blue-600">Nenhum contrato encontrado para esta loja.</p>
           </ng-template>
         </div>
       </div>
 
       <!-- Edit Modal -->
       <div *ngIf="showEditModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50" [@fadeIn]>
-        <div class="bg-gray-800/95 backdrop-blur-sm rounded-xl border border-gray-700/50 p-8 w-full max-w-lg mx-4 shadow-2xl">
+        <div class="bg-white backdrop-blur-sm rounded-xl border border-blue-200 p-8 w-full max-w-lg mx-4 shadow-2xl">
           <!-- Header -->
           <div class="flex justify-between items-center mb-6">
             <div class="flex items-center">
-              <div class="bg-yellow-500/20 p-3 rounded-lg mr-4">
-                <i class="fas fa-edit text-yellow-400 text-xl"></i>
+              <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                <i class="fas fa-edit text-blue-600 text-xl"></i>
               </div>
               <div>
-                <h3 class="text-2xl font-bold text-white">Editar Loja</h3>
-                <p class="text-gray-400 text-sm">Atualize as informações da loja</p>
+                <h3 class="text-2xl font-bold text-blue-900">Editar Loja</h3>
+                <p class="text-blue-600 text-sm">Atualize as informações da loja</p>
               </div>
             </div>
             <button 
               (click)="closeEditModal()"
-              class="text-gray-400 hover:text-white transition-colors p-2 hover:bg-gray-700/50 rounded-lg">
+              class="text-blue-600 hover:text-blue-800 transition-colors p-2 hover:bg-blue-50 rounded-lg">
               <i class="fas fa-times text-xl"></i>
             </button>
           </div>
@@ -218,65 +218,65 @@ import { AuthService } from '../../../auth/auth.service';
           <form [formGroup]="editForm" (ngSubmit)="onSubmitEdit()" class="space-y-6">
             <!-- Nome -->
             <div>
-              <label for="editNome" class="block text-sm font-semibold text-gray-300 mb-2">
-                <i class="fas fa-store text-yellow-400 mr-2"></i>
+              <label for="editNome" class="block text-sm font-semibold text-blue-700 mb-2">
+                <i class="fas fa-store text-blue-600 mr-2"></i>
                 Nome da Loja
               </label>
               <input 
                 type="text" 
                 id="editNome" 
                 formControlName="nome"
-                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+                class="w-full px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                 placeholder="Digite o nome da loja">
             </div>
 
             <!-- Número -->
             <div>
-              <label for="editNumero" class="block text-sm font-semibold text-gray-300 mb-2">
-                <i class="fas fa-hashtag text-yellow-400 mr-2"></i>
+              <label for="editNumero" class="block text-sm font-semibold text-blue-700 mb-2">
+                <i class="fas fa-hashtag text-blue-600 mr-2"></i>
                 Número da Loja
               </label>
               <input 
                 type="text" 
                 id="editNumero" 
                 formControlName="numero"
-                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+                class="w-full px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                 placeholder="Digite o número da loja">
             </div>
 
             <!-- Localização -->
             <div>
-              <label for="editLocalizacao" class="block text-sm font-semibold text-gray-300 mb-2">
-                <i class="fas fa-map-marker-alt text-yellow-400 mr-2"></i>
+              <label for="editLocalizacao" class="block text-sm font-semibold text-blue-700 mb-2">
+                <i class="fas fa-map-marker-alt text-blue-600 mr-2"></i>
                 Localização
               </label>
               <input 
                 type="text" 
                 id="editLocalizacao" 
                 formControlName="localizacao"
-                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300"
+                class="w-full px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                 placeholder="Digite a localização da loja">
             </div>
 
             <!-- Status -->
             <div>
-              <label for="editStatus" class="block text-sm font-semibold text-gray-300 mb-2">
-                <i class="fas fa-toggle-on text-yellow-400 mr-2"></i>
+              <label for="editStatus" class="block text-sm font-semibold text-blue-700 mb-2">
+                <i class="fas fa-toggle-on text-blue-600 mr-2"></i>
                 Status da Loja
               </label>
               <select 
                 id="editStatus" 
                 formControlName="status"
-                class="w-full px-4 py-3 bg-gray-900/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300">
-                <option value="VAGA" class="bg-gray-800">Vaga</option>
-                <option value="OCUPADA" class="bg-gray-800">Ocupada</option>
-                <option value="MANUTENCAO" class="bg-gray-800">Manutenção</option>
+                class="w-full px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300">
+                <option value="VAGA" class="bg-white">Vaga</option>
+                <option value="OCUPADA" class="bg-white">Ocupada</option>
+                <option value="MANUTENCAO" class="bg-white">Manutenção</option>
               </select>
             </div>
 
             <!-- Error Message -->
-            <div *ngIf="editError" class="bg-red-500/20 border border-red-500/50 rounded-lg p-4">
-              <div class="flex items-center text-red-300">
+            <div *ngIf="editError" class="bg-red-100 border border-red-400 rounded-lg p-4">
+              <div class="flex items-center text-red-700">
                 <i class="fas fa-exclamation-triangle mr-3"></i>
                 <span>{{ editError }}</span>
               </div>
@@ -287,14 +287,14 @@ import { AuthService } from '../../../auth/auth.service';
               <button 
                 type="button" 
                 (click)="closeEditModal()"
-                class="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 border border-gray-600">
+                class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 border border-gray-300">
                 <i class="fas fa-times mr-2"></i>
                 Cancelar
               </button>
               <button 
                 type="submit" 
                 [disabled]="editing || editForm.invalid"
-                class="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:from-gray-600 disabled:to-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed disabled:transform-none shadow-lg">
+                class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 disabled:from-gray-300 disabled:to-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed disabled:transform-none shadow-lg">
                 <i class="fas fa-save mr-2" *ngIf="!editing"></i>
                 <i class="fas fa-spinner fa-spin mr-2" *ngIf="editing"></i>
                 <span *ngIf="!editing">Salvar Alterações</span>
@@ -307,12 +307,12 @@ import { AuthService } from '../../../auth/auth.service';
 
       <!-- Tenant Modal -->
       <div *ngIf="showTenantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 border border-blue-200">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Vincular Inquilino</h3>
+            <h3 class="text-lg font-semibold text-blue-900">Vincular Inquilino</h3>
             <button 
               (click)="closeTenantModal()"
-              class="text-gray-400 hover:text-gray-600">
+              class="text-blue-600 hover:text-blue-800">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
@@ -320,11 +320,11 @@ import { AuthService } from '../../../auth/auth.service';
           </div>
 
           <div class="mb-4">
-            <label for="tenantSelect" class="block text-sm font-medium text-gray-700 mb-1">Selecionar Inquilino</label>
+            <label for="tenantSelect" class="block text-sm font-medium text-blue-700 mb-1">Selecionar Inquilino</label>
             <select 
               id="tenantSelect" 
               [(ngModel)]="selectedTenantId"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              class="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-blue-50 text-blue-900">
               <option value="">Selecione um inquilino</option>
               <option *ngFor="let tenant of availableTenants" [value]="tenant.id">
                 {{ tenant.nome }} - {{ tenant.email }}
@@ -340,7 +340,7 @@ import { AuthService } from '../../../auth/auth.service';
             <button 
               type="button" 
               (click)="closeTenantModal()"
-              class="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+              class="px-4 py-2 text-blue-600 border border-blue-200 rounded-md hover:bg-blue-50 transition-colors">
               Cancelar
             </button>
             <button 
