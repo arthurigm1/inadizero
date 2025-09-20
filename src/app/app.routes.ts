@@ -34,6 +34,13 @@ export const routes: Routes = [
             (m) => m.DashboardComponent
           ),
       },
+      {
+        path: 'contracts',
+        loadChildren: () =>
+          import('./features/contracts/contracts.module').then(
+            (m) => m.ContractsModule
+          ),
+      },
     ],
   },
   {
