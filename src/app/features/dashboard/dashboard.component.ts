@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { trigger, transition, style, animate, state } from '@angular/animations';
+import { ContractService } from '../contracts/contract.service';
+import { Contract, ContractStats, StoreOption, TenantOption, CreateContractRequest, ContractStatus } from '../contracts/contract.interfaces';
 import { UsersComponent } from '../users/users.component';
 import { StoresComponent } from '../stores/stores.component';
 import { SettingsComponent } from '../settings/settings.component';
@@ -9,7 +12,7 @@ import { SettingsComponent } from '../settings/settings.component';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, UsersComponent, StoresComponent, SettingsComponent],
+  imports: [CommonModule, FormsModule, RouterModule, UsersComponent, StoresComponent, SettingsComponent],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black" [@fadeIn]>
       <!-- Sidebar -->
@@ -57,6 +60,16 @@ import { SettingsComponent } from '../settings/settings.component';
                 <path d="M5 8a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"/>
               </svg>
               Lojas
+            </a>
+            
+            <a (click)="navigateTo('contracts')" 
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+               [class]="currentSection === 'contracts' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : 'text-gray-300 hover:bg-yellow-500/10 hover:text-yellow-400'">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm0 2h12v12H4V4z" clip-rule="evenodd"/>
+                <path d="M6 6h8v2H6V6zM6 10h8v2H6v-2zM6 14h5v2H6v-2z"/>
+              </svg>
+              Contratos
             </a>
             
             <a (click)="navigateTo('settings')" 
@@ -167,12 +180,12 @@ import { SettingsComponent } from '../settings/settings.component';
                 <div class="flex items-center justify-between">
                   <div>
                     <p class="text-yellow-400 text-sm font-medium">Receita Total</p>
-                    <p class="text-3xl font-bold text-white mt-2">R$ 125.430</p>
+                    <p class="text-3xl font-bold text-white mt-2">{{formatCurrency(dashboardStats.totalRevenue)}}</p>
                     <p class="text-green-400 text-sm mt-1 flex items-center">
                       <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                       </svg>
-                      +12.5%
+                      Receita mensal
                     </p>
                   </div>
                   <div class="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
@@ -188,12 +201,12 @@ import { SettingsComponent } from '../settings/settings.component';
                 <div class="flex items-center justify-between">
                   <div>
                     <p class="text-yellow-400 text-sm font-medium">Propriedades</p>
-                    <p class="text-3xl font-bold text-white mt-2">247</p>
+                    <p class="text-3xl font-bold text-white mt-2">{{dashboardStats.totalProperties}}</p>
                     <p class="text-blue-400 text-sm mt-1 flex items-center">
                       <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                       </svg>
-                      85% ocupadas
+                      {{dashboardStats.occupancyRate}}% ocupadas
                     </p>
                   </div>
                   <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
@@ -209,12 +222,12 @@ import { SettingsComponent } from '../settings/settings.component';
                 <div class="flex items-center justify-between">
                   <div>
                     <p class="text-yellow-400 text-sm font-medium">Inquilinos</p>
-                    <p class="text-3xl font-bold text-white mt-2">189</p>
+                    <p class="text-3xl font-bold text-white mt-2">{{dashboardStats.totalTenants}}</p>
                     <p class="text-red-400 text-sm mt-1 flex items-center">
                       <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                       </svg>
-                      15% inadimplentes
+                      {{dashboardStats.defaultRate}}% inadimplentes
                     </p>
                   </div>
                   <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
@@ -230,12 +243,12 @@ import { SettingsComponent } from '../settings/settings.component';
                 <div class="flex items-center justify-between">
                   <div>
                     <p class="text-yellow-400 text-sm font-medium">Manutenções</p>
-                    <p class="text-3xl font-bold text-white mt-2">23</p>
+                    <p class="text-3xl font-bold text-white mt-2">{{dashboardStats.maintenanceRequests}}</p>
                     <p class="text-orange-400 text-sm mt-1 flex items-center">
                       <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                       </svg>
-                      5 pendentes
+                      {{dashboardStats.pendingMaintenance}} pendentes
                     </p>
                   </div>
                   <div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
@@ -282,43 +295,20 @@ import { SettingsComponent } from '../settings/settings.component';
             <div class="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 rounded-xl p-6">
               <h3 class="text-xl font-bold text-white mb-6">Atividades Recentes</h3>
               <div class="space-y-4">
-                <div class="flex items-center space-x-4 p-4 bg-gray-800/50 rounded-lg">
-                  <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
-                    <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                <div *ngFor="let activity of recentActivities" class="flex items-center space-x-4 p-4 bg-gray-800/50 rounded-lg">
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                       [class]="'bg-' + activity.color + '-500/20'">
+                    <svg class="w-5 h-5" [class]="'text-' + activity.color + '-400'" fill="currentColor" viewBox="0 0 20 20">
+                      <path *ngIf="activity.icon === 'check'" fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      <path *ngIf="activity.icon === 'user'" d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z"/>
+                      <path *ngIf="activity.icon === 'warning'" fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                     </svg>
                   </div>
                   <div class="flex-1">
-                    <p class="text-white font-medium">Pagamento recebido</p>
-                    <p class="text-gray-400 text-sm">João Silva - Loja 15A - R$ 2.500,00</p>
+                    <p class="text-white font-medium">{{activity.title}}</p>
+                    <p class="text-gray-400 text-sm">{{activity.description}}</p>
                   </div>
-                  <span class="text-gray-400 text-sm">2 min atrás</span>
-                </div>
-                
-                <div class="flex items-center space-x-4 p-4 bg-gray-800/50 rounded-lg">
-                  <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                    <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z"/>
-                    </svg>
-                  </div>
-                  <div class="flex-1">
-                    <p class="text-white font-medium">Novo inquilino cadastrado</p>
-                    <p class="text-gray-400 text-sm">Maria Santos - Loja 23B</p>
-                  </div>
-                  <span class="text-gray-400 text-sm">15 min atrás</span>
-                </div>
-                
-                <div class="flex items-center space-x-4 p-4 bg-gray-800/50 rounded-lg">
-                  <div class="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
-                    <svg class="w-5 h-5 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                  </div>
-                  <div class="flex-1">
-                    <p class="text-white font-medium">Manutenção solicitada</p>
-                    <p class="text-gray-400 text-sm">Loja 8C - Problema elétrico</p>
-                  </div>
-                  <span class="text-gray-400 text-sm">1 hora atrás</span>
+                  <span class="text-gray-400 text-sm">{{activity.time}}</span>
                 </div>
               </div>
             </div>
@@ -334,11 +324,302 @@ import { SettingsComponent } from '../settings/settings.component';
             <app-stores></app-stores>
           </div>
           
+          <!-- Contracts Section -->
+          <div *ngIf="currentSection === 'contracts'" [@slideIn]>
+            <div class="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 rounded-xl p-6">
+              <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-white">Gestão de Contratos</h2>
+                <button (click)="navigateTo('contract-management')" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg font-medium transition-colors">
+                   Gerenciar Contratos
+                 </button>
+              </div>
+              <p class="text-gray-400 mb-4">Acesse o módulo completo de contratos para gerenciar todos os aspectos dos seus contratos de locação.</p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                  <h3 class="text-white font-semibold mb-2">Contratos Ativos</h3>
+                  <p class="text-2xl font-bold text-green-400">156</p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                  <h3 class="text-white font-semibold mb-2">Vencendo em 30 dias</h3>
+                  <p class="text-2xl font-bold text-yellow-400">12</p>
+                </div>
+                <div class="bg-gray-800/50 p-4 rounded-lg">
+                  <h3 class="text-white font-semibold mb-2">Vencidos</h3>
+                  <p class="text-2xl font-bold text-red-400">3</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Contract Management Section -->
+          <div *ngIf="currentSection === 'contract-management'" [@slideIn]>
+            <div class="space-y-6">
+              <!-- Header with Actions -->
+              <div class="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 rounded-xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                  <h2 class="text-2xl font-bold text-white">Gestão Completa de Contratos</h2>
+                  <div class="flex space-x-3">
+                    <button (click)="openCreateContractModal()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                      + Novo Contrato
+                    </button>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                      📊 Relatórios
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                  <div class="bg-gray-800/50 p-4 rounded-lg">
+                    <h3 class="text-white font-semibold mb-2">Total de Contratos</h3>
+                    <p class="text-2xl font-bold text-blue-400">{{(contractStats?.totalAtivos || 0) + (contractStats?.totalVencidos || 0) + (contractStats?.totalRescindidos || 0) + (contractStats?.totalSuspensos || 0)}}</p>
+                  </div>
+                  <div class="bg-gray-800/50 p-4 rounded-lg">
+                    <h3 class="text-white font-semibold mb-2">Contratos Ativos</h3>
+                    <p class="text-2xl font-bold text-green-400">{{contractStats?.totalAtivos || 0}}</p>
+                  </div>
+                  <div class="bg-gray-800/50 p-4 rounded-lg">
+                    <h3 class="text-white font-semibold mb-2">Vencendo em 30 dias</h3>
+                    <p class="text-2xl font-bold text-yellow-400">{{contractStats?.vencendoEm30Dias || 0}}</p>
+                  </div>
+                  <div class="bg-gray-800/50 p-4 rounded-lg">
+                    <h3 class="text-white font-semibold mb-2">Vencidos</h3>
+                    <p class="text-2xl font-bold text-red-400">{{contractStats?.totalVencidos || 0}}</p>
+                  </div>
+                </div>
+                
+                <!-- Search and Filters -->
+                <div class="flex flex-col md:flex-row gap-4">
+                  <div class="flex-1">
+                    <input type="text" placeholder="Buscar contratos..." [(ngModel)]="contractSearchTerm"
+                           class="w-full px-4 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                  </div>
+                  <select [(ngModel)]="contractStatusFilter" class="px-4 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                    <option value="all">Todos os Status</option>
+                    <option value="active">Ativo</option>
+                    <option value="expiring">Vencendo</option>
+                    <option value="expired">Vencido</option>
+                  </select>
+                  <select [(ngModel)]="contractStoreFilter" class="px-4 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                    <option value="all">Todas as Lojas</option>
+                    <option value="Loja 15A">Loja 15A</option>
+                    <option value="Loja 23B">Loja 23B</option>
+                    <option value="Loja 8C">Loja 8C</option>
+                    <option value="Loja 7A">Loja 7A</option>
+                    <option value="Loja 12D">Loja 12D</option>
+                  </select>
+                </div>
+              </div>
+              
+              <!-- Contracts List -->
+              <div class="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 rounded-xl p-6">
+                <h3 class="text-xl font-bold text-white mb-4">Lista de Contratos</h3>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left">
+                    <thead>
+                      <tr class="border-b border-gray-700">
+                        <th class="pb-3 text-gray-300 font-medium">Inquilino</th>
+                        <th class="pb-3 text-gray-300 font-medium">Loja</th>
+                        <th class="pb-3 text-gray-300 font-medium">Valor</th>
+                        <th class="pb-3 text-gray-300 font-medium">Vencimento</th>
+                        <th class="pb-3 text-gray-300 font-medium">Status</th>
+                        <th class="pb-3 text-gray-300 font-medium">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody class="space-y-2">
+                      <tr *ngFor="let contract of getFilteredContracts()" class="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
+                        <td class="py-4 text-white">{{contract.inquilino?.nome}}</td>
+                        <td class="py-4 text-gray-300">{{contract.loja?.nome}} - {{contract.loja?.numero}}</td>
+                        <td class="py-4 text-green-400 font-semibold">{{formatCurrency(contract.valorAluguel)}}</td>
+                        <td class="py-4" [class.text-red-400]="contract.status === ContractStatus.VENCIDO" [class.text-gray-300]="contract.status === ContractStatus.ATIVO">{{formatDate(contract.dataFim)}}</td>
+                        <td class="py-4">
+                          <span [class]="getStatusClass(contract.status)">{{getStatusText(contract.status)}}</span>
+                        </td>
+                        <td class="py-4">
+                          <div class="flex space-x-2">
+                            <button (click)="viewContract(contract)" class="text-blue-400 hover:text-blue-300 text-sm">Ver</button>
+                            <button (click)="editContract(contract)" class="text-yellow-400 hover:text-yellow-300 text-sm">Editar</button>
+                            <button *ngIf="contract.status === ContractStatus.ATIVO" (click)="renewContract(contract)" class="text-green-400 hover:text-green-300 text-sm">Renovar</button>
+                            <button *ngIf="contract.status === ContractStatus.VENCIDO" (click)="rescindContract(contract)" class="text-red-400 hover:text-red-300 text-sm">Rescindir</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-6">
+                  <p class="text-gray-400 text-sm">Mostrando 1-5 de 171 contratos</p>
+                  <div class="flex space-x-2">
+                    <button class="px-3 py-1 bg-gray-700 text-gray-300 rounded hover:bg-gray-600 transition-colors">Anterior</button>
+                    <button class="px-3 py-1 bg-yellow-500 text-black rounded font-medium">1</button>
+                    <button class="px-3 py-1 bg-gray-700 text-gray-300 rounded hover:bg-gray-600 transition-colors">2</button>
+                    <button class="px-3 py-1 bg-gray-700 text-gray-300 rounded hover:bg-gray-600 transition-colors">3</button>
+                    <button class="px-3 py-1 bg-gray-700 text-gray-300 rounded hover:bg-gray-600 transition-colors">Próximo</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <!-- Settings Section -->
           <div *ngIf="currentSection === 'settings'" [@slideIn]>
             <app-settings></app-settings>
           </div>
         </main>
+      </div>
+      
+      <!-- Create Contract Modal -->
+      <div *ngIf="showCreateContractModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 rounded-xl p-6 w-full max-w-md mx-4">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-white">Novo Contrato</h3>
+            <button (click)="closeCreateContractModal()" class="text-gray-400 hover:text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          
+          <form (ngSubmit)="createContract()" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Nome do Inquilino</label>
+              <select [(ngModel)]="newContract.inquilinoId" name="inquilinoId" required
+                      class="w-full px-3 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <option value="">Selecione um inquilino</option>
+                <option *ngFor="let tenant of tenants" [value]="tenant.id">{{tenant.nome}}</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Loja</label>
+              <select [(ngModel)]="newContract.lojaId" name="lojaId" required
+                      class="w-full px-3 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <option value="">Selecione uma loja</option>
+                <option *ngFor="let store of stores" [value]="store.id">{{store.nome}} - {{store.numero}}</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Valor Mensal (R$)</label>
+              <input type="number" [(ngModel)]="newContract.valorAluguel" name="valorAluguel" required min="0" step="0.01"
+                     class="w-full px-3 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Data de Início</label>
+              <input type="date" [(ngModel)]="newContract.dataInicio" name="dataInicio" required
+                     class="w-full px-3 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Data de Fim</label>
+              <input type="date" [(ngModel)]="newContract.dataFim" name="dataFim" required
+                     class="w-full px-3 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Cláusulas</label>
+              <input type="text" [(ngModel)]="newContract.clausulas" name="clausulas" placeholder="Cláusulas do contrato"
+                     class="w-full px-3 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-2">Observações</label>
+              <input type="tel" [(ngModel)]="newContract.observacoes" name="observacoes"
+                     class="w-full px-3 py-2 bg-gray-800/70 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+            </div>
+            
+            <div class="flex space-x-3 pt-4">
+              <button type="button" (click)="closeCreateContractModal()" 
+                      class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors">
+                Cancelar
+              </button>
+              <button type="submit" 
+                      class="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors">
+                Criar Contrato
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Contract Details Modal -->
+      <div *ngIf="showContractDetails && selectedContract" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-white">Detalhes do Contrato</h3>
+            <button (click)="closeContractDetails()" class="text-gray-400 hover:text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Inquilino</label>
+                <p class="text-white font-semibold">{{selectedContract.inquilino?.nome}}</p>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Loja</label>
+                <p class="text-white font-semibold">{{selectedContract.loja?.nome}} - {{selectedContract.loja?.numero}}</p>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Valor Mensal</label>
+                <p class="text-green-400 font-bold text-lg">{{formatCurrency(selectedContract.valorAluguel)}}</p>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Status</label>
+                <span [class]="getStatusClass(selectedContract.status)">{{getStatusText(selectedContract.status)}}</span>
+              </div>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Data de Início</label>
+                <p class="text-white">{{formatDate(selectedContract.dataInicio)}}</p>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Data de Vencimento</label>
+                <p class="text-white">{{formatDate(selectedContract.dataFim)}}</p>
+              </div>
+              
+              <div *ngIf="selectedContract.inquilino?.email">
+                <label class="block text-sm font-medium text-gray-400 mb-1">Email</label>
+                <p class="text-white">{{selectedContract.inquilino?.email}}</p>
+              </div>
+              
+              <div *ngIf="selectedContract.inquilino?.telefone">
+                <label class="block text-sm font-medium text-gray-400 mb-1">Telefone</label>
+                <p class="text-white">{{selectedContract.inquilino?.telefone}}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex space-x-3 pt-6 mt-6 border-t border-gray-700">
+            <button (click)="editContract(selectedContract)" 
+                    class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black rounded-lg font-medium transition-colors">
+              Editar Contrato
+            </button>
+            <button *ngIf="selectedContract.status === ContractStatus.ATIVO" 
+                    (click)="renewContract(selectedContract)" 
+                    class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors">
+              Renovar Contrato
+            </button>
+            <button *ngIf="selectedContract.status === ContractStatus.VENCIDO" 
+                    (click)="rescindContract(selectedContract)" 
+                    class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors">
+              Rescindir Contrato
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   `,
@@ -367,6 +648,75 @@ export class DashboardComponent implements OnInit {
   currentSection = 'dashboard';
   showNotifications = false;
   showNotificationDialog = false;
+  
+  // Expose ContractStatus enum to template
+  ContractStatus = ContractStatus;
+  
+  // Contract Management State
+  showCreateContractModal = false;
+  showContractDetails = false;
+  selectedContract: Contract | null = null;
+  contractSearchTerm = '';
+  contractStatusFilter = 'all';
+  contractStoreFilter = 'all';
+  
+  contracts: Contract[] = [];
+  contractStats: ContractStats | null = null;
+  stores: StoreOption[] = [];
+  tenants: TenantOption[] = [];
+  loading = false;
+
+  // Dashboard statistics
+  dashboardStats = {
+    totalRevenue: 0,
+    totalProperties: 0,
+    occupancyRate: 0,
+    totalTenants: 0,
+    defaultRate: 0,
+    maintenanceRequests: 0,
+    pendingMaintenance: 0
+  };
+
+  recentActivities = [
+    {
+      type: 'payment',
+      title: 'Pagamento recebido',
+      description: 'Aguardando dados do backend',
+      time: 'Carregando...',
+      icon: 'check',
+      color: 'green'
+    },
+    {
+      type: 'tenant',
+      title: 'Novo inquilino cadastrado',
+      description: 'Aguardando dados do backend',
+      time: 'Carregando...',
+      icon: 'user',
+      color: 'blue'
+    },
+    {
+      type: 'maintenance',
+      title: 'Manutenção solicitada',
+      description: 'Aguardando dados do backend',
+      time: 'Carregando...',
+      icon: 'warning',
+      color: 'orange'
+    }
+  ];
+  
+  newContract: CreateContractRequest = {
+    lojaId: '',
+    inquilinoId: '',
+    valorAluguel: 0,
+    dataInicio: '',
+    dataFim: '',
+    reajusteAnual: false,
+    percentualReajuste: 0,
+    clausulas: '',
+    observacoes: ''
+  };
+
+  constructor(private router: Router, private contractService: ContractService) {}
   
   notifications = [
     {
@@ -425,10 +775,88 @@ export class DashboardComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router) {}
-
   ngOnInit(): void {
     this.simulateNewNotifications();
+    
+    // Load real contract data from backend
+    this.loadContractData();
+  }
+
+  private loadContractData(): void {
+    this.loading = true;
+    
+    // Load contracts
+    this.contractService.getCompanyContracts().subscribe({
+      next: (response: any) => {
+        this.contracts = response.contratos;
+        this.loading = false;
+        this.calculateDashboardStats();
+      },
+      error: (error: any) => {
+        console.error('Erro ao carregar contratos:', error);
+        this.loading = false;
+      }
+    });
+    
+    // Load contract statistics
+    this.contractService.getContractStats().subscribe({
+      next: (stats: ContractStats) => {
+        this.contractStats = stats;
+      },
+      error: (error: any) => {
+        console.error('Erro ao carregar estatísticas de contratos:', error);
+      }
+    });
+    
+    // Load stores for dropdown
+    this.contractService.getStores().subscribe({
+      next: (stores: StoreOption[]) => {
+        this.stores = stores;
+        this.calculateDashboardStats();
+      },
+      error: (error: any) => {
+        console.error('Erro ao carregar lojas:', error);
+      }
+    });
+    
+    // Load tenants for dropdown
+    this.contractService.getTenants().subscribe({
+      next: (tenants: TenantOption[]) => {
+        this.tenants = tenants;
+        this.calculateDashboardStats();
+      },
+      error: (error: any) => {
+        console.error('Erro ao carregar inquilinos:', error);
+      }
+    });
+  }
+
+  private calculateDashboardStats(): void {
+    if (this.contracts.length > 0) {
+      // Calculate total revenue from active contracts
+      this.dashboardStats.totalRevenue = this.contracts
+        .filter(contract => contract.status === ContractStatus.ATIVO)
+        .reduce((total, contract) => total + contract.valorAluguel, 0);
+
+      // Calculate occupancy rate (active contracts / total stores)
+      if (this.stores.length > 0) {
+        const activeContracts = this.contracts.filter(contract => contract.status === ContractStatus.ATIVO).length;
+        this.dashboardStats.occupancyRate = Math.round((activeContracts / this.stores.length) * 100);
+      }
+
+      // Calculate default rate (overdue contracts / total contracts)
+      const overdueContracts = this.contracts.filter(contract => contract.status === ContractStatus.VENCIDO).length;
+      this.dashboardStats.defaultRate = this.contracts.length > 0 ? 
+        Math.round((overdueContracts / this.contracts.length) * 100) : 0;
+    }
+
+    // Set total properties and tenants
+    this.dashboardStats.totalProperties = this.stores.length;
+    this.dashboardStats.totalTenants = this.tenants.length;
+
+    // Keep maintenance data as mock for now
+    this.dashboardStats.maintenanceRequests = 23;
+    this.dashboardStats.pendingMaintenance = 8;
   }
 
   toggleSidebar() {
@@ -444,6 +872,8 @@ export class DashboardComponent implements OnInit {
       case 'dashboard': return 'Dashboard';
       case 'users': return 'Usuários';
       case 'stores': return 'Lojas';
+      case 'contracts': return 'Contratos';
+      case 'contract-management': return 'Gestão de Contratos';
       case 'settings': return 'Configurações';
       default: return 'Dashboard';
     }
@@ -531,5 +961,146 @@ export class DashboardComponent implements OnInit {
         }
       }
     }, 30000);
+  }
+  
+  // Contract Management Methods
+  openCreateContractModal() {
+    this.showCreateContractModal = true;
+    this.newContract = {
+      lojaId: '',
+      inquilinoId: '',
+      valorAluguel: 0,
+      dataInicio: '',
+      dataFim: '',
+      reajusteAnual: false,
+      percentualReajuste: 0,
+      clausulas: '',
+      observacoes: ''
+    };
+  }
+  
+  closeCreateContractModal() {
+    this.showCreateContractModal = false;
+  }
+  
+  createContract() {
+    if (this.newContract.lojaId && this.newContract.inquilinoId && this.newContract.valorAluguel > 0) {
+      this.loading = true;
+      
+      this.contractService.createContract(this.newContract).subscribe({
+        next: (response) => {
+          console.log('Contrato criado com sucesso:', response);
+          this.closeCreateContractModal();
+          this.loadContractData(); // Recarrega os dados
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Erro ao criar contrato:', error);
+          this.loading = false;
+        }
+      });
+    }
+  }
+  
+  viewContract(contract: any) {
+    this.selectedContract = contract;
+    this.showContractDetails = true;
+  }
+  
+  closeContractDetails() {
+    this.showContractDetails = false;
+    this.selectedContract = null;
+  }
+  
+  editContract(contract: Contract) {
+    // Para edição, você pode implementar um modal de edição ou navegar para uma página específica
+    console.log('Edit contract:', contract);
+    // Exemplo: abrir modal de edição ou navegar para página de edição
+    // this.router.navigate(['/contracts/edit', contract.id]);
+  }
+  
+  renewContract(contract: Contract) {
+    if (confirm('Deseja renovar este contrato?')) {
+      this.loading = true;
+      
+      const renewData = {
+        novaDataFim: '', // Será definida pelo backend
+        observacoes: 'Renovação automática'
+      };
+      
+      this.contractService.renewContract(contract.id, renewData).subscribe({
+        next: (response) => {
+          console.log('Contrato renovado com sucesso:', response);
+          this.loadContractData(); // Recarrega os dados
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Erro ao renovar contrato:', error);
+          this.loading = false;
+        }
+      });
+    }
+  }
+  
+  rescindContract(contract: Contract) {
+    if (confirm('Deseja rescindir este contrato? Esta ação não pode ser desfeita.')) {
+      this.loading = true;
+      
+      this.contractService.deleteContract(contract.id).subscribe({
+        next: (response) => {
+          console.log('Contrato rescindido com sucesso:', response);
+          this.closeContractDetails();
+          this.loadContractData(); // Recarrega os dados
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Erro ao rescindir contrato:', error);
+          this.loading = false;
+        }
+      });
+    }
+  }
+  
+  getFilteredContracts() {
+    return this.contracts.filter(contract => {
+      const matchesSearch = (contract.inquilino?.nome || '').toLowerCase().includes(this.contractSearchTerm.toLowerCase()) ||
+                           (contract.loja?.nome || '').toLowerCase().includes(this.contractSearchTerm.toLowerCase()) ||
+                           (contract.loja?.numero || '').toLowerCase().includes(this.contractSearchTerm.toLowerCase());
+      const matchesStatus = this.contractStatusFilter === 'all' || contract.status === this.contractStatusFilter;
+      const matchesStore = this.contractStoreFilter === 'all' || contract.loja?.id === this.contractStoreFilter;
+      
+      return matchesSearch && matchesStatus && matchesStore;
+    });
+  }
+  
+  getStatusClass(status: ContractStatus): string {
+    switch (status) {
+      case ContractStatus.ATIVO: return 'px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium';
+      case ContractStatus.VENCIDO: return 'px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-medium';
+      case ContractStatus.RESCINDIDO: return 'px-2 py-1 bg-gray-500/20 text-gray-400 rounded-full text-xs font-medium';
+      case ContractStatus.SUSPENSO: return 'px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium';
+      default: return 'px-2 py-1 bg-gray-500/20 text-gray-400 rounded-full text-xs font-medium';
+    }
+  }
+  
+  getStatusText(status: ContractStatus): string {
+    switch (status) {
+      case ContractStatus.ATIVO: return 'Ativo';
+      case ContractStatus.VENCIDO: return 'Vencido';
+      case ContractStatus.RESCINDIDO: return 'Rescindido';
+      case ContractStatus.SUSPENSO: return 'Suspenso';
+      default: return 'Desconhecido';
+    }
+  }
+  
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  }
+  
+  formatDate(dateString: string): string {
+    return new Date(dateString).toLocaleDateString('pt-BR');
   }
 }
