@@ -15,17 +15,21 @@ import {
   StoreOption,
   TenantOption
 } from './contract.interfaces';
+import { AuthService } from '../../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContractService {
-  private apiUrl = 'http://localhost:3000/api/contrato';
+  private apiUrl = 'http://localhost:3010/api/contrato';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = this.authService.token;
+    if (!token) {
+      throw new Error('Token de autenticação não encontrado');
+    }
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -109,7 +113,7 @@ export class ContractService {
   // Métodos auxiliares para obter dados para selects
   getStores(): Observable<StoreOption[]> {
     const headers = this.getAuthHeaders();
-    return this.http.get<StoreOption[]>('http://localhost:3000/api/loja/empresa', { headers });
+    return this.http.get<StoreOption[]>('http://localhost:3010/api/loja/empresa', { headers });
   }
 
   getTenants(): Observable<TenantOption[]> {

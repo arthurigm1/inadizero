@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ContractService } from '../contract.service';
 import { Contract, UpdateContractRequest, ContractStatus, StoreOption, TenantOption } from '../contract.interfaces';
+import { PdfGeneratorService, ContractData } from '../../../services/pdf-generator.service';
+import { StoreService, Tenant } from '../../stores/store.service';
 
 @Component({
   selector: 'app-contract-edit',
@@ -65,6 +66,27 @@ import { Contract, UpdateContractRequest, ContractStatus, StoreOption, TenantOpt
                      class="text-red-500 text-sm mt-1">
                   <span *ngIf="contractForm.get('dataFim')?.errors?.['required']">Data de fim é obrigatória</span>
                   <span *ngIf="contractForm.get('dataFim')?.errors?.['pastDate']">Data de fim não pode ser no passado</span>
+                </div>
+              </div>
+
+              <!-- Dia de Vencimento -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Dia de Vencimento *
+                </label>
+                <input 
+                  type="number" 
+                  min="1"
+                  max="31"
+                  formControlName="dataVencimento"
+                  placeholder="Ex: 10"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  [class.border-red-500]="contractForm.get('dataVencimento')?.invalid && contractForm.get('dataVencimento')?.touched">
+                <div *ngIf="contractForm.get('dataVencimento')?.invalid && contractForm.get('dataVencimento')?.touched" 
+                     class="text-red-500 text-sm mt-1">
+                  <span *ngIf="contractForm.get('dataVencimento')?.errors?.['required']">Dia de vencimento é obrigatório</span>
+                  <span *ngIf="contractForm.get('dataVencimento')?.errors?.['min']">Dia deve ser entre 1 e 31</span>
+                  <span *ngIf="contractForm.get('dataVencimento')?.errors?.['max']">Dia deve ser entre 1 e 31</span>
                 </div>
               </div>
             </div>
@@ -176,21 +198,35 @@ import { Contract, UpdateContractRequest, ContractStatus, StoreOption, TenantOpt
             </div>
           </div>
 
-          <!-- Informações Não Editáveis -->
-          <div class="bg-gray-50 p-6 rounded-lg border">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Informações do Contrato (Não Editáveis)</h3>
+          <!-- Informações do Contrato -->
+          <div class="bg-white p-6 rounded-lg shadow-sm border">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Informações do Contrato</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <h4 class="text-sm font-medium text-gray-500 mb-1">Loja</h4>
+                <h4 class="text-sm font-medium text-gray-500 mb-1">Loja (Não Editável)</h4>
                 <p class="text-sm text-gray-900">{{ contract?.loja?.nome || 'N/A' }} - Nº {{ contract?.loja?.numero || 'N/A' }}</p>
               </div>
               <div>
-                <h4 class="text-sm font-medium text-gray-500 mb-1">Inquilino</h4>
-                <p class="text-sm text-gray-900">{{ contract?.inquilino?.nome || 'N/A' }}</p>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Inquilino *
+                </label>
+                <select 
+                  formControlName="inquilinoId"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  [class.border-red-500]="contractForm.get('inquilinoId')?.invalid && contractForm.get('inquilinoId')?.touched">
+                  <option value="">Selecione um inquilino</option>
+                  <option *ngFor="let tenant of tenants" [value]="tenant.id">
+                    {{ tenant.nome }} - {{ tenant.email }}
+                  </option>
+                </select>
+                <div *ngIf="contractForm.get('inquilinoId')?.invalid && contractForm.get('inquilinoId')?.touched" 
+                     class="text-red-500 text-sm mt-1">
+                  <span *ngIf="contractForm.get('inquilinoId')?.errors?.['required']">Inquilino é obrigatório</span>
+                </div>
               </div>
               <div>
-                <h4 class="text-sm font-medium text-gray-500 mb-1">Data de Início</h4>
+                <h4 class="text-sm font-medium text-gray-500 mb-1">Data de Início (Não Editável)</h4>
                 <p class="text-sm text-gray-900">{{ formatDate(contract?.dataInicio) }}</p>
               </div>
             </div>
@@ -203,6 +239,20 @@ import { Contract, UpdateContractRequest, ContractStatus, StoreOption, TenantOpt
               (click)="goBack()"
               class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium transition-colors">
               Cancelar
+            </button>
+            <button 
+              type="button"
+              (click)="generatePdf()"
+              [disabled]="!contract || generatingPdf"
+              class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+              <span *ngIf="generatingPdf" class="inline-flex items-center">
+                <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Gerando PDF...
+              </span>
+              <span *ngIf="!generatingPdf">📄 Gerar PDF</span>
             </button>
             <button 
               type="submit"
@@ -234,43 +284,36 @@ import { Contract, UpdateContractRequest, ContractStatus, StoreOption, TenantOpt
   `
 })
 export class ContractEditComponent implements OnInit {
+  @Input() contractToEdit: Contract | null = null;
+  @Output() onCancel = new EventEmitter<void>();
+  @Output() onSave = new EventEmitter<Contract>();
+  
   contractForm: FormGroup | null = null;
   contract: Contract | null = null;
   loading = false;
   saving = false;
-  contractId: string | null = null;
+  generatingPdf = false;
+  tenants: Tenant[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private pdfGeneratorService: PdfGeneratorService,
+    private storeService: StoreService
   ) {}
 
   ngOnInit() {
-    this.contractId = this.route.snapshot.paramMap.get('id');
-    if (this.contractId) {
-      this.loadContract();
+    console.log('🚀 Iniciando ContractEditComponent...');
+    if (this.contractToEdit) {
+      console.log('📋 Contrato recebido:', this.contractToEdit);
+      this.contract = this.contractToEdit;
+      this.createForm();
+      this.setupFormValidation();
+      this.loadTenants();
     }
   }
 
-  loadContract() {
-    if (!this.contractId) return;
-    
-    this.loading = true;
-    this.contractService.getContractById(this.contractId).subscribe({
-      next: (contract) => {
-        this.contract = contract;
-        this.createForm();
-        this.setupFormValidation();
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar contrato:', error);
-        this.loading = false;
-      }
-    });
-  }
+
 
   createForm() {
     if (!this.contract) return;
@@ -278,12 +321,14 @@ export class ContractEditComponent implements OnInit {
     this.contractForm = this.fb.group({
       valorAluguel: [this.contract.valorAluguel, [Validators.required, Validators.min(0.01)]],
       dataFim: [this.formatDateForInput(this.contract.dataFim), [Validators.required]],
+      dataVencimento: [this.contract.dataVencimento || 1, [Validators.required, Validators.min(1), Validators.max(31)]],
       reajusteAnual: [this.contract.reajusteAnual],
       percentualReajuste: [this.contract.percentualReajuste || ''],
       clausulas: [this.contract.clausulas || ''],
       observacoes: [this.contract.observacoes || ''],
       status: [this.contract.status],
-      ativo: [this.contract.ativo]
+      ativo: [this.contract.ativo],
+      inquilinoId: [this.contract.inquilino?.id || '', [Validators.required]]
     });
   }
 
@@ -346,7 +391,7 @@ export class ContractEditComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.contractForm || !this.contractId || this.contractForm.invalid) {
+    if (!this.contractForm || !this.contract || this.contractForm.invalid) {
       // Marcar todos os campos como touched para mostrar erros
       if (this.contractForm) {
         Object.keys(this.contractForm.controls).forEach(key => {
@@ -370,10 +415,11 @@ export class ContractEditComponent implements OnInit {
       ativo: formValue.ativo
     };
 
-    this.contractService.updateContract(this.contractId, updateData).subscribe({
+    this.contractService.updateContract(this.contract.id, updateData).subscribe({
       next: (contract) => {
         console.log('Contrato atualizado com sucesso:', contract);
-        this.router.navigate(['/contracts/details', contract.id]);
+        this.saving = false;
+        this.onSave.emit(contract);
       },
       error: (error) => {
         console.error('Erro ao atualizar contrato:', error);
@@ -383,11 +429,63 @@ export class ContractEditComponent implements OnInit {
     });
   }
 
+  generatePdf() {
+    if (!this.contract) return;
+
+    this.generatingPdf = true;
+
+    const contractData: ContractData = {
+      id: this.contract.id,
+      loja: this.contract.loja,
+      inquilino: this.contract.inquilino,
+      valorAluguel: this.contract.valorAluguel,
+      dataInicio: this.contract.dataInicio,
+      dataFim: this.contract.dataFim,
+      reajusteAnual: this.contract.reajusteAnual,
+      percentualReajuste: this.contract.percentualReajuste,
+      clausulas: this.contract.clausulas,
+      observacoes: this.contract.observacoes,
+      status: this.contract.status,
+      ativo: this.contract.ativo
+    };
+
+    this.pdfGeneratorService.generateContractPdf(contractData).subscribe({
+      next: (blob: Blob) => {
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `contrato-${this.contract?.loja?.numero}-${this.contract?.inquilino?.nome?.replace(/\s+/g, '-')}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        this.generatingPdf = false;
+      },
+      error: (error: any) => {
+        console.error('Erro ao gerar PDF:', error);
+        this.generatingPdf = false;
+        // TODO: Show error message to user
+      }
+    });
+  }
+
+  loadTenants() {
+    console.log('🔍 Iniciando carregamento de inquilinos...');
+    this.storeService.getTenants().subscribe({
+      next: (tenants: Tenant[]) => {
+        console.log('✅ Inquilinos carregados:', tenants);
+        console.log('📊 Quantidade de inquilinos:', tenants.length);
+        this.tenants = tenants;
+      },
+      error: (error: any) => {
+        console.error('❌ Erro ao carregar inquilinos:', error);
+      }
+    });
+  }
+
   goBack() {
-    if (this.contractId) {
-      this.router.navigate(['/contracts/details', this.contractId]);
-    } else {
-      this.router.navigate(['/contracts/list']);
-    }
+    this.onCancel.emit();
   }
 }

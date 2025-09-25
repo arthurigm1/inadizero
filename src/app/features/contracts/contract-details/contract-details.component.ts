@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ContractService } from '../contract.service';
 import { Contract, ContractStatus } from '../contract.interfaces';
-import { ContractRescindModalComponent } from '../contract-rescind-modal/contract-rescind-modal.component';
-import { ContractRenewModalComponent } from '../contract-renew-modal/contract-renew-modal.component';
 
 @Component({
   selector: 'app-contract-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ContractRescindModalComponent, ContractRenewModalComponent],
+  imports: [CommonModule],
   template: `
     <div class="p-6">
       <div class="flex items-center justify-between mb-6">
@@ -24,7 +22,7 @@ import { ContractRenewModalComponent } from '../contract-renew-modal/contract-re
         
         <div class="flex space-x-3" *ngIf="contract">
           <button 
-            [routerLink]="['/contracts/edit', contract.id]"
+            
             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
             Editar
           </button>
@@ -226,22 +224,7 @@ import { ContractRenewModalComponent } from '../contract-renew-modal/contract-re
       </div>
     </div>
 
-    <!-- Modals -->
-    <app-contract-rescind-modal
-      [isOpen]="showRescindModal"
-      [contractId]="contractId"
-      [contractInfo]="contract"
-      (closeEvent)="closeRescindModal()"
-      (rescindSuccess)="onRescindSuccess()">
-    </app-contract-rescind-modal>
-
-    <app-contract-renew-modal
-      [isOpen]="showRenewModal"
-      [contractId]="contractId"
-      [contractInfo]="contract"
-      (closeEvent)="closeRenewModal()"
-      (renewSuccess)="onRenewSuccess()">
-    </app-contract-renew-modal>
+  
   `
 })
 export class ContractDetailsComponent implements OnInit {

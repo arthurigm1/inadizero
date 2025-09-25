@@ -26,19 +26,13 @@ export const routes: Routes = [
       import('./core/layout/main-layout.component').then(
         (m) => m.MainLayoutComponent
       ),
+    canActivate: [authGuard],
     children: [
       {
         path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then(
             (m) => m.DashboardComponent
-          ),
-      },
-      {
-        path: 'contracts',
-        loadChildren: () =>
-          import('./features/contracts/contracts.module').then(
-            (m) => m.ContractsModule
           ),
       },
     ],

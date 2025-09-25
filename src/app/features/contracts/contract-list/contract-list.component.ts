@@ -21,12 +21,10 @@ import {
         <h1 class="text-2xl font-bold text-gray-900">Lista de Contratos</h1>
         <div class="flex space-x-3">
           <button 
-            routerLink="/contracts/reports"
             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
             Relatórios
           </button>
           <button 
-            routerLink="/contracts/create"
             class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
             Novo Contrato
           </button>
@@ -337,12 +335,11 @@ export class ContractListComponent implements OnInit {
     this.loading = true;
     this.contractService.getCompanyContracts(this.filters).subscribe({
       next: (response) => {
-        this.contracts = response.contratos;
-        this.currentPage = response.paginacao.paginaAtual;
-        this.totalPages = response.paginacao.totalPaginas;
-        this.totalItems = response.paginacao.totalContratos;
-        this.hasNextPage = response.paginacao.temProximaPagina;
-        this.hasPreviousPage = response.paginacao.temPaginaAnterior;
+        this.contracts = response.contracts;
+        this.totalItems = response.total;
+        this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+        this.hasNextPage = this.currentPage < this.totalPages;
+        this.hasPreviousPage = this.currentPage > 1;
         this.loading = false;
       },
       error: (error) => {
