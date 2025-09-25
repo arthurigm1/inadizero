@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { IPortalInquilinoData } from './tenant.interfaces';
 
 export interface Tenant {
   id: string;
@@ -97,5 +98,25 @@ export class TenantService {
 
   getCurrentTenant(): Tenant | null {
     return this.currentTenantSubject.value;
+  }
+
+  getPortalData(): Observable<IPortalInquilinoData> {
+    const token = localStorage.getItem('tenantToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<{success: boolean, message: string, data: IPortalInquilinoData}>('http://localhost:3010/api/portal-inquilino/dados', { headers })
+      .pipe(
+        map(response => response.data),
+        catchError(error => {
+          console.error('Erro ao buscar dados do portal:', error);
+          if (error.status === 401) {
+            this.logout();
+          }
+          return throwError(() => error);
+        })
+      );
   }
 }

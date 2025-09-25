@@ -8,6 +8,7 @@ export interface Contract {
   reajusteAnual: boolean;
   percentualReajuste?: number;
   clausulas?: string;
+  dataVencimento?: number;
   observacoes?: string;
   status: ContractStatus;
   ativo: boolean;
@@ -41,7 +42,8 @@ export interface CreateContractRequest {
   valorAluguel: number;
   dataInicio: string;
   dataFim: string;
-  reajusteAnual: boolean;
+  dataVencimento: number;
+  reajusteAnual?: boolean;
   percentualReajuste?: number;
   clausulas?: string;
   observacoes?: string;
@@ -90,14 +92,8 @@ export interface ContractFilters {
 }
 
 export interface ContractListResponse {
-  contratos: Contract[];
-  paginacao: {
-    paginaAtual: number;
-    totalPaginas: number;
-    totalContratos: number;
-    temProximaPagina: boolean;
-    temPaginaAnterior: boolean;
-  };
+  contracts: Contract[];
+  total: number;
 }
 
 export interface ExpiringContractsRequest {
@@ -105,11 +101,10 @@ export interface ExpiringContractsRequest {
 }
 
 export interface ContractStats {
-  totalAtivos: number;
-  totalVencidos: number;
-  totalRescindidos: number;
-  totalSuspensos: number;
-  vencendoEm30Dias: number;
+  activeContracts: number;
+  pendingContracts: number;
+  expiringSoon: number;
+  totalRevenue: number;
 }
 
 // Interfaces para selects
