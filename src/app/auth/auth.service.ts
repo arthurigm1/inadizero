@@ -51,8 +51,8 @@ interface EmpresasResponse {
 export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
-  private apiUrl = 'https://backend-production-780b.up.railway.app/api/usuario'; // Ajuste para sua URL
-  private empresaApiUrl = 'https://backend-production-780b.up.railway.app/api/empresa'; // URL para empresas
+  private apiUrl = 'https://backend-production-d59b.up.railway.app/api/usuario'; // Ajuste para sua URL
+  private empresaApiUrl = 'https://backend-production-d59b.up.railway.app/api/empresa'; // URL para empresas
 
   constructor(private http: HttpClient, private router: Router) {
     this.currentUserSubject = new BehaviorSubject<User | null>(
