@@ -11,17 +11,17 @@ import AOS from 'aos';
       class="min-h-screen bg-gray-900 text-white font-sans overflow-x-hidden"
     >
       <!-- Seção unificada Nav + Hero -->
-      <section class="relative bg-black overflow-hidden h-[90vh]">
+      <section class="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 overflow-hidden h-[90vh]">
         <!-- Efeito de gradiente de fundo -->
         <div
-          class="absolute inset-0 bg-gradient-to-br from-yellow-500/20 via-transparent to-black"
+          class="absolute inset-0 bg-gradient-to-br from-blue-500/30 via-transparent to-blue-900/40"
         ></div>
 
         <!-- Partículas animadas de fundo -->
         <div class="absolute inset-0 overflow-hidden">
           <div
             *ngFor="let particle of particles"
-            class="absolute rounded-full bg-yellow-400/20"
+            class="absolute rounded-full bg-blue-200/20"
             [style.left]="particle.x + '%'"
             [style.top]="particle.y + '%'"
             [style.width]="particle.size + 'px'"
@@ -38,12 +38,12 @@ import AOS from 'aos';
 
         <!-- Barra de Navegação -->
         <nav class="relative z-30">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
               <!-- Logo -->
               <div class="flex items-center gap-2">
-                <span class="text-yellow-400 font-bold text-2xl tracking-tight">
-                  Inadi<span class="text-white">Zero</span>
+                <span class="text-white font-bold text-2xl tracking-tight">
+                  Inadi<span class="text-blue-200">Zero</span>
                 </span>
               </div>
 
@@ -51,7 +51,7 @@ import AOS from 'aos';
               <div class="md:hidden flex items-center">
                 <button
                   (click)="toggleMenu()"
-                  class="text-gray-300 hover:text-yellow-400 focus:outline-none"
+                  class="text-white hover:text-blue-200 focus:outline-none transition-colors duration-200"
                 >
                   <svg
                     class="h-6 w-6"
@@ -74,31 +74,31 @@ import AOS from 'aos';
                 <div class="flex items-center space-x-8">
                   <a
                     (click)="scrollTo('features')"
-                    class="text-gray-300 hover:text-yellow-400 transition font-medium hover:scale-105 cursor-pointer"
+                    class="text-white hover:text-blue-200 transition font-medium hover:scale-105 cursor-pointer"
                   >
                     Recursos
                   </a>
                   <a
                     (click)="scrollTo('solutions')"
-                    class="text-gray-300 hover:text-yellow-400 transition font-medium hover:scale-105 cursor-pointer"
+                    class="text-white hover:text-blue-200 transition font-medium hover:scale-105 cursor-pointer"
                   >
                     Soluções
                   </a>
                   <a
                     (click)="scrollTo('pricing')"
-                    class="text-gray-300 hover:text-yellow-400 transition font-medium hover:scale-105 cursor-pointer"
+                    class="text-white hover:text-blue-200 transition font-medium hover:scale-105 cursor-pointer"
                   >
                     Planos
                   </a>
                   <a
                     (click)="scrollTo('testimonials')"
-                    class="text-gray-300 hover:text-yellow-400 transition font-medium hover:scale-105 cursor-pointer"
+                    class="text-white hover:text-blue-200 transition font-medium hover:scale-105 cursor-pointer"
                   >
                     Clientes
                   </a>
                   <a
                     (click)="scrollTo('contact')"
-                    class="text-gray-300 hover:text-yellow-400 transition font-medium hover:scale-105 cursor-pointer"
+                    class="text-white hover:text-blue-200 transition font-medium hover:scale-105 cursor-pointer"
                   >
                     Contato
                   </a>
@@ -109,25 +109,25 @@ import AOS from 'aos';
               <div class="hidden md:flex items-center gap-4">
                 <a
                   routerLink="/login"
-                  class="text-yellow-400 font-medium hover:text-yellow-300 transition-all duration-300 relative group"
+                  class="text-white font-medium hover:text-blue-200 transition-all duration-300 relative group"
                 >
                   Entrar
                   <span
-                    class="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"
+                    class="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"
                   ></span>
                 </a>
                 <a
                   routerLink="/tenant/login"
-                  class="text-yellow-400 font-medium hover:text-yellow-400 transition-all duration-300 relative group"
+                  class="text-white font-medium hover:text-blue-200 transition-all duration-300 relative group"
                 >
                   Portal do Inquilino
                   <span
-                    class="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 transition-all duration-300 group-hover:w-full"
+                    class="absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full"
                   ></span>
                 </a>
                 <a
-                  routerLink="/register"
-                  class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold py-3 px-8 rounded-lg hover:from-yellow-400 hover:to-yellow-500 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-yellow-500/25"
+                  routerLink="/registro"
+                  class="bg-gradient-to-r from-white to-blue-50 text-blue-700 font-bold py-3 px-8 rounded-lg hover:from-blue-50 hover:to-white transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
                 >
                   Começar
                 </a>
@@ -138,45 +138,45 @@ import AOS from 'aos';
           <!-- Menu Mobile -->
           <div
             *ngIf="isMenuOpen"
-            class="md:hidden bg-gray-900 px-4 pb-4 border-t border-gray-800"
+            class="md:hidden bg-blue-900/95 backdrop-blur-sm px-4 pb-4 border-t border-blue-700/50"
           >
             <div class="flex flex-col space-y-4 py-4">
               <a
                 (click)="scrollTo('features'); toggleMenu()"
-                class="text-gray-300 hover:text-yellow-400 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
               >
                 Recursos
               </a>
               <a
                 (click)="scrollTo('solutions'); toggleMenu()"
-                class="text-gray-300 hover:text-yellow-400 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
               >
                 Soluções
               </a>
               <a
                 (click)="scrollTo('pricing'); toggleMenu()"
-                class="text-gray-300 hover:text-yellow-400 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
               >
                 Planos
               </a>
               <a
                 (click)="scrollTo('testimonials'); toggleMenu()"
-                class="text-gray-300 hover:text-yellow-400 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
               >
                 Clientes
               </a>
               <a
                 (click)="scrollTo('contact'); toggleMenu()"
-                class="text-gray-300 hover:text-yellow-400 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
               >
                 Contato
               </a>
               <div
-                class="pt-4 border-t border-gray-800 flex flex-col space-y-3"
+                class="pt-4 border-t border-blue-700/50 flex flex-col space-y-3"
               >
                 <a
                   routerLink="/login"
-                  class="bg-yellow-500 text-black font-medium py-2 px-6 rounded-md hover:bg-yellow-400 transition text-center shadow-lg transform hover:shadow-yellow-500/30"
+                  class="bg-white text-blue-700 font-medium py-2 px-6 rounded-md hover:bg-blue-50 transition text-center shadow-lg transform hover:shadow-blue-500/30"
                 >
                   Portal do Inquilino
                 </a>
@@ -187,7 +187,7 @@ import AOS from 'aos';
 
         <!-- Conteúdo Principal Hero -->
         <div
-          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10"
+          class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-4 py-8 md:py-16 relative z-5"
         >
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <!-- Texto e CTA -->
@@ -195,10 +195,10 @@ import AOS from 'aos';
               <h1
                 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-8 leading-tight"
               >
-                <span class="text-yellow-400">Sistema de gestão</span> para seu
+                <span class="text-white">Sistema de gestão</span> para seu
                 negócio
                 <span
-                  class="block mt-2 text-3xl sm:text-4xl md:text-5xl text-yellow-400"
+                  class="block mt-2 text-3xl sm:text-4xl md:text-5xl text-blue-200"
                 >
                   grátis por 30 dias
                 </span>
@@ -209,7 +209,7 @@ import AOS from 'aos';
                   class="flex items-center text-lg md:text-xl text-white gap-2"
                 >
                   <svg
-                    class="w-6 h-6 text-yellow-400"
+                    class="w-6 h-6 text-blue-200"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -227,7 +227,7 @@ import AOS from 'aos';
                   class="flex items-center text-lg md:text-xl text-white gap-2"
                 >
                   <svg
-                    class="w-6 h-6 text-yellow-400"
+                    class="w-6 h-6 text-blue-200"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -245,7 +245,7 @@ import AOS from 'aos';
                   class="flex items-center text-lg md:text-xl text-white gap-2"
                 >
                   <svg
-                    class="w-6 h-6 text-yellow-400"
+                    class="w-6 h-6 text-blue-200"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -264,25 +264,25 @@ import AOS from 'aos';
               <div class="flex flex-col items-center lg:items-start gap-4">
                 <a
                   routerLink="/register"
-                  class="w-full sm:w-auto bg-yellow-500 text-black font-medium py-4 px-8 rounded-md hover:bg-yellow-400 transition text-center shadow-lg transform hover:scale-105 hover:shadow-yellow-500/30 text-lg"
+                  class="w-full sm:w-auto bg-white text-blue-700 font-medium py-4 px-8 rounded-md hover:bg-blue-50 transition text-center shadow-lg transform hover:scale-105 hover:shadow-blue-500/30 text-lg"
                 >
                   Criar conta 100% gratuita
                 </a>
-                <p class="text-sm text-gray-300">
+                <p class="text-sm text-blue-200">
                   *Não é necessário cartão de crédito
                 </p>
               </div>
             </div>
 
             <div class="relative group">
-              <!-- Container da imagem aumentada -->
-              <div
-                class="relative w-full max-w-2xl lg:max-w-none mx-auto lg:mx-0 lg:w-[110%] xl:w-[130%] transform lg:translate-x-8 xl:translate-x-16 transition duration-500 group-hover:scale-[1.02]"
-              >
+              <!-- Container da imagem centralizada e um pouco de lado -->
+            <div
+    class="relative w-full max-w-2xl lg:max-w-4xl mx-auto lg:mx-0 lg:w-[110%] xl:w-[120%] transform lg:translate-x-4 xl:translate-x-8 transition duration-500 group-hover:scale-[1.02]"
+  >
                 <img
-                  src="assets/landingpage/landingpage2.png"
+                  src="assets/landingpage/celular.png"
                   alt="Landing Page"
-                  class="w-full h-auto rounded-xl shadow-2xl "
+                  class="w-full h-auto rounded-xl "
                 />
               </div>
             </div>
@@ -294,7 +294,7 @@ import AOS from 'aos';
           class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20"
         >
           <svg
-            class="w-6 h-6 text-yellow-400"
+            class="w-6 h-6 text-blue-200"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -311,7 +311,7 @@ import AOS from 'aos';
 
       <!-- Stats Section -->
       <section
-        class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black py-12 md:py-16 animate-fade-in"
+        class="bg-gradient-to-r from-white to-blue-50 text-blue-700 py-12 md:py-16 animate-fade-in"
       >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
@@ -352,11 +352,11 @@ import AOS from 'aos';
             <div class="max-w-2xl mx-auto">
               <!-- Container adicional para melhor controle -->
               <h2
-                class="text-4xl font-bold text-yellow-400 mb-4 relative inline-block"
+                class="text-4xl font-bold text-blue-200 mb-4 relative inline-block"
               >
                 <span class="relative z-10">Recursos Exclusivos</span>
                 <span
-                  class="absolute -bottom-1 left-0 w-full h-1 bg-yellow-500 transform scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100"
+                  class="absolute -bottom-1 left-0 w-full h-1 bg-blue-400 transform scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100"
                 ></span>
               </h2>
               <p
@@ -375,12 +375,12 @@ import AOS from 'aos';
           >
             <!-- Feature 1 -->
             <div
-              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-blue-400 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10"
               data-aos="fade-up"
               data-aos-delay="150"
             >
               <div
-                class="icon-container w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400 transform transition-transform duration-500 group-hover:rotate-6"
+                class="icon-container w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-200 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -398,7 +398,7 @@ import AOS from 'aos';
                 </svg>
               </div>
               <h3
-                class="text-2xl font-semibold text-white mb-4 group-hover:text-yellow-400 transition-colors duration-300"
+                class="text-2xl font-semibold text-white mb-4 group-hover:text-blue-200 transition-colors duration-300"
               >
                 Gestão de Contratos
               </h3>
@@ -408,7 +408,7 @@ import AOS from 'aos';
               </p>
               <div class="mt-6">
                 <span
-                  class="inline-block px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-400 rounded-full"
+                  class="inline-block px-3 py-1 text-xs font-semibold bg-blue-500/20 text-blue-200 rounded-full"
                 >
                   Automatizado
                 </span>
@@ -417,12 +417,12 @@ import AOS from 'aos';
 
             <!-- Feature 2 -->
             <div
-              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/10"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-blue-400 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10"
               data-aos="fade-up"
               data-aos-delay="200"
             >
               <div
-                class="icon-container w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6 text-yellow-400 transform transition-transform duration-500 group-hover:rotate-6"
+                class="icon-container w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-200 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -440,7 +440,7 @@ import AOS from 'aos';
                 </svg>
               </div>
               <h3
-                class="text-2xl font-semibold text-white mb-4 group-hover:text-yellow-400 transition-colors duration-300"
+                class="text-2xl font-semibold text-white mb-4 group-hover:text-blue-200 transition-colors duration-300"
               >
                 Cobrança Automatizada
               </h3>
@@ -451,7 +451,7 @@ import AOS from 'aos';
               </p>
               <div class="mt-6">
                 <span
-                  class="inline-block px-3 py-1 text-xs font-semibold bg-yellow-500/20 text-yellow-400 rounded-full"
+                  class="inline-block px-3 py-1 text-xs font-semibold bg-blue-500/20 text-blue-200 rounded-full"
                 >
                   Integração bancária
                 </span>
@@ -630,15 +630,15 @@ import AOS from 'aos';
       </section>
       <!-- CTA Section -->
       <section
-        class="relative py-10 md:py-15 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black"
+        class="relative py-10 md:py-15 bg-gradient-to-r from-blue-500 to-blue-600 text-white"
       >
         <!-- Elementos decorativos de fundo -->
         <div class="absolute inset-0 overflow-hidden">
           <div
-            class="absolute top-1/4 -left-20 w-64 h-64 bg-yellow-400 rounded-full opacity-10 blur-3xl"
+            class="absolute top-1/4 -left-20 w-64 h-64 bg-blue-300 rounded-full opacity-10 blur-3xl"
           ></div>
           <div
-            class="absolute bottom-1/4 -right-20 w-72 h-72 bg-yellow-300 rounded-full opacity-10 blur-3xl"
+            class="absolute bottom-1/4 -right-20 w-72 h-72 bg-blue-200 rounded-full opacity-10 blur-3xl"
           ></div>
         </div>
 
@@ -678,14 +678,14 @@ import AOS from 'aos';
             >
               <a
                 routerLink="/register"
-                class="w-full sm:w-auto flex justify-center items-center bg-black text-yellow-400 font-semibold py-3 px-8 rounded-lg hover:bg-gray-900 transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95"
+                class="w-full sm:w-auto flex justify-center items-center bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95"
               >
                 Experimente Grátis
               </a>
 
               <a
                 href="#demo"
-                class="w-full sm:w-auto flex justify-center items-center bg-white text-gray-900 font-semibold py-3 px-8 rounded-lg hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95"
+                class="w-full sm:w-auto flex justify-center items-center bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg hover:bg-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl active:scale-95"
               >
                 Agendar Demonstração
               </a>
@@ -1054,7 +1054,7 @@ import AOS from 'aos';
               </ul>
               <a
                 href="#contact"
-                class="inline-block bg-yellow-500 text-black font-medium py-3 px-6 md:px-8 rounded-md hover:bg-yellow-400 transition shadow-lg transform hover:scale-105 hover:shadow-yellow-500/30"
+                class="inline-block bg-blue-500 text-white font-medium py-3 px-6 md:px-8 rounded-md hover:bg-blue-600 transition shadow-lg transform hover:scale-105 hover:shadow-blue-500/30"
               >
                 Agendar Demonstração
               </a>
@@ -1067,7 +1067,7 @@ import AOS from 'aos';
       <section id="pricing" class="py-16 md:py-24 bg-gray-900 animate-fade-in">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12 md:mb-16">
-            <h2 class="text-3xl font-bold text-yellow-400 mb-4">
+            <h2 class="text-3xl font-bold text-blue-200 mb-4">
               Planos Flexíveis
             </h2>
             <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
@@ -1693,7 +1693,7 @@ import AOS from 'aos';
                     id="name"
                     name="name"
                     required
-                    class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 md:py-3 px-3 md:px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 md:py-3 px-3 md:px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -1707,7 +1707,7 @@ import AOS from 'aos';
                     id="email"
                     name="email"
                     required
-                    class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 md:py-3 px-3 md:px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 md:py-3 px-3 md:px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -1720,7 +1720,7 @@ import AOS from 'aos';
                     type="tel"
                     id="phone"
                     name="phone"
-                    class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 md:py-3 px-3 md:px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 md:py-3 px-3 md:px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -1734,13 +1734,13 @@ import AOS from 'aos';
                     name="message"
                     rows="4"
                     required
-                    class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 md:py-3 px-3 md:px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md py-2 md:py-3 px-3 md:px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   ></textarea>
                 </div>
                 <div>
                   <button
                     type="submit"
-                    class="w-full bg-yellow-500 text-black font-medium py-2 md:py-3 px-4 md:px-6 rounded-md hover:bg-yellow-400 transition shadow-lg transform hover:scale-[1.02] hover:shadow-yellow-500/30"
+                    class="w-full bg-blue-500 text-white font-medium py-2 md:py-3 px-4 md:px-6 rounded-md hover:bg-blue-600 transition shadow-lg transform hover:scale-[1.02] hover:shadow-blue-500/30"
                   >
                     Enviar Mensagem
                   </button>

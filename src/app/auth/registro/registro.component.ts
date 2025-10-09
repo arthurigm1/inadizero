@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   template: `
     <div
-      class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 relative overflow-hidden"
+      class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-300 relative overflow-hidden"
     >
       <!-- Enhanced Background Elements -->
       <div class="absolute inset-0 overflow-hidden">
@@ -60,24 +60,6 @@ import { Subscription } from 'rxjs';
               <div class="absolute inset-0 bg-blue-500 rounded-2xl blur-xl opacity-50 animate-pulse"></div>
               <!-- Middle Glow -->
               <div class="absolute inset-0 bg-blue-400 rounded-2xl blur-lg opacity-30 animate-pulse" style="animation-delay: 1000ms;"></div>
-              <!-- Main Icon -->
-              <div class="relative bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-700 p-5 rounded-2xl shadow-2xl transform transition-all duration-500 hover:scale-105 hover:rotate-3">
-                <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl"></div>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-10 w-10 text-white filter drop-shadow-lg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                  />
-                </svg>
-              </div>
             </div>
           </div>
           
@@ -132,7 +114,7 @@ import { Subscription } from 'rxjs';
                 <!-- Connection Line -->
                 <div 
                   *ngIf="i < steps.length - 1" 
-                  [class]="currentStep > i + 1 ? 'bg-gradient-to-r from-blue-500 to-indigo-500' : 'bg-gray-300'"
+                  [class]="currentStep > i + 1 ? 'bg-gradient-to-r from-blue-400 to-indigo-200' : 'bg-gray-300'"
                   class="w-24 h-2 mx-4 rounded-full transition-all duration-500 transform hover:scale-y-125"
                 ></div>
               </div>
@@ -437,7 +419,7 @@ import { Subscription } from 'rxjs';
               type="button"
               (click)="nextStep()"
               *ngIf="currentStep < 4"
-              class="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all duration-300 font-semibold flex items-center group shadow-lg hover:shadow-xl cursor-pointer"
+              class="px-8 py-3 bg-gradient-to-r from-blue-400 to-blue-300 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all duration-300 font-semibold flex items-center group shadow-lg hover:shadow-xl cursor-pointer"
             >
               <span>Continuar</span>
               <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -697,7 +679,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     if (this.currentStep > stepIndex + 1) {
       return 'bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg';
     } else if (this.currentStep === stepIndex + 1) {
-      return 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg ring-4 ring-blue-200';
+      return 'bg-gradient-to-br from-blue-500 to-indigo-300 text-white shadow-lg ring-4 ring-blue-200';
     } else {
       return 'bg-gray-200 text-gray-500';
     }
