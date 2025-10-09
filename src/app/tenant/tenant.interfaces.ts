@@ -28,6 +28,8 @@ export interface ILojaInquilino {
   nome: string;
   numero: string;
   localizacao: string;
+  categoria?: string;
+  area?: number;
   contrato: {
     id: string;
     valorAluguel: number;
@@ -47,6 +49,7 @@ export interface IFaturaInquilino {
   status: StatusFatura;
   diasParaVencimento?: number;
   diasEmAtraso?: number;
+  efiCobrancaId?:number;
   loja: {
     id: string;
     nome: string;
