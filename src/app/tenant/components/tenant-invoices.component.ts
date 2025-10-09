@@ -380,7 +380,7 @@ export class TenantInvoicesComponent {
       'Content-Type': 'application/json'
     });
     const url = `http://localhost:3010/api/portal-inquilino/fatura-efi/${efiCobrancaId}`;
-    return this.http.get<EfiFaturaResponse>(url, { headers });
+    return this.http.get<EfiFaturaResponse>(url, { headers: headers });
   }
 
   // Método para pagar fatura

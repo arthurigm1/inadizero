@@ -607,6 +607,11 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
   currentTime = new Date();
   
   currentSection: 'dashboard' | 'faturas' | 'contratos' | 'lojas' | 'configuracoes' = 'dashboard';
+  
+  // Cache para evitar recálculos desnecessários
+  private _cachedFinancialCards: any[] = [];
+  private _cachedPendingInvoices: IFaturaInquilino[] = [];
+  private _lastPortalDataUpdate: number = 0;
 
   navigationSections = [
     {
@@ -644,12 +649,18 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
   get financialCards() {
     if (!this.portalData) return [];
     
+    // Verifica se os dados mudaram desde a última atualização
+    const currentDataHash = JSON.stringify(this.portalData.resumoFinanceiro);
+    if (this._lastPortalDataUpdate === currentDataHash.length && this._cachedFinancialCards.length > 0) {
+      return this._cachedFinancialCards;
+    }
+    
     const totalPendingInvoices = this.getAllPendingInvoices().length;
     const totalPaidInvoices = this.portalData.resumoFinanceiro.faturasPagas;
     const totalInvoices = totalPendingInvoices + totalPaidInvoices;
     const progressPercentage = totalInvoices > 0 ? (totalPaidInvoices / totalInvoices) * 100 : 0;
 
-    return [
+    this._cachedFinancialCards = [
       {
         title: 'Faturas Pendentes',
         value: totalPendingInvoices,
@@ -683,6 +694,9 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
         progress: progressPercentage
       }
     ];
+    
+    this._lastPortalDataUpdate = currentDataHash.length;
+    return this._cachedFinancialCards;
   }
 
   get unreadNotifications() {
@@ -714,11 +728,22 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.portalData = data;
           this.loading = false;
+          
+          // Limpa o cache quando novos dados são carregados
+          this._cachedFinancialCards = [];
+          this._cachedPendingInvoices = [];
+          this._lastPortalDataUpdate = 0;
         }, 800); // Simular loading para melhor UX
       },
       error: (err: any) => {
         console.error('Erro ao carregar dados do portal:', err);
         this.loading = false;
+        
+        // Limpa o cache em caso de erro
+        this._cachedFinancialCards = [];
+        this._cachedPendingInvoices = [];
+        this._lastPortalDataUpdate = 0;
+        
         if (err.status === 401) {
           this.router.navigate(['/tenant/login']);
         }
@@ -756,16 +781,28 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
   getAllPendingInvoices(): IFaturaInquilino[] {
     if (!this.portalData) return [];
     
+    // Verifica se os dados mudaram desde a última atualização
+    const currentDataHash = JSON.stringify({
+      pendentes: this.portalData.faturas.pendentes,
+      emAtraso: this.portalData.faturas.emAtraso
+    });
+    
+    if (this._lastPortalDataUpdate === currentDataHash.length && this._cachedPendingInvoices.length > 0) {
+      return this._cachedPendingInvoices;
+    }
+    
     const allPendingInvoices = [
       ...this.portalData.faturas.pendentes,
       ...this.portalData.faturas.emAtraso
     ];
     
-    return allPendingInvoices.sort((a, b) => {
+    this._cachedPendingInvoices = allPendingInvoices.sort((a, b) => {
       const dateA = new Date(a.dataVencimento).getTime();
       const dateB = new Date(b.dataVencimento).getTime();
       return dateA - dateB;
     });
+    
+    return this._cachedPendingInvoices;
   }
 
   logout() {
