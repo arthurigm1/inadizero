@@ -9,11 +9,12 @@ import { UsersComponent } from '../users/users.component';
 import { StoresComponent } from '../stores/stores.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { ContractsComponent } from '../contracts/contracts.component';
+import { ContractDetailComponent } from '../contracts/contract-detail/contract-detail.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, UsersComponent, StoresComponent, SettingsComponent, ContractsComponent],
+  imports: [CommonModule, FormsModule, RouterModule, UsersComponent, StoresComponent, SettingsComponent, ContractsComponent, ContractDetailComponent],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50" [@fadeIn]>
       <!-- Sidebar -->
@@ -334,10 +335,18 @@ import { ContractsComponent } from '../contracts/contracts.component';
           
           <!-- Contracts Section -->
           <div *ngIf="currentSection === 'contracts'" [@slideIn]>
-            <app-contracts></app-contracts>
+            <app-contracts (contractSelected)="navigateToContractDetail($event)"></app-contracts>
           </div>
 
-          
+          <!-- Contract Detail Section -->
+          <div *ngIf="currentSection === 'contract-detail'" [@slideIn]>
+            <app-contract-detail 
+              [contractId]="selectedContractId" 
+              (backToList)="navigateBackToContracts()"
+              (editContractEvent)="handleEditContract($event)">
+            </app-contract-detail>
+          </div>
+
 
           <!-- Settings Section -->
           <div *ngIf="currentSection === 'settings'" [@slideIn]>
@@ -372,6 +381,7 @@ export class DashboardComponent implements OnInit {
   currentSection = 'dashboard';
   showNotifications = false;
   showNotificationDialog = false;
+  selectedContractId: string | null = null;
   
   // Dashboard statistics
   dashboardStats = {
@@ -499,6 +509,7 @@ export class DashboardComponent implements OnInit {
       case 'users': return 'Usuários';
       case 'stores': return 'Lojas';
       case 'contracts': return 'Contratos';
+      case 'contract-detail': return 'Detalhes do Contrato';
       case 'settings': return 'Configurações';
       default: return 'Dashboard';
     }
@@ -605,5 +616,29 @@ export class DashboardComponent implements OnInit {
 
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('pt-BR');
+  }
+
+  navigateToContractDetail(contractId: string) {
+    this.selectedContractId = contractId;
+    this.currentSection = 'contract-detail';
+  }
+
+  navigateBackToContracts() {
+    this.selectedContractId = null;
+    this.currentSection = 'contracts';
+  }
+
+  handleEditContract(contract: any) {
+    // Navigate back to contracts section and trigger edit mode
+    this.currentSection = 'contracts';
+    // The contracts component will handle the edit modal display
+    // We need to pass the contract to edit to the contracts component
+    setTimeout(() => {
+      // Use a small delay to ensure the contracts component is rendered
+      const contractsComponent = document.querySelector('app-contracts') as any;
+      if (contractsComponent && contractsComponent.editContract) {
+        contractsComponent.editContract(contract);
+      }
+    }, 100);
   }
 }

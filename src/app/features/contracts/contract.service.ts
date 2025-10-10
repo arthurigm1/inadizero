@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   Contract,
   CreateContractRequest,
@@ -12,7 +13,8 @@ import {
   UpdateExpiredStatusResponse,
   ContractStats,
   StoreOption,
-  TenantOption
+  TenantOption,
+  ContractDetailResponse
 } from './contract.interfaces';
 import { AuthService } from '../../auth/auth.service';
 
@@ -65,7 +67,8 @@ export class ContractService {
   // GET /id/:id - Buscar contrato por ID
   getContractById(id: string): Observable<Contract> {
     const headers = this.getAuthHeaders();
-    return this.http.get<Contract>(`${this.apiUrl}/id/${id}`, { headers });
+    return this.http.get<ContractDetailResponse>(`${this.apiUrl}/id/${id}`, { headers })
+      .pipe(map(response => response.contrato));
   }
 
   // PUT /atualizar/:id - Atualizar contrato

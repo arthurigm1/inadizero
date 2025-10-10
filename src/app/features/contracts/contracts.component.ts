@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,12 +6,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { ContractService } from './contract.service';
 import { Contract, ContractStats, StoreOption, TenantOption, CreateContractRequest, ContractStatus, ContractFilters } from './contract.interfaces';
 import { StoreService, Tenant } from '../stores/store.service';
-import { ContractEditComponent } from './contract-edit/contract-edit.component';
+import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-modal.component';
 
 @Component({
   selector: 'app-contracts',
   standalone: true,
-  imports: [CommonModule, FormsModule, ContractEditComponent],
+  imports: [CommonModule, FormsModule, ContractEditModalComponent],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50" [@fadeIn]>
       <!-- Header -->
@@ -131,50 +131,75 @@ import { ContractEditComponent } from './contract-edit/contract-edit.component';
           </div>
         </div>
 
-        <!-- Contracts Table -->
-        <div class="bg-white border border-blue-200 rounded-xl overflow-hidden">
-          <div class="p-6 border-b border-blue-200">
+        <!-- Contracts Cards -->
+        <div class="bg-white border border-blue-200 rounded-xl p-6">
+          <div class="mb-6">
             <h3 class="text-lg font-semibold text-blue-900">Lista de Contratos</h3>
           </div>
           
-          <div class="overflow-x-auto">
-            <table class="w-full">
-              <thead class="bg-blue-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">ID</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Loja</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Inquilino</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Valor</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Data Início</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Data Fim</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Status</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Ações</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-blue-200">
-                <tr *ngFor="let contract of contracts" class="hover:bg-blue-50 transition-colors">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-900">#{{contract.id}}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-900">{{contract.loja?.nome}}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-900">{{contract.inquilino?.nome}}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-900">{{formatCurrency(contract.valorAluguel)}}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-900">{{formatDate(contract.dataInicio)}}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-900">{{formatDate(contract.dataFim)}}</td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span [class]="getStatusClass(contract.status)" class="px-2 py-1 text-xs font-medium rounded-full">
-                      {{getStatusText(contract.status)}}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex space-x-2">
-                      <button (click)="viewContract(contract)" class="text-blue-600 hover:text-blue-900">Ver</button>
-                      <button (click)="editContract(contract)" class="text-green-600 hover:text-green-900">Editar</button>
-                      <button (click)="deleteContract(contract)" class="text-red-600 hover:text-red-900">Rescindir</button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div *ngFor="let contract of contracts" 
+                 (click)="viewContractDetails(contract)"
+                 class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              
+              <!-- Contract Header -->
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-blue-900 group-hover:text-blue-700 transition-colors">#{{contract.id.substring(0, 8)}}</h4>
+                    <p class="text-sm text-gray-600">Contrato</p>
+                  </div>
+                </div>
+                <span [class]="getStatusClass(contract.status)" class="px-2 py-1 text-xs font-medium rounded-full">
+                  {{getStatusText(contract.status)}}
+                </span>
+              </div>
+
+              <!-- Contract Info -->
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-600">Loja:</span>
+                  <span class="text-sm font-medium text-blue-900">{{contract.loja?.nome}}</span>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-600">Inquilino:</span>
+                  <span class="text-sm font-medium text-blue-900">{{contract.inquilino?.nome}}</span>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-600">Valor:</span>
+                  <span class="text-lg font-bold text-green-600">{{formatCurrency(contract.valorAluguel)}}</span>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-3">
+                  <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>{{formatDate(contract.dataInicio)}}</span>
+                    <span>até</span>
+                    <span>{{formatDate(contract.dataFim)}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex justify-end space-x-2 mt-4 pt-4 border-t border-gray-200">
+                <button (click)="editContract(contract); $event.stopPropagation()" 
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
+                  Editar
+                </button>
+                <button (click)="deleteContract(contract); $event.stopPropagation()" 
+                        class="text-red-600 hover:text-red-800 text-sm font-medium transition-colors">
+                  Rescindir
+                </button>
+              </div>
+            </div>
           </div>
+        </div>
 
           <!-- Pagination -->
           <div class="px-6 py-3 border-t border-blue-200 bg-blue-50">
@@ -302,16 +327,12 @@ import { ContractEditComponent } from './contract-edit/contract-edit.component';
       </div>
 
       <!-- Edit Contract Modal -->
-      <div *ngIf="showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@slideIn]>
-        <div class="bg-white rounded-xl max-w-6xl w-full mx-4 max-h-[95vh] overflow-y-auto">
-          <app-contract-edit 
-            [contractToEdit]="contractToEdit"
-            (onCancel)="closeEditModal()"
-            (onSave)="onContractSaved($event)">
-          </app-contract-edit>
-        </div>
-      </div>
-    </div>
+      <app-contract-edit-modal
+        [isVisible]="showEditModal"
+        [contractToEdit]="contractToEdit"
+        (onCancel)="closeEditModal()"
+        (onSave)="onContractSaved($event)">
+      </app-contract-edit-modal>
   `,
   animations: [
     trigger('fadeIn', [
@@ -329,6 +350,8 @@ import { ContractEditComponent } from './contract-edit/contract-edit.component';
   ]
 })
 export class ContractsComponent implements OnInit {
+  @Output() contractSelected = new EventEmitter<string>();
+  
   contracts: Contract[] = [];
   contractStats: ContractStats = {
     activeContracts: 0,
@@ -595,8 +618,8 @@ loadContracts(): void {
     });
   }
 
-  viewContract(contract: Contract): void {
-    this.router.navigate(['/contracts', contract.id]);
+  viewContractDetails(contract: Contract): void {
+    this.contractSelected.emit(contract.id);
   }
 
   editContract(contract: Contract): void {

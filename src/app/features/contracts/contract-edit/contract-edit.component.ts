@@ -315,7 +315,6 @@ export class ContractEditComponent implements OnInit {
       clausulas: [this.contract.clausulas || ''],
       observacoes: [this.contract.observacoes || ''],
       status: [this.contract.status],
-      ativo: [this.contract.ativo],
       inquilinoId: [this.contract.inquilino?.id || '', [Validators.required]]
     });
   }
@@ -400,13 +399,17 @@ export class ContractEditComponent implements OnInit {
       clausulas: formValue.clausulas || undefined,
       observacoes: formValue.observacoes || undefined,
       status: formValue.status as ContractStatus,
-      ativo: formValue.ativo
+      ativo: formValue.ativo,
+      inquilinoId: formValue.inquilinoId
     };
 
     this.contractService.updateContract(this.contract.id, updateData).subscribe({
       next: (contract) => {
         console.log('Contrato atualizado com sucesso:', contract);
         this.saving = false;
+        // Atualizar o contrato local com os dados retornados
+        this.contract = contract;
+        // Emitir o evento para fechar o modal
         this.onSave.emit(contract);
       },
       error: (error) => {
@@ -434,7 +437,6 @@ export class ContractEditComponent implements OnInit {
       clausulas: this.contract.clausulas,
       observacoes: this.contract.observacoes,
       status: this.contract.status,
-      ativo: this.contract.ativo
     };
 
     this.pdfGeneratorService.generateContractPdf(contractData).subscribe({

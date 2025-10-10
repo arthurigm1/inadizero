@@ -9,12 +9,12 @@ export interface User {
   email: string;
   name: string;
   role:
-    | 'visitante'
-    | 'lojista'
-    | 'gerente'
-    | 'proprietario'
-    | 'contador'
-    | 'secretaria';
+  | 'visitante'
+  | 'lojista'
+  | 'gerente'
+  | 'proprietario'
+  | 'contador'
+  | 'secretaria';
   token?: string;
 }
 
@@ -69,7 +69,19 @@ export class AuthService {
     const user = this.currentUserValue;
     return user?.token || null;
   }
+  isTokenExpired(): boolean {
+    const token = this.token;
+    if (!token) return true;
 
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiration = payload.exp * 1000; // Convert to milliseconds
+      return Date.now() >= expiration;
+    } catch (error) {
+      console.error('Erro ao verificar token:', error);
+      return true; // Se há erro no token, considera expirado
+    }
+  }
   login(email: string, senha: string): Observable<User> {
     return this.http
       .post<LoginResponse>(`${this.apiUrl}/login`, { email, senha })

@@ -17,7 +17,6 @@ export interface ContractData {
   clausulas?: string;
   observacoes?: string;
   status: string;
-  ativo: boolean;
 }
 
 @Injectable({

@@ -11,22 +11,29 @@ export interface Contract {
   dataVencimento?: number;
   observacoes?: string;
   status: ContractStatus;
-  ativo: boolean;
-  createdAt: string;
-  updatedAt: string;
+  criadoEm: string;
+  atualizadoEm: string;
   
   // Dados relacionados (populados pelo backend)
   loja?: {
     id: string;
     nome: string;
     numero: string;
+    localizacao?: string;
   };
   inquilino?: {
     id: string;
     nome: string;
     email: string;
-    telefone: string;
+    telefone?: string;
+    cpf?: string;
   };
+}
+
+// Interface para resposta detalhada do contrato
+export interface ContractDetailResponse {
+  sucesso: boolean;
+  contrato: Contract;
 }
 
 export enum ContractStatus {
@@ -58,6 +65,7 @@ export interface UpdateContractRequest {
   observacoes?: string;
   status?: ContractStatus;
   ativo?: boolean;
+  inquilinoId?: string;
 }
 
 
