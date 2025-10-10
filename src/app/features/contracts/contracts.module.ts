@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ContractsComponent } from './contracts.component';
 import { ContractListComponent } from './contract-list/contract-list.component';
-import { ContractDetailsComponent } from './contract-details/contract-details.component';
 import { ContractEditComponent } from './contract-edit/contract-edit.component';
 import { ContractService } from './contract.service';
 
@@ -16,7 +15,6 @@ import { ContractService } from './contract.service';
     RouterModule,
     ContractsComponent,
     ContractListComponent,
-    ContractDetailsComponent,
     ContractEditComponent,
   ],
   providers: [

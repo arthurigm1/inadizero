@@ -168,7 +168,7 @@ import { ContractEditComponent } from './contract-edit/contract-edit.component';
                     <div class="flex space-x-2">
                       <button (click)="viewContract(contract)" class="text-blue-600 hover:text-blue-900">Ver</button>
                       <button (click)="editContract(contract)" class="text-green-600 hover:text-green-900">Editar</button>
-                      <button (click)="deleteContract(contract)" class="text-red-600 hover:text-red-900">Excluir</button>
+                      <button (click)="deleteContract(contract)" class="text-red-600 hover:text-red-900">Rescindir</button>
                     </div>
                   </td>
                 </tr>
@@ -606,7 +606,7 @@ loadContracts(): void {
 
   deleteContract(contract: Contract): void {
     if (confirm('Tem certeza que deseja excluir este contrato?')) {
-      this.contractService.deleteContract(contract.id).subscribe({
+      this.contractService.rescindContract(contract.id).subscribe({
         next: () => {
           console.log('Contrato excluído com sucesso');
           this.loadContracts();

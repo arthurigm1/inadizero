@@ -132,7 +132,7 @@ import { StoreService, Tenant } from '../../stores/store.service';
 
           <!-- Status e Situação -->
           <div class="bg-white p-6 rounded-lg shadow-sm border">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Status e Situação</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Status</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <!-- Status -->
@@ -150,18 +150,6 @@ import { StoreService, Tenant } from '../../stores/store.service';
                 </select>
               </div>
 
-              <!-- Ativo -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Situação
-                </label>
-                <select 
-                  formControlName="ativo"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option [value]="true">Ativo</option>
-                  <option [value]="false">Inativo</option>
-                </select>
-              </div>
             </div>
           </div>
 

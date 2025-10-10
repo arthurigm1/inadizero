@@ -5,7 +5,6 @@ import {
   Contract,
   CreateContractRequest,
   UpdateContractRequest,
-  RescindContractRequest,
   ContractRenewRequest,
   ContractFilters,
   ContractListResponse,
@@ -75,16 +74,12 @@ export class ContractService {
     return this.http.put<Contract>(`${this.apiUrl}/atualizar/${id}`, contract, { headers });
   }
 
-  // DELETE /deletar/:id - Deletar contrato
-  deleteContract(id: string): Observable<void> {
-    const headers = this.getAuthHeaders();
-    return this.http.delete<void>(`${this.apiUrl}/deletar/${id}`, { headers });
-  }
+
 
   // PATCH /rescindir/:id - Rescindir contrato
-  rescindContract(id: string, data: RescindContractRequest): Observable<Contract> {
+  rescindContract(id: string): Observable<Contract> {
     const headers = this.getAuthHeaders();
-    return this.http.patch<Contract>(`${this.apiUrl}/rescindir/${id}`, data, { headers });
+    return this.http.patch<Contract>(`${this.apiUrl}/rescindir/${id}`,null, { headers });
   }
 
   // PATCH /renovar/:id - Renovar contrato

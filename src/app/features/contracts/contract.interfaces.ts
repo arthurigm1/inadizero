@@ -60,9 +60,7 @@ export interface UpdateContractRequest {
   ativo?: boolean;
 }
 
-export interface RescindContractRequest {
-  observacoes?: string;
-}
+
 
 export interface ContractRenewRequest {
   novaDataFim: string;
