@@ -10,11 +10,12 @@ import { StoresComponent } from '../stores/stores.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 import { ContractDetailComponent } from '../contracts/contract-detail/contract-detail.component';
+import { InvoicesComponent } from '../../features/invoices/invoices.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, UsersComponent, StoresComponent, SettingsComponent, ContractsComponent, ContractDetailComponent],
+  imports: [CommonModule, FormsModule, RouterModule, UsersComponent, StoresComponent, SettingsComponent, ContractsComponent, ContractDetailComponent, InvoicesComponent],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50" [@fadeIn]>
       <!-- Sidebar -->
@@ -72,6 +73,16 @@ import { ContractDetailComponent } from '../contracts/contract-detail/contract-d
                 <path d="M6 6h8v2H6V6zM6 10h8v2H6v-2zM6 14h5v2H6v-2z"/>
               </svg>
               Contratos
+            </a>
+            
+            <a (click)="navigateTo('invoices')" 
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+               [class]="currentSection === 'invoices' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd"/>
+                <path d="M6 8h8v2H6V8zM6 12h8v2H6v-2z"/>
+              </svg>
+              Faturas
             </a>
             
             <a (click)="navigateTo('settings')" 
@@ -347,6 +358,10 @@ import { ContractDetailComponent } from '../contracts/contract-detail/contract-d
             </app-contract-detail>
           </div>
 
+          <!-- Invoices Section -->
+          <div *ngIf="currentSection === 'invoices'" [@slideIn]>
+            <app-invoices></app-invoices>
+          </div>
 
           <!-- Settings Section -->
           <div *ngIf="currentSection === 'settings'" [@slideIn]>
@@ -510,7 +525,10 @@ export class DashboardComponent implements OnInit {
       case 'stores': return 'Lojas';
       case 'contracts': return 'Contratos';
       case 'contract-detail': return 'Detalhes do Contrato';
+      case 'invoices': return 'Faturas';
       case 'settings': return 'Configurações';
+      case 'settings': return 'Configurações';
+      case 'contract-detail': return 'Detalhes do Contrato';
       default: return 'Dashboard';
     }
   }
