@@ -527,8 +527,6 @@ export class DashboardComponent implements OnInit {
       case 'contract-detail': return 'Detalhes do Contrato';
       case 'invoices': return 'Faturas';
       case 'settings': return 'Configurações';
-      case 'settings': return 'Configurações';
-      case 'contract-detail': return 'Detalhes do Contrato';
       default: return 'Dashboard';
     }
   }

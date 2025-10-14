@@ -197,9 +197,6 @@ import {
                   <span [class]="getStatusClass(contract.status)">
                     {{ contract.status }}
                   </span>
-                  <div class="text-xs text-gray-500 mt-1">
-                    {{ contract.ativo ? 'Ativo' : 'Inativo' }}
-                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-2">
