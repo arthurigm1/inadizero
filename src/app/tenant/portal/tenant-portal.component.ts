@@ -8,6 +8,9 @@ import { TenantInvoicesComponent } from '../components/tenant-invoices.component
 import { TenantContractsComponent } from '../components/tenant-contracts.component';
 import { TenantStoresComponent } from '../components/tenant-stores.component';
 import { TenantSettingsComponent } from '../components/tenant-settings.component';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-tenant-portal',
@@ -17,7 +20,8 @@ import { TenantSettingsComponent } from '../components/tenant-settings.component
     TenantInvoicesComponent, 
     TenantContractsComponent, 
     TenantStoresComponent, 
-    TenantSettingsComponent
+    TenantSettingsComponent,
+    HttpClientModule
   ],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-25 relative overflow-hidden" [@pageEnter]>
@@ -549,12 +553,14 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
 
   constructor(
     private tenantService: TenantService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private http: HttpClient
+  ) {
+    this.loadPortalData();
+  }
 
   ngOnInit() {
-    this.loadPortalData();
-    // Atualizar hora a cada minuto
+    this.currentTime = new Date();
     setInterval(() => {
       this.currentTime = new Date();
     }, 60000);
@@ -564,29 +570,33 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
     // Cleanup
   }
 
-  loadPortalData() {
+  loadPortalData(skipChargeRefresh: boolean = false) {
     this.loading = true;
-    
     this.tenantService.getPortalData().subscribe({
       next: (data: IPortalInquilinoData) => {
         setTimeout(() => {
           this.portalData = data;
           this.loading = false;
-          
+
           // Limpa cache
           this._cachedFinancialCards = [];
           this._cachedPendingInvoices = [];
           this._lastPortalDataUpdate = 0;
+
+          // Após carregar os dados, chama atualização das cobranças EFI
+          if (!skipChargeRefresh) {
+            this.refreshChargesFromEfi();
+          }
         }, 600);
       },
       error: (err: any) => {
         console.error('Erro ao carregar dados:', err);
         this.loading = false;
-        
+
         this._cachedFinancialCards = [];
         this._cachedPendingInvoices = [];
         this._lastPortalDataUpdate = 0;
-        
+
         if (err.status === 401) {
           this.router.navigate(['/tenant/login']);
         }
@@ -661,5 +671,24 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
 
   isCurrentSection(section: 'dashboard' | 'faturas' | 'contratos' | 'lojas' | 'configuracoes'): boolean {
     return this.currentSection === section;
+  }
+
+  private refreshChargesFromEfi(): void {
+    if (!this.portalData) return;
+    const invoices = this.getAllPendingInvoices().filter(f => !!f.efiCobrancaId);
+    const ids = Array.from(new Set(invoices.map(f => String(f.efiCobrancaId))));
+    if (ids.length === 0) return;
+
+    const requests = ids.map(id => this.http.get(`http://localhost:3010/api/efi/charge/${id}`));
+    forkJoin(requests).subscribe({
+      next: () => {
+        // Recarrega os dados do portal após processar as cobranças
+        this.loadPortalData(true);
+      },
+      error: () => {
+        // Mesmo em erro, tentar atualizar para refletir estado atual
+        this.loadPortalData(true);
+      }
+    });
   }
 }
