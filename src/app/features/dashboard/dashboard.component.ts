@@ -11,11 +11,13 @@ import { SettingsComponent } from '../settings/settings.component';
 import { ContractsComponent } from '../contracts/contracts.component';
 import { ContractDetailComponent } from '../contracts/contract-detail/contract-detail.component';
 import { InvoicesComponent } from '../../features/invoices/invoices.component';
+import { NotificacoesComponent } from './notifications/notifications.component';
+import { InadimplentesComponent } from './inadimplentes/inadimplentes.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, UsersComponent, StoresComponent, SettingsComponent, ContractsComponent, ContractDetailComponent, InvoicesComponent],
+  imports: [CommonModule, FormsModule, RouterModule, UsersComponent, StoresComponent, SettingsComponent, ContractsComponent, ContractDetailComponent, InvoicesComponent, NotificacoesComponent, InadimplentesComponent],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50" [@fadeIn]>
       <!-- Sidebar -->
@@ -93,6 +95,24 @@ import { InvoicesComponent } from '../../features/invoices/invoices.component';
               </svg>
               Configurações
             </a>
+            
+            <a (click)="navigateTo('notifications')"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+                [class]="currentSection === 'notifications' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+               <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                 <path d="M10 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 003 15h14a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+               </svg>
+               Notificações
+             </a>
+            <a (click)="navigateTo('inadimplentes')"
+               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+               [class]="currentSection === 'inadimplentes' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M12 8c-1.657 0-3 1.343-3 3v5H5a2 2 0 01-2-2V7a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2h-4v-5c0-1.657-1.343-3-3-3z"/>
+              </svg>
+              Inadimplentes
+            </a>
+              
           </nav>
           
           <!-- User Profile -->
@@ -367,6 +387,13 @@ import { InvoicesComponent } from '../../features/invoices/invoices.component';
           <div *ngIf="currentSection === 'settings'" [@slideIn]>
             <app-settings></app-settings>
           </div>
+           <div *ngIf="currentSection === 'notifications'" [@slideIn]>
+            <app-notificacoes></app-notificacoes>
+          </div>
+          <!-- Inadimplentes Section -->
+          <div *ngIf="currentSection === 'inadimplentes'" [@slideIn]>
+            <app-inadimplentes></app-inadimplentes>
+          </div>
         </main>
       </div>
     </div>
@@ -499,16 +526,6 @@ export class DashboardComponent implements OnInit {
     this.simulateNewNotifications();
   }
 
-  private calculateDashboardStats(): void {
-    // Set mock data for dashboard statistics
-    this.dashboardStats.totalRevenue = 125000;
-    this.dashboardStats.totalProperties = 45;
-    this.dashboardStats.occupancyRate = 87;
-    this.dashboardStats.totalTenants = 39;
-    this.dashboardStats.defaultRate = 5;
-    this.dashboardStats.maintenanceRequests = 23;
-    this.dashboardStats.pendingMaintenance = 8;
-  }
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
@@ -527,6 +544,8 @@ export class DashboardComponent implements OnInit {
       case 'contract-detail': return 'Detalhes do Contrato';
       case 'invoices': return 'Faturas';
       case 'settings': return 'Configurações';
+      case 'notifications': return 'Notificações';
+      case 'inadimplentes': return 'Inadimplentes';
       default: return 'Dashboard';
     }
   }
