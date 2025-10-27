@@ -57,7 +57,7 @@ enum TipoUsuario {
       <!-- Header -->
       <div class="mb-8" [@fadeIn]>
         <h1 class="text-4xl font-bold text-blue-800 mb-2">Gerenciamento de Usuários</h1>
-        <p class="text-gray-600">Gerencie todos os usuários do sistema</p>
+        <p class="text-gray-600">Gerencie todos os usuários do sistema com busca e filtros</p>
       </div>
 
       <!-- Modal para Criar Inquilino -->
@@ -186,7 +186,7 @@ enum TipoUsuario {
         
         <div class="flex flex-wrap gap-4">
           <!-- Campo de busca -->
-          <div class="relative flex-1 min-w-64">
+          <div class="relative flex-1 min-w-64 sm:w-80 md:w-[28rem]">
             <input 
               type="text" 
               placeholder="Buscar por nome ou email..."
@@ -226,7 +226,7 @@ enum TipoUsuario {
       <!-- Users Table -->
       <div class="bg-white backdrop-blur-sm rounded-xl border border-blue-200 overflow-hidden shadow-2xl" [@fadeIn]>
         <div class="overflow-x-auto">
-          <table class="w-full">
+          <table class="w-full table-auto">
             <thead class="bg-blue-50">
               <tr>
                 <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Usuário</th>
@@ -238,20 +238,19 @@ enum TipoUsuario {
               </tr>
             </thead>
             <tbody class="divide-y divide-blue-100">
-              <tr *ngFor="let user of users" class="hover:bg-blue-50 transition-colors duration-200">
+              <tr *ngFor="let user of users" class="group hover:bg-blue-50 transition-colors duration-200">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold mr-4">
+                    <div class="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold mr-4 ring-2 ring-blue-200">
                       {{ user.name.charAt(0).toUpperCase() }}
                     </div>
                     <div>
-                      <div class="text-sm font-medium text-blue-900">{{ user.name }}</div>
-                      <div class="text-sm text-blue-600">ID: {{ user.id }}</div>
+                      <div class="text-base font-semibold text-blue-900">{{ user.name }}</div>
                     </div>
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-blue-700">{{ user.email }}</div>
+                  <a [href]="'mailto:' + user.email" class="text-sm text-blue-700 hover:text-blue-900 hover:underline truncate max-w-[240px] inline-block">{{ user.email }}</a>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span [ngClass]="{
@@ -259,7 +258,7 @@ enum TipoUsuario {
                     'bg-blue-100 text-blue-800 border-blue-200': user.type === 'FUNCIONARIO',
                     'bg-green-100 text-green-800 border-green-200': user.type === 'INQUILINO',
                     'bg-purple-100 text-purple-800 border-purple-200': user.type === 'VISITANTE'
-                  }" class="inline-flex px-3 py-1 text-xs font-semibold rounded-full border">
+                  }" class="inline-flex px-3 py-1 text-xs font-semibold rounded-full border shadow-sm">
                     {{ getUserTypeLabel(user.type) }}
                   </span>
                 </td>
@@ -268,7 +267,7 @@ enum TipoUsuario {
                     'bg-green-100 text-green-800 border-green-200': user.status === 'active',
                     'bg-red-100 text-red-800 border-red-200': user.status === 'inactive',
                     'bg-yellow-100 text-yellow-800 border-yellow-200': user.status === 'pending'
-                  }" class="inline-flex px-3 py-1 text-xs font-semibold rounded-full border">
+                  }" class="inline-flex px-3 py-1 text-xs font-semibold rounded-full border shadow-sm">
                     {{ user.status === 'active' ? 'Ativo' : user.status === 'inactive' ? 'Inativo' : 'Pendente' }}
                   </span>
                 </td>
@@ -277,22 +276,25 @@ enum TipoUsuario {
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-2">
-                    <button class="text-blue-600 hover:text-blue-800 transition-colors duration-200" title="Editar">
+                    <button class="p-2 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-800 transition-colors duration-200" title="Editar" aria-label="Editar usuário">
                       <i class="fas fa-edit"></i>
                     </button>
-                    <button class="text-blue-500 hover:text-blue-700 transition-colors duration-200" title="Visualizar">
+                    <button class="p-2 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-800 transition-colors duration-200" title="Visualizar" aria-label="Visualizar usuário">
                       <i class="fas fa-eye"></i>
                     </button>
-                    <button class="text-red-500 hover:text-red-700 transition-colors duration-200" title="Excluir">
+                    <button class="p-2 rounded-full hover:bg-red-50 text-red-500 hover:text-red-700 transition-colors duration-200" title="Excluir" aria-label="Excluir usuário">
                       <i class="fas fa-trash"></i>
                     </button>
                   </div>
                 </td>
               </tr>
               <tr *ngIf="users.length === 0">
-                <td colspan="6" class="px-6 py-8 text-center text-blue-600">
-                  <i class="fas fa-users-slash text-3xl mb-2"></i>
-                  <p>Nenhum usuário encontrado</p>
+                <td colspan="6" class="px-6 py-10 text-center">
+                  <div class="flex flex-col items-center text-blue-700">
+                    <i class="fas fa-users-slash text-4xl mb-3"></i>
+                    <p class="text-sm">Nenhum usuário encontrado para os filtros atuais.</p>
+                    <button (click)="clearFilters()" class="mt-4 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors">Limpar filtros</button>
+                  </div>
                 </td>
               </tr>
             </tbody>

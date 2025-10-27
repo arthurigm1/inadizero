@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { trigger, transition, style, animate, state } from '@angular/animations';
 import { AuthService } from '../../auth/auth.service';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartOptions } from 'chart.js';
+import 'chart.js/auto';
 
 import { UsersComponent } from '../users/users.component';
 import { StoresComponent } from '../stores/stores.component';
@@ -17,7 +21,7 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, UsersComponent, StoresComponent, SettingsComponent, ContractsComponent, ContractDetailComponent, InvoicesComponent, NotificacoesComponent, InadimplentesComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule, BaseChartDirective, UsersComponent, StoresComponent, SettingsComponent, ContractsComponent, ContractDetailComponent, InvoicesComponent, NotificacoesComponent, InadimplentesComponent],
   template: `
     <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50" [@fadeIn]>
       <!-- Sidebar -->
@@ -129,9 +133,12 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
           </div>
         </div>
       </div>
+
+      <!-- Mobile Overlay -->
+      <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden" *ngIf="sidebarOpen" (click)="toggleSidebar()"></div>
       
       <!-- Main Content -->
-      <div class="transition-all duration-300 ease-in-out" [class.ml-64]="sidebarOpen" [class.ml-0]="!sidebarOpen">
+      <div class="transition-all duration-300 ease-in-out md:ml-64">
         <!-- Header -->
         <header class="bg-white backdrop-blur-xl border-b border-blue-200 sticky top-0 z-40">
           <div class="px-6 py-4">
@@ -148,7 +155,7 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
               <div class="flex items-center space-x-4">
                 <div class="relative">
                   <input type="text" placeholder="Buscar..." 
-                         class="w-64 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                         class="w-40 sm:w-64 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
                   <svg class="absolute right-3 top-2.5 w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                   </svg>
@@ -214,22 +221,22 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
           <!-- Dashboard Content -->
           <div *ngIf="currentSection === 'dashboard'" [@slideIn]>
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
               <!-- Revenue Card -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 transition-all duration-300 transform hover:scale-105" [@cardHover]>
+              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
                 <div class="flex items-center justify-between">
                   <div>
-                    <p class="text-yellow-400 text-sm font-medium">Receita Total</p>
-                    <p class="text-3xl font-bold text-white mt-2">{{formatCurrency(dashboardStats.totalRevenue)}}</p>
-                    <p class="text-green-400 text-sm mt-1 flex items-center">
+                    <p class="text-blue-600 text-sm font-medium">Receita Total</p>
+                    <p class="text-3xl font-bold text-blue-900 mt-2">{{formatCurrency(dashboardStats.totalRevenue)}}</p>
+                    <p class="text-green-600 text-sm mt-1 flex items-center">
                       <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                       </svg>
                       Receita mensal
                     </p>
                   </div>
-                  <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                     </svg>
                   </div>
@@ -237,20 +244,20 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
               </div>
               
               <!-- Properties Card -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 transition-all duration-300 transform hover:scale-105" [@cardHover]>
+              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
                 <div class="flex items-center justify-between">
                   <div>
-                    <p class="text-yellow-400 text-sm font-medium">Propriedades</p>
-                    <p class="text-3xl font-bold text-white mt-2">{{dashboardStats.totalProperties}}</p>
-                    <p class="text-blue-400 text-sm mt-1 flex items-center">
+                    <p class="text-blue-600 text-sm font-medium">Propriedades</p>
+                    <p class="text-3xl font-bold text-blue-900 mt-2">{{dashboardStats.totalProperties}}</p>
+                    <p class="text-blue-600 text-sm mt-1 flex items-center">
                       <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                       </svg>
                       {{dashboardStats.occupancyRate}}% ocupadas
                     </p>
                   </div>
-                  <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                     </svg>
                   </div>
@@ -258,20 +265,20 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
               </div>
               
               <!-- Tenants Card -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 transition-all duration-300 transform hover:scale-105" [@cardHover]>
+              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
                 <div class="flex items-center justify-between">
                   <div>
-                    <p class="text-yellow-400 text-sm font-medium">Inquilinos</p>
-                    <p class="text-3xl font-bold text-white mt-2">{{dashboardStats.totalTenants}}</p>
-                    <p class="text-red-400 text-sm mt-1 flex items-center">
+                    <p class="text-blue-600 text-sm font-medium">Inquilinos</p>
+                    <p class="text-3xl font-bold text-blue-900 mt-2">{{dashboardStats.totalTenants}}</p>
+                    <p class="text-red-600 text-sm mt-1 flex items-center">
                       <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                       </svg>
                       {{dashboardStats.defaultRate}}% inadimplentes
                     </p>
                   </div>
-                  <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
                   </div>
@@ -279,20 +286,20 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
               </div>
               
               <!-- Maintenance Card -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 transition-all duration-300 transform hover:scale-105" [@cardHover]>
+              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
                 <div class="flex items-center justify-between">
                   <div>
-                    <p class="text-yellow-400 text-sm font-medium">Manutenções</p>
-                    <p class="text-3xl font-bold text-white mt-2">{{dashboardStats.maintenanceRequests}}</p>
-                    <p class="text-orange-400 text-sm mt-1 flex items-center">
+                    <p class="text-blue-600 text-sm font-medium">Manutenções</p>
+                    <p class="text-3xl font-bold text-blue-900 mt-2">{{dashboardStats.maintenanceRequests}}</p>
+                    <p class="text-orange-600 text-sm mt-1 flex items-center">
                       <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                       </svg>
                       {{dashboardStats.pendingMaintenance}} pendentes
                     </p>
                   </div>
-                  <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
@@ -301,32 +308,72 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
               </div>
             </div>
             
-            <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <!-- Revenue Chart -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6">
-                <h3 class="text-xl font-bold text-blue-900 mb-4">Receita Mensal</h3>
-                <div class="h-64 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <div class="text-center">
-                    <svg class="w-16 h-16 text-blue-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg>
-                    <p class="text-gray-500">Gráfico de receita será implementado</p>
-                  </div>
+            <!-- Analytics Section -->
+            <div class="bg-white border border-blue-200 rounded-xl p-6 mb-8">
+              <div class="flex flex-wrap items-end gap-4 mb-6">
+                <div class="w-full sm:w-auto">
+                  <label class="block text-sm font-medium text-blue-900 mb-1">Início</label>
+                  <input type="date" [(ngModel)]="inicio" class="w-full sm:w-48 px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div class="w-full sm:w-auto">
+                  <label class="block text-sm font-medium text-blue-900 mb-1">Fim</label>
+                  <input type="date" [(ngModel)]="fim" class="w-full sm:w-48 px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <button (click)="loadAnalytics()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Aplicar filtros</button>
+                <div class="flex items-center gap-2">
+                  <button (click)="setQuickRange('30d')" class="px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100">Últimos 30d</button>
+                  <button (click)="setQuickRange('90d')" class="px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100">Últimos 90d</button>
+                  <button (click)="setQuickRange('ytd')" class="px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100">Ano atual</button>
+                </div>
+                <div *ngIf="loadingAnalytics" class="text-blue-600 text-sm">Carregando dados...</div>
+                <div *ngIf="errorAnalytics" class="text-red-600 text-sm">{{ errorAnalytics }}</div>
+              </div>
+
+              <!-- KPIs -->
+              <div *ngIf="!loadingAnalytics; else kpiSkeleton" class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p class="text-xs text-blue-600">Entradas no período</p>
+                  <p class="text-xl font-bold text-blue-900">{{ analytics?.caixa?.entradas ? formatCurrency(analytics.caixa.entradas) : '-' }}</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p class="text-xs text-blue-600">A receber no período</p>
+                  <p class="text-xl font-bold text-blue-900">{{ analytics?.caixa?.aReceber ? formatCurrency(analytics.caixa.aReceber) : '-' }}</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p class="text-xs text-blue-600">Total atrasado</p>
+                  <p class="text-xl font-bold text-blue-900">{{ analytics?.inadimplencia?.valorTotalEmAtraso ? formatCurrency(analytics.inadimplencia.valorTotalEmAtraso) : '-' }}</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p class="text-xs text-blue-600">Inquilinos inadimplentes</p>
+                  <p class="text-xl font-bold text-blue-900">{{ analytics?.inadimplencia?.totalInadimplentes ?? '-' }}</p>
                 </div>
               </div>
-              
-              <!-- Occupancy Chart -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6">
-                <h3 class="text-xl font-bold text-blue-900 mb-4">Taxa de Ocupação</h3>
-                <div class="h-64 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <div class="text-center">
-                    <svg class="w-16 h-16 text-blue-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
-                    </svg>
-                    <p class="text-gray-500">Gráfico de ocupação será implementado</p>
-                  </div>
+              <ng-template #kpiSkeleton>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
+                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
+                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
+                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
+                </div>
+              </ng-template>
+
+              <!-- Charts -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
+                  <h3 class="text-lg font-bold text-blue-900 mb-4">Recebimentos por mês</h3>
+                  <canvas baseChart [data]="lineRecebData" [options]="lineChartOptions" [type]="'line'" class="h-56 sm:h-64 md:h-80"></canvas>
+                </div>
+                <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
+                  <h3 class="text-lg font-bold text-blue-900 mb-4">A receber por mês</h3>
+                  <canvas baseChart [data]="lineAReceberData" [options]="lineChartOptions" [type]="'line'" class="h-56 sm:h-64 md:h-80"></canvas>
+                </div>
+                <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
+                  <h3 class="text-lg font-bold text-blue-900 mb-4">Top inadimplentes</h3>
+                  <canvas baseChart [data]="barTopData" [options]="barChartOptions" [type]="'bar'" class="h-56 sm:h-64 md:h-80"></canvas>
+                </div>
+                <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
+                  <h3 class="text-lg font-bold text-blue-900 mb-4">Distribuição por status</h3>
+                  <canvas baseChart [data]="pieStatusData" [options]="pieChartOptions" [type]="'pie'" class="h-56 sm:h-64 md:h-80"></canvas>
                 </div>
               </div>
             </div>
@@ -335,7 +382,7 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
             <div class="bg-white border border-blue-200 rounded-xl p-6">
               <h3 class="text-xl font-bold text-blue-900 mb-6">Atividades Recentes</h3>
               <div class="space-y-4">
-                <div *ngFor="let activity of recentActivities" class="flex items-center space-x-4 p-4 bg-gray-800/50 rounded-lg">
+                <div *ngFor="let activity of recentActivities" class="flex items-center space-x-4 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition">
                   <div class="w-10 h-10 rounded-full flex items-center justify-center"
                        [class]="'bg-' + activity.color + '-500/20'">
                     <svg class="w-5 h-5" [class]="'text-' + activity.color + '-400'" fill="currentColor" viewBox="0 0 20 20">
@@ -345,10 +392,10 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
                     </svg>
                   </div>
                   <div class="flex-1">
-                    <p class="text-white font-medium">{{activity.title}}</p>
-                    <p class="text-gray-400 text-sm">{{activity.description}}</p>
+                    <p class="text-blue-900 font-medium">{{activity.title}}</p>
+                    <p class="text-blue-700 text-sm">{{activity.description}}</p>
                   </div>
-                  <span class="text-gray-400 text-sm">{{activity.time}}</span>
+                  <span class="text-blue-600 text-sm">{{activity.time}}</span>
                 </div>
               </div>
             </div>
@@ -463,7 +510,55 @@ export class DashboardComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService, private http: HttpClient) {}
+
+  // Analytics state
+  inicio: string = '';
+  fim: string = '';
+  analytics: any | null = null;
+  loadingAnalytics = false;
+  errorAnalytics: string | null = null;
+
+  // Charts data and options
+  lineRecebData: ChartConfiguration<'line'>['data'] = {
+    labels: [],
+    datasets: [
+      { label: 'Recebimentos', data: [], borderColor: '#2e86de', backgroundColor: 'rgba(46,134,222,0.08)', tension: 0.3 }
+    ]
+  };
+  lineAReceberData: ChartConfiguration<'line'>['data'] = {
+    labels: [],
+    datasets: [
+      { label: 'A Receber', data: [], borderColor: '#f39c12', backgroundColor: 'rgba(243,156,18,0.08)', tension: 0.3 }
+    ]
+  };
+  barTopData: ChartConfiguration<'bar'>['data'] = {
+    labels: [],
+    datasets: [
+      { label: 'Valor em atraso', data: [], backgroundColor: '#e74c3c' }
+    ]
+  };
+  pieStatusData: ChartConfiguration<'pie'>['data'] = {
+    labels: ['Pendentes','Pagas','Vencidas','Canceladas'],
+    datasets: [
+      { data: [0,0,0,0], backgroundColor: ['#f39c12','#2ecc71','#e74c3c','#95a5a6'] }
+    ]
+  };
+
+  lineChartOptions: ChartOptions = {
+    responsive: true,
+    plugins: { legend: { position: 'bottom' } },
+    scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(0,0,0,0.05)' } } }
+  };
+  barChartOptions: ChartOptions = {
+    responsive: true,
+    plugins: { legend: { position: 'bottom' } },
+    scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(0,0,0,0.05)' } } }
+  };
+  pieChartOptions: ChartOptions = {
+    responsive: true,
+    plugins: { legend: { position: 'bottom' } }
+  };
   
   notifications = [
     {
@@ -524,6 +619,11 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.simulateNewNotifications();
+    const today = new Date();
+    const startOfYear = new Date(today.getFullYear(), 0, 1);
+    this.inicio = this.toInputDate(startOfYear);
+    this.fim = this.toInputDate(today);
+    this.loadAnalytics();
   }
 
 
@@ -556,6 +656,93 @@ export class DashboardComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  private toInputDate(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  private formatMonthLabel(mesStr: string): string {
+    const [y, m] = mesStr.split('-');
+    const date = new Date(Number(y), Number(m) - 1, 1);
+    return date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+  }
+
+  loadAnalytics() {
+    const token = this.authService.token;
+    if (!token) {
+      this.errorAnalytics = 'Sessão expirada. Faça login novamente.';
+      return;
+    }
+
+    this.loadingAnalytics = true;
+    this.errorAnalytics = null;
+
+    const baseUrl = 'http://localhost:3010/api/empresa/analytics';
+    const params = new URLSearchParams();
+    if (this.inicio) params.append('inicio', this.inicio);
+    if (this.fim) params.append('fim', this.fim);
+    const url = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
+
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    this.http.get<any>(url, { headers }).subscribe({
+      next: (data) => {
+        const payload = (data && typeof data === 'object' && 'analytics' in data) ? data.analytics : data;
+        this.analytics = payload;
+
+        // Linha: Recebimentos por mês
+        const recebSeries = (payload.series?.recebimentosPorMes || []) as Array<{ mes: string; valor: number }>;
+        this.lineRecebData.labels = recebSeries.map(x => this.formatMonthLabel(x.mes));
+        (this.lineRecebData.datasets[0].data as number[]) = recebSeries.map(x => x.valor || 0);
+
+        // Linha: A receber por mês
+        const aRecSeries = (payload.series?.aReceberPorMes || []) as Array<{ mes: string; valor: number }>;
+        this.lineAReceberData.labels = aRecSeries.map(x => this.formatMonthLabel(x.mes));
+        (this.lineAReceberData.datasets[0].data as number[]) = aRecSeries.map(x => x.valor || 0);
+
+        // Barra: Top inadimplentes
+        const top = (payload.inadimplencia?.topInadimplentes || []) as Array<{ nome: string; totalEmAtraso: number }>;
+        this.barTopData.labels = top.map(x => x.nome);
+        (this.barTopData.datasets[0].data as number[]) = top.map(x => x.totalEmAtraso || 0);
+
+        // Pizza: Distribuição por status (quantidades)
+        const f = payload.totals?.faturas || {};
+        const pend = f.pendentes?.quantidade || 0;
+        const pagas = f.pagas?.quantidade || 0;
+        const venc = f.vencidas?.quantidade || 0;
+        const canc = f.canceladas?.quantidade || 0;
+        (this.pieStatusData.datasets[0].data as number[]) = [pend, pagas, venc, canc];
+
+        this.loadingAnalytics = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar analytics:', err);
+        this.errorAnalytics = err?.error?.message || 'Erro ao carregar dados analíticos';
+        this.loadingAnalytics = false;
+      }
+    });
+  }
+
+  setQuickRange(range: '30d' | '90d' | 'ytd') {
+    const today = new Date();
+    let start: Date;
+    if (range === '30d') {
+      start = new Date(today);
+      start.setDate(start.getDate() - 30);
+    } else if (range === '90d') {
+      start = new Date(today);
+      start.setDate(start.getDate() - 90);
+    } else {
+      // ytd
+      start = new Date(today.getFullYear(), 0, 1);
+    }
+    this.inicio = this.toInputDate(start);
+    this.fim = this.toInputDate(today);
+    this.loadAnalytics();
   }
 
   openNotificationDialog() {

@@ -61,7 +61,7 @@ import { AuthService } from '../../auth/auth.service';
       </div>
 
       <!-- Stats Cards -->
-      <div *ngIf="!loading && !error" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" [@slideIn]>
+      <div *ngIf="!loading && !error" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8" [@slideIn]>
         <div class="bg-white backdrop-blur-sm rounded-xl p-6 border border-blue-200 hover:border-blue-400 transition-all duration-300">
           <div class="flex items-center justify-between">
             <div>
@@ -78,9 +78,10 @@ import { AuthService } from '../../auth/auth.service';
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-600 text-sm">Lojas Ocupadas</p>
+              <p class="text-2xl font-bold text-red-600">{{ occupiedCount }}</p>
             </div>
-            <div class="bg-green-100 p-3 rounded-lg">
-              <i class="fas fa-check-circle text-green-600 text-xl"></i>
+            <div class="bg-red-100 p-3 rounded-lg">
+              <i class="fas fa-door-closed text-red-600 text-xl"></i>
             </div>
           </div>
         </div>
@@ -89,9 +90,10 @@ import { AuthService } from '../../auth/auth.service';
           <div class="flex items-center justify-between">
             <div>
               <p class="text-gray-600 text-sm">Lojas Vagas</p>
+              <p class="text-2xl font-bold text-green-600">{{ vacantCount }}</p>
             </div>
-            <div class="bg-red-100 p-3 rounded-lg">
-              <i class="fas fa-times-circle text-red-600 text-xl"></i>
+            <div class="bg-green-100 p-3 rounded-lg">
+              <i class="fas fa-door-open text-green-600 text-xl"></i>
             </div>
           </div>
         </div>
@@ -99,13 +101,15 @@ import { AuthService } from '../../auth/auth.service';
         <div class="bg-white backdrop-blur-sm rounded-xl p-6 border border-blue-200 hover:border-blue-400 transition-all duration-300">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-gray-600 text-sm">Receita Mensal</p>
+              <p class="text-gray-600 text-sm">Em Manutenção</p>
+              <p class="text-2xl font-bold text-amber-600">{{ maintenanceCount }}</p>
             </div>
-            <div class="bg-blue-100 p-3 rounded-lg">
-              <i class="fas fa-dollar-sign text-blue-600 text-xl"></i>
+            <div class="bg-amber-100 p-3 rounded-lg">
+              <i class="fas fa-tools text-amber-600 text-xl"></i>
             </div>
           </div>
         </div>
+
       </div>
 
       <!-- Actions Bar -->
@@ -130,11 +134,11 @@ import { AuthService } from '../../auth/auth.service';
             <input 
               type="text" 
               placeholder="Buscar lojas..."
-              class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 pl-10 text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+              class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 pl-10 text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 w-full sm:w-72 md:w-96"
             >
             <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400"></i>
           </div>
-          <select class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500">
+          <select class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 w-full sm:w-48">
             <option value="all">Todas as lojas</option>
             <option value="occupied">Ocupadas</option>
             <option value="vacant">Vagas</option>
@@ -226,22 +230,31 @@ import { AuthService } from '../../auth/auth.service';
           <h3 class="text-xl font-semibold text-blue-700 mb-2">Nenhuma loja encontrada</h3>
           <p class="text-blue-600">Não há lojas cadastradas para esta empresa.</p>
         </div>
-        <div *ngFor="let store of stores" 
-             class="bg-white backdrop-blur-sm rounded-xl border border-blue-200 overflow-hidden hover:border-blue-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl cursor-pointer"
+        <div *ngFor="let store of stores; trackBy: trackByStoreId" 
+             class="bg-white backdrop-blur-sm rounded-xl border border-blue-200 overflow-hidden hover:border-blue-400 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-2xl cursor-pointer"
+             [ngClass]="{
+               'border-l-4 border-red-400': store.status === 'OCUPADA',
+               'border-l-4 border-green-400': store.status === 'VAGA',
+               'border-l-4 border-amber-400': store.status === 'MANUTENCAO'
+             }"
              [@cardHover]
              (click)="viewStoreDetails(store)">
           
           <!-- Store Image -->
           <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200 relative">
             <div class="absolute inset-0 flex items-center justify-center">
-              <i class="fas fa-store text-6xl text-blue-400"></i>
+              <i [ngClass]="{
+                'fas fa-door-closed text-red-500': store.status === 'OCUPADA',
+                'fas fa-door-open text-green-500': store.status === 'VAGA',
+                'fas fa-tools text-amber-500': store.status === 'MANUTENCAO'
+              }" class="text-6xl"></i>
             </div>
             <div class="absolute top-4 right-4">
               <span [ngClass]="{
-                'bg-green-500': store.status === 'OCUPADA',
-                'bg-red-500': store.status === 'VAGA',
-                'bg-yellow-500': store.status === 'MANUTENCAO'
-              }" class="px-3 py-1 rounded-full text-xs font-semibold text-white">
+                'bg-red-500': store.status === 'OCUPADA',
+                'bg-green-500': store.status === 'VAGA',
+                'bg-amber-500': store.status === 'MANUTENCAO'
+              }" class="px-3 py-1 rounded-full text-xs font-semibold text-white shadow">
                 {{ store.status === 'OCUPADA' ? 'Ocupada' : store.status === 'VAGA' ? 'Vaga' : 'Manutenção' }}
               </span>
             </div>
@@ -260,9 +273,19 @@ import { AuthService } from '../../auth/auth.service';
                 <span>{{ store.localizacao }}</span>
               </div>
               
-              <div class="flex items-center text-blue-700">
-                <i class="fas fa-info-circle w-5 text-blue-500 mr-3"></i>
-                <span class="capitalize">{{ store.status.toLowerCase() }}</span>
+              <div class="flex items-center">
+                <i [ngClass]="{
+                  'fas fa-door-closed text-red-500': store.status === 'OCUPADA',
+                  'fas fa-door-open text-green-500': store.status === 'VAGA',
+                  'fas fa-tools text-amber-500': store.status === 'MANUTENCAO'
+                }" class="w-5 mr-3"></i>
+                <span [ngClass]="{
+                  'bg-red-100 text-red-700 border-red-200': store.status === 'OCUPADA',
+                  'bg-green-100 text-green-700 border-green-200': store.status === 'VAGA',
+                  'bg-amber-100 text-amber-700 border-amber-200': store.status === 'MANUTENCAO'
+                }" class="px-3 py-1 rounded-full text-xs font-semibold border">
+                  {{ store.status === 'OCUPADA' ? 'Ocupada' : store.status === 'VAGA' ? 'Vaga' : 'Manutenção' }}
+                </span>
               </div>
               
               <div class="flex items-center text-blue-700">
@@ -272,7 +295,7 @@ import { AuthService } from '../../auth/auth.service';
               
               <div class="flex items-center text-blue-700">
                 <i class="fas fa-file-contract w-5 text-blue-500 mr-3"></i>
-                <span>{{ store.contratos.length || 0 }} contrato(s)</span>
+                <span>{{ store.contratos?.length || 0 }} contrato(s)</span>
               </div>
             </div>
             
@@ -283,6 +306,13 @@ import { AuthService } from '../../auth/auth.service';
                 class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-200">
                 <i class="fas fa-edit mr-2"></i>
                 Editar
+              </button>
+              <button
+                *ngIf="store.inquilino"
+                (click)="openUnlinkTenantModal(store); $event.stopPropagation()"
+                class="flex-1 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-200">
+                <i class="fas fa-user-times mr-2"></i>
+                Desvincular Inquilino
               </button>
 
             </div>
@@ -628,15 +658,7 @@ import { AuthService } from '../../auth/auth.service';
            >
              Cancelar
            </button>
-           <button
-             type="button"
-             (click)="onRemoveTenant()"
-             [disabled]="assigningTenant"
-             class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-           >
-             <span *ngIf="!assigningTenant">Remover</span>
-             <span *ngIf="assigningTenant">Removendo...</span>
-           </button>
+
            <button
              type="button"
              (click)="onAssignTenant()"
@@ -772,6 +794,15 @@ import { AuthService } from '../../auth/auth.service';
                      </div>
                    </div>
                  </div>
+                 <div class="flex">
+                   <button
+                     (click)="openUnlinkTenantModal(selectedStore)"
+                     [disabled]="unlinkingTenant"
+                     class="mt-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
+                     <i class="fas fa-user-minus mr-2"></i>
+                     Desvincular Usuário
+                   </button>
+                 </div>
                </div>
                
                <!-- Informações do Inquilino -->
@@ -856,9 +887,19 @@ import { AuthService } from '../../auth/auth.service';
             <i class="fas fa-user-times text-orange-500 text-2xl mr-3"></i>
             <h3 class="text-xl font-bold text-blue-900">Confirmar Desvinculação</h3>
           </div>
-          <p class="text-blue-600 mb-6">
-            Tem certeza que deseja desvincular o inquilino <strong class="text-blue-800">{{ storeToUnlinkTenant?.inquilino?.nome }}</strong> da loja <strong class="text-blue-800">{{ storeToUnlinkTenant?.nome }}</strong>?
-          </p>
+          <div class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p class="text-blue-700">
+              Você está prestes a desvincular 
+              <span class="font-semibold text-blue-900">{{ getUnlinkTargetLabel() }}</span>
+              da loja 
+              <span class="inline-flex items-center px-2 py-0.5 bg-blue-100 text-blue-800 rounded-md font-semibold">
+                {{ storeToUnlinkTenant?.nome }}
+              </span>.
+            </p>
+            <p class="text-blue-500 text-sm mt-2">
+              Após confirmar, o vínculo será removido e os dados permanecerão intactos.
+            </p>
+          </div>
           <div class="flex justify-end space-x-3">
             <button 
               (click)="closeUnlinkTenantModal()"
@@ -927,6 +968,19 @@ export class StoresComponent implements OnInit {
     { value: 'OCUPADA', label: 'Ocupada' },
     { value: 'INATIVA', label: 'Inativa' }
   ];
+
+  // Contadores derivados para o template (evitam arrow functions no HTML)
+  get occupiedCount(): number {
+    return this.stores.filter(s => s.status === 'OCUPADA').length;
+  }
+
+  get vacantCount(): number {
+    return this.stores.filter(s => s.status === 'VAGA').length;
+  }
+
+  get maintenanceCount(): number {
+    return this.stores.filter(s => s.status === 'MANUTENCAO').length;
+  }
   
   // Propriedades de paginação
   currentPage = 1;
@@ -1027,6 +1081,8 @@ export class StoresComponent implements OnInit {
       }
     });
   }
+
+  // O fluxo de desvinculação de usuário usa o mesmo modal de confirmação
 
 
 
@@ -1237,14 +1293,8 @@ export class StoresComponent implements OnInit {
 
     this.assigningTenant = true;
     this.tenantError = null;
-
-    const updateData = {
-      vincularInquilino: {
-        inquilinoId: null
-      }
-    };
-
-    this.storeService.updateStore(this.currentStoreForTenant.id, updateData).subscribe({
+    // Use DELETE /desvincular/:id for tenant unlinking
+    this.storeService.unlinkTenant(this.currentStoreForTenant.id).subscribe({
       next: () => {
         this.assigningTenant = false;
         this.closeTenantModal();
@@ -1440,21 +1490,63 @@ export class StoresComponent implements OnInit {
     if (!this.storeToUnlinkTenant) return;
 
     this.unlinkingTenant = true;
-    this.storeService.unlinkTenant(this.storeToUnlinkTenant.id).subscribe({
-      next: () => {
-        // Atualizar a lista de lojas
-        this.loadStores();
-        // Atualizar os detalhes se estamos visualizando a mesma loja
-        if (this.viewMode === 'details' && this.selectedStore?.id === this.storeToUnlinkTenant?.id && this.storeToUnlinkTenant) {
-          this.loadStoreDetails(this.storeToUnlinkTenant.id);
+
+    // Se houver inquilino vinculado, usa o endpoint de desvincular inquilino (DELETE)
+    if (this.storeToUnlinkTenant.usuario) {
+      this.storeService.unlinkTenant(this.storeToUnlinkTenant.id).subscribe({
+        next: () => {
+          this.loadStores();
+          const id = this.storeToUnlinkTenant?.id;
+          if (this.viewMode === 'details' && id && this.selectedStore?.id === id) {
+            this.loadStoreDetails(id);
+          }
+          this.closeUnlinkTenantModal();
+        },
+        error: (error) => {
+          console.error('Erro ao desvincular inquilino:', error);
+          this.unlinkingTenant = false;
         }
-        this.closeUnlinkTenantModal();
-      },
-      error: (error) => {
-        console.error('Erro ao desvincular inquilino:', error);
-        this.unlinkingTenant = false;
-        // Aqui você can adicionar uma notificação de erro
-      }
-    });
+      });
+      return;
+    }
+
+    // Se houver usuário vinculado, usa o update para limpar usuarioId
+    if (this.storeToUnlinkTenant.usuario) {
+      const id = this.storeToUnlinkTenant.id;
+      this.storeService.updateStore(id, { usuarioId: null }).subscribe({
+        next: () => {
+          this.loadStores();
+          if (this.viewMode === 'details' && this.selectedStore?.id === id) {
+            this.loadStoreDetails(id);
+          }
+          this.closeUnlinkTenantModal();
+        },
+        error: (error) => {
+          console.error('Erro ao desvincular usuário:', error);
+          this.unlinkingTenant = false;
+        }
+      });
+      return;
+    }
+
+    // Caso não haja vínculo, apenas fecha o modal
+    this.unlinkingTenant = false;
+    this.closeUnlinkTenantModal();
+  }
+
+  getUnlinkTargetLabel(): string {
+    if (!this.storeToUnlinkTenant) {
+      return 'o vínculo atual';
+    }
+    const store = this.storeToUnlinkTenant;
+    if (store.inquilino) {
+      const nome = store.inquilino.nome || '';
+      return `o inquilino ${nome}`;
+    }
+    if (store.usuario) {
+      const nome = store.usuario.nome || '';
+      return `o usuário ${nome}`;
+    }
+    return 'o vínculo atual';
   }
 }

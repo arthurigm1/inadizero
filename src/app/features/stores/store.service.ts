@@ -42,6 +42,7 @@ export interface UpdateStoreData {
   vincularInquilino?: {
     inquilinoId: string | null;
   };
+  usuarioId?: string | null;
 }
 
 export interface Tenant {

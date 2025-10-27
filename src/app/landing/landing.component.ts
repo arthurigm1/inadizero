@@ -11,7 +11,7 @@ import AOS from 'aos';
       class="min-h-screen bg-gray-900 text-white font-sans overflow-x-hidden"
     >
       <!-- Seção unificada Nav + Hero -->
-      <section class="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 overflow-hidden h-[90vh]">
+      <section class="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 overflow-hidden min-h-screen sm:h-[90vh]">
         <!-- Efeito de gradiente de fundo -->
         <div
           class="absolute inset-0 bg-gradient-to-br from-blue-500/30 via-transparent to-blue-900/40"
@@ -39,10 +39,10 @@ import AOS from 'aos';
         <!-- Barra de Navegação -->
         <nav class="relative z-30">
           <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
+            <div class="flex justify-between items-center h-16 sm:h-20">
               <!-- Logo -->
               <div class="flex items-center gap-2">
-                <span class="text-white font-bold text-2xl tracking-tight">
+                <span class="text-white font-bold text-xl sm:text-2xl tracking-tight">
                   Inadi<span class="text-blue-200">Zero</span>
                 </span>
               </div>
@@ -51,7 +51,7 @@ import AOS from 'aos';
               <div class="md:hidden flex items-center">
                 <button
                   (click)="toggleMenu()"
-                  class="text-white hover:text-blue-200 focus:outline-none transition-colors duration-200"
+                  class="text-white hover:text-blue-200 focus:outline-none transition-colors duration-200 p-2"
                 >
                   <svg
                     class="h-6 w-6"
@@ -63,7 +63,7 @@ import AOS from 'aos';
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="2"
-                      d="M4 6h16M4 12h16M4 18h16"
+                      [attr.d]="isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'"
                     />
                   </svg>
                 </button>
@@ -144,42 +144,42 @@ import AOS from 'aos';
           <!-- Menu Mobile -->
           <div
             *ngIf="isMenuOpen"
-            class="md:hidden bg-blue-900/95 backdrop-blur-sm px-4 pb-4 border-t border-blue-700/50"
+            class="md:hidden bg-blue-900/95 backdrop-blur-sm px-4 pb-4 border-t border-blue-700/50 animate-slide-down"
           >
             <div class="flex flex-col space-y-4 py-4">
               <a
                 (click)="scrollTo('features'); toggleMenu()"
-                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer py-2 px-3 rounded-md hover:bg-blue-800/50"
               >
                 Recursos
               </a>
               <a
                 (click)="scrollTo('solutions'); toggleMenu()"
-                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer py-2 px-3 rounded-md hover:bg-blue-800/50"
               >
                 Soluções
               </a>
               <a
                 (click)="scrollTo('pricing'); toggleMenu()"
-                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer py-2 px-3 rounded-md hover:bg-blue-800/50"
               >
                 Planos
               </a>
               <a
                 (click)="scrollTo('testimonials'); toggleMenu()"
-                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer py-2 px-3 rounded-md hover:bg-blue-800/50"
               >
                 Clientes
               </a>
               <a
                 (click)="scrollTo('faq'); toggleMenu()"
-                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer py-2 px-3 rounded-md hover:bg-blue-800/50"
               >
                 FAQ
               </a>
               <a
                 (click)="scrollTo('contact'); toggleMenu()"
-                class="text-white hover:text-blue-200 transition font-medium cursor-pointer"
+                class="text-white hover:text-blue-200 transition font-medium cursor-pointer py-2 px-3 rounded-md hover:bg-blue-800/50"
               >
                 Contato
               </a>
@@ -188,9 +188,21 @@ import AOS from 'aos';
               >
                 <a
                   routerLink="/login"
-                  class="bg-white text-blue-700 font-medium py-2 px-6 rounded-md hover:bg-blue-50 transition text-center shadow-lg transform hover:shadow-blue-500/30"
+                  class="bg-transparent border border-white text-white font-medium py-3 px-6 rounded-md hover:bg-white hover:text-blue-700 transition text-center"
+                >
+                  Entrar
+                </a>
+                <a
+                  routerLink="/tenant/login"
+                  class="bg-transparent border border-blue-200 text-blue-200 font-medium py-3 px-6 rounded-md hover:bg-blue-200 hover:text-blue-900 transition text-center"
                 >
                   Portal do Inquilino
+                </a>
+                <a
+                  routerLink="/registro"
+                  class="bg-white text-blue-700 font-bold py-3 px-6 rounded-md hover:bg-blue-50 transition text-center shadow-lg"
+                >
+                  Começar
                 </a>
               </div>
             </div>
@@ -199,29 +211,29 @@ import AOS from 'aos';
 
         <!-- Conteúdo Principal Hero -->
         <div
-          class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-4 py-8 md:py-16 relative z-5"
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-16 relative z-5"
         >
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center min-h-[calc(100vh-8rem)] sm:min-h-0">
             <!-- Texto e CTA -->
-            <div class="animate-fade-in-up text-center lg:text-left">
+            <div class="animate-fade-in-up text-center lg:text-left order-2 lg:order-1">
               <h1
-                class="text-4xl sm:text-5xl md:text-6xl font-bold mb-8 leading-tight"
+                class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8 leading-tight"
               >
                 <span class="text-white">Sistema de gestão</span> para seu
                 negócio
                 <span
-                  class="block mt-2 text-3xl sm:text-4xl md:text-5xl text-blue-200"
+                  class="block mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-blue-200"
                 >
                   grátis por 30 dias
                 </span>
               </h1>
 
-              <div class="space-y-4 mb-8">
+              <div class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 <p
-                  class="flex items-center text-lg md:text-xl text-white gap-2"
+                  class="flex items-center justify-center lg:justify-start text-base sm:text-lg md:text-xl text-white gap-2 sm:gap-3"
                 >
                   <svg
-                    class="w-6 h-6 text-blue-200"
+                    class="w-5 h-5 sm:w-6 sm:h-6 text-blue-200 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -236,10 +248,10 @@ import AOS from 'aos';
                   Imóveis ilimitados
                 </p>
                 <p
-                  class="flex items-center text-lg md:text-xl text-white gap-2"
+                  class="flex items-center justify-center lg:justify-start text-base sm:text-lg md:text-xl text-white gap-2 sm:gap-3"
                 >
                   <svg
-                    class="w-6 h-6 text-blue-200"
+                    class="w-5 h-5 sm:w-6 sm:h-6 text-blue-200 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -254,10 +266,10 @@ import AOS from 'aos';
                   Emissão de boletos
                 </p>
                 <p
-                  class="flex items-center text-lg md:text-xl text-white gap-2"
+                  class="flex items-center justify-center lg:justify-start text-base sm:text-lg md:text-xl text-white gap-2 sm:gap-3"
                 >
                   <svg
-                    class="w-6 h-6 text-blue-200"
+                    class="w-5 h-5 sm:w-6 sm:h-6 text-blue-200 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -273,28 +285,29 @@ import AOS from 'aos';
                 </p>
               </div>
 
-              <div class="flex flex-col items-center lg:items-start gap-4">
+              <div class="flex flex-col items-center lg:items-start gap-3 sm:gap-4">
                 <a
                   routerLink="/register"
-                  class="w-full sm:w-auto bg-white text-blue-700 font-medium py-4 px-8 rounded-md hover:bg-blue-50 transition text-center shadow-lg transform hover:scale-105 hover:shadow-blue-500/30 text-lg"
+                  class="w-full sm:w-auto bg-white text-blue-700 font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-md hover:bg-blue-50 transition text-center shadow-lg transform hover:scale-105 hover:shadow-blue-500/30 text-base sm:text-lg"
                 >
                   Criar conta 100% gratuita
                 </a>
-                <p class="text-sm text-blue-200">
+                <p class="text-xs sm:text-sm text-blue-200">
                   *Não é necessário cartão de crédito
                 </p>
               </div>
             </div>
 
-            <div class="relative group">
-              <!-- Container da imagem centralizada e um pouco de lado -->
-            <div
-    class="relative w-full max-w-2xl lg:max-w-4xl mx-auto lg:mx-0 lg:w-[110%] xl:w-[120%] transform lg:translate-x-4 xl:translate-x-8 transition duration-500 group-hover:scale-[1.02]"
-  >
+            <div class="relative group order-1 lg:order-2">
+              <!-- Container da imagem otimizado para mobile -->
+              <div
+                class="relative w-full max-w-sm sm:max-w-md lg:max-w-2xl xl:max-w-4xl mx-auto lg:mx-0 lg:w-[110%] xl:w-[120%] transform lg:translate-x-4 xl:translate-x-8 transition duration-500 group-hover:scale-[1.02]"
+              >
                 <img
                   src="assets/landingpage/celular.png"
                   alt="Landing Page"
-                  class="w-full h-auto rounded-xl "
+                  class="w-full h-auto rounded-xl"
+                  loading="lazy"
                 />
               </div>
             </div>
@@ -303,10 +316,10 @@ import AOS from 'aos';
 
         <!-- Indicador de scroll -->
         <div
-          class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20"
+          class="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-20"
         >
           <svg
-            class="w-6 h-6 text-blue-200"
+            class="w-5 h-5 sm:w-6 sm:h-6 text-blue-200"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -323,33 +336,33 @@ import AOS from 'aos';
 
       <!-- Stats Section -->
       <section
-        class="bg-gradient-to-r from-white to-blue-50 text-blue-700 py-12 md:py-16 animate-fade-in"
+        class="bg-gradient-to-r from-white to-blue-50 text-blue-700 py-8 sm:py-12 md:py-16 animate-fade-in"
       >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-            class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 text-center"
+            class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-8 text-center"
           >
-            <div class="p-4 md:p-6 transform hover:scale-110 transition">
-              <div class="text-2xl md:text-4xl font-bold">+95%</div>
-              <div class="mt-1 md:mt-2 text-sm md:text-base font-medium">
+            <div class="p-3 sm:p-4 md:p-6 transform hover:scale-110 transition duration-300 bg-white/50 rounded-lg shadow-sm">
+              <div class="text-xl sm:text-2xl md:text-4xl font-bold">+95%</div>
+              <div class="mt-1 md:mt-2 text-xs sm:text-sm md:text-base font-medium leading-tight">
                 Ocupação Média
               </div>
             </div>
-            <div class="p-4 md:p-6 transform hover:scale-110 transition">
-              <div class="text-2xl md:text-4xl font-bold">R$ 500M+</div>
-              <div class="mt-1 md:mt-2 text-sm md:text-base font-medium">
+            <div class="p-3 sm:p-4 md:p-6 transform hover:scale-110 transition duration-300 bg-white/50 rounded-lg shadow-sm">
+              <div class="text-xl sm:text-2xl md:text-4xl font-bold">R$ 500M+</div>
+              <div class="mt-1 md:mt-2 text-xs sm:text-sm md:text-base font-medium leading-tight">
                 Em Contratos
               </div>
             </div>
-            <div class="p-4 md:p-6 transform hover:scale-110 transition">
-              <div class="text-2xl md:text-4xl font-bold">1.2K+</div>
-              <div class="mt-1 md:mt-2 text-sm md:text-base font-medium">
+            <div class="p-3 sm:p-4 md:p-6 transform hover:scale-110 transition duration-300 bg-white/50 rounded-lg shadow-sm">
+              <div class="text-xl sm:text-2xl md:text-4xl font-bold">1.2K+</div>
+              <div class="mt-1 md:mt-2 text-xs sm:text-sm md:text-base font-medium leading-tight">
                 Lojas Gerenciadas
               </div>
             </div>
-            <div class="p-4 md:p-6 transform hover:scale-110 transition">
-              <div class="text-2xl md:text-4xl font-bold">24/7</div>
-              <div class="mt-1 md:mt-2 text-sm md:text-base font-medium">
+            <div class="p-3 sm:p-4 md:p-6 transform hover:scale-110 transition duration-300 bg-white/50 rounded-lg shadow-sm">
+              <div class="text-xl sm:text-2xl md:text-4xl font-bold">24/7</div>
+              <div class="mt-1 md:mt-2 text-xs sm:text-sm md:text-base font-medium leading-tight">
                 Suporte Especializado
               </div>
             </div>
@@ -358,13 +371,13 @@ import AOS from 'aos';
       </section>
 
       <!-- Features Section -->
-      <section id="features" class="py-16 md:py-24 bg-black overflow-hidden">
+      <section id="features" class="py-12 sm:py-16 md:py-24 bg-black overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-16 md:mb-20" data-aos="fade-up">
+          <div class="text-center mb-10 sm:mb-16 md:mb-20" data-aos="fade-up">
             <div class="max-w-2xl mx-auto">
               <!-- Container adicional para melhor controle -->
               <h2
-                class="text-4xl font-bold text-blue-200 mb-4 relative inline-block"
+                class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-200 mb-3 sm:mb-4 relative inline-block"
               >
                 <span class="relative z-10">Recursos Exclusivos</span>
                 <span
@@ -372,7 +385,7 @@ import AOS from 'aos';
                 ></span>
               </h2>
               <p
-                class="text-xl text-gray-300 leading-relaxed"
+                class="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed"
                 data-aos="fade-up"
                 data-aos-delay="100"
               >
@@ -383,20 +396,20 @@ import AOS from 'aos';
             </div>
           </div>
           <div
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10"
           >
             <!-- Feature 1 -->
             <div
-              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-blue-400 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-700 hover:border-blue-400 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10"
               data-aos="fade-up"
               data-aos-delay="150"
             >
               <div
-                class="icon-container w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-200 transform transition-transform duration-500 group-hover:rotate-6"
+                class="icon-container w-12 h-12 sm:w-14 sm:h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4 sm:mb-6 text-blue-200 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-8 w-8"
+                  class="h-6 w-6 sm:h-8 sm:w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -410,15 +423,15 @@ import AOS from 'aos';
                 </svg>
               </div>
               <h3
-                class="text-2xl font-semibold text-white mb-4 group-hover:text-blue-200 transition-colors duration-300"
+                class="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-3 sm:mb-4 group-hover:text-blue-200 transition-colors duration-300"
               >
                 Gestão de Contratos
               </h3>
-              <p class="text-gray-300 text-base leading-relaxed">
+              <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
                 Controle completo de contratos com alertas inteligentes para
                 vencimentos, reajustes automáticos e histórico de renovações.
               </p>
-              <div class="mt-6">
+              <div class="mt-4 sm:mt-6">
                 <span
                   class="inline-block px-3 py-1 text-xs font-semibold bg-blue-500/20 text-blue-200 rounded-full"
                 >
@@ -429,16 +442,16 @@ import AOS from 'aos';
 
             <!-- Feature 2 -->
             <div
-              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-blue-400 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-700 hover:border-blue-400 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10"
               data-aos="fade-up"
               data-aos-delay="200"
             >
               <div
-                class="icon-container w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-200 transform transition-transform duration-500 group-hover:rotate-6"
+                class="icon-container w-12 h-12 sm:w-14 sm:h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4 sm:mb-6 text-blue-200 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-8 w-8"
+                  class="h-6 w-6 sm:h-8 sm:w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -452,16 +465,16 @@ import AOS from 'aos';
                 </svg>
               </div>
               <h3
-                class="text-2xl font-semibold text-white mb-4 group-hover:text-blue-200 transition-colors duration-300"
+                class="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-3 sm:mb-4 group-hover:text-blue-200 transition-colors duration-300"
               >
                 Cobrança Automatizada
               </h3>
-              <p class="text-gray-300 text-base leading-relaxed">
+              <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
                 Sistema completo de cobrança com emissão de boletos,
                 notificações personalizadas e acompanhamento de pagamentos em
                 tempo real.
               </p>
-              <div class="mt-6">
+              <div class="mt-4 sm:mt-6">
                 <span
                   class="inline-block px-3 py-1 text-xs font-semibold bg-blue-500/20 text-blue-200 rounded-full"
                 >
@@ -472,16 +485,16 @@ import AOS from 'aos';
 
             <!-- Feature 3 - Integração PIX (nova) -->
             <div
-              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-8 rounded-2xl border border-gray-700 hover:border-blue-400 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10"
+              class="feature-card bg-gradient-to-br from-gray-800 to-gray-850 p-5 sm:p-6 md:p-8 rounded-2xl border border-gray-700 hover:border-blue-400 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10"
               data-aos="fade-up"
               data-aos-delay="250"
             >
               <div
-                class="icon-container w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-200 transform transition-transform duration-500 group-hover:rotate-6"
+                class="icon-container w-12 h-12 sm:w-14 sm:h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4 sm:mb-6 text-blue-200 transform transition-transform duration-500 group-hover:rotate-6"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-8 w-8"
+                  class="h-6 w-6 sm:h-8 sm:w-8"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -994,34 +1007,34 @@ import AOS from 'aos';
       </section>
 
       <!-- Pricing Section -->
-      <section id="pricing" class="py-16 md:py-24 bg-black">
+      <section id="pricing" class="py-12 sm:py-16 md:py-24 bg-black">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center mb-16" data-aos="fade-up">
-            <h2 class="text-4xl font-bold text-blue-200 mb-4">
+          <div class="text-center mb-10 sm:mb-16" data-aos="fade-up">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-200 mb-3 sm:mb-4">
               Planos que se adaptam ao seu negócio
             </h2>
-            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p class="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               Escolha o plano ideal para o tamanho do seu empreendimento. Todos
               incluem suporte técnico especializado.
             </p>
           </div>
 
           <div
-            class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto"
+            class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto"
           >
             <!-- Basic Plan -->
             <div
-              class="bg-gray-800 p-6 md:p-8 rounded-xl border border-gray-700 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition transform hover:-translate-y-2"
+              class="bg-gray-800 p-4 sm:p-6 md:p-8 rounded-xl border border-gray-700 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 transition transform hover:-translate-y-2"
               data-aos="fade-up"
               data-aos-delay="100"
             >
-              <h3 class="text-xl font-semibold text-blue-400 mb-4">Básico</h3>
-              <div class="mb-6">
-                <span class="text-3xl md:text-4xl font-bold text-white">
+              <h3 class="text-lg sm:text-xl font-semibold text-blue-400 mb-3 sm:mb-4">Básico</h3>
+              <div class="mb-4 sm:mb-6">
+                <span class="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                   R$ 97
                 </span>
-                <span class="text-gray-400">/mês</span>
-                <p class="text-sm text-gray-400 mt-2">
+                <span class="text-gray-400 text-sm sm:text-base">/mês</span>
+                <p class="text-xs sm:text-sm text-gray-400 mt-1 sm:mt-2">
                   Ideal para pequenos comércios
                 </p>
               </div>
@@ -1071,51 +1084,51 @@ import AOS from 'aos';
        </section>
 
        <!-- Testimonials Section -->
-       <section
-         id="testimonials"
-         class="py-16 md:py-24 bg-gray-900 animate-fade-in"
-       >
-         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-           <div class="text-center mb-16" data-aos="fade-up">
-             <h2 class="text-4xl font-bold text-blue-200 mb-4">
-               O que Nossos Clientes Dizem
-             </h2>
-             <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-               Centros comerciais que transformaram sua gestão com o InadiZero
-             </p>
-           </div>
+      <section
+        id="testimonials"
+        class="py-12 sm:py-16 md:py-24 bg-gray-900 animate-fade-in"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-10 sm:mb-16" data-aos="fade-up">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-200 mb-3 sm:mb-4">
+              O que Nossos Clientes Dizem
+            </h2>
+            <p class="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              Centros comerciais que transformaram sua gestão com o InadiZero
+            </p>
+          </div>
 
-           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
              <!-- Testimonial 1 -->
-             <div
-               class="bg-gray-800 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition transform hover:-translate-y-2"
-               data-aos="fade-up"
-               data-aos-delay="100"
-             >
-               <div class="flex items-center mb-6">
-                 <div class="flex -space-x-2">
-                   <img
-                     class="w-12 h-12 rounded-full border-2 border-blue-500"
-                     src="https://randomuser.me/api/portraits/men/32.jpg"
-                     alt=""
-                   />
-                 </div>
-                 <div class="ml-4">
-                   <h4 class="font-semibold text-white">
-                     Carlos Mendes
-                   </h4>
-                   <p class="text-sm text-gray-400">
-                     Shopping Vale Sul
-                   </p>
-                 </div>
-               </div>
-               <p class="text-gray-300 italic mb-6">
-                 "O InadiZero revolucionou nossa gestão de contratos. Reduzimos o
-                 tempo de administração em 60% e aumentamos nossa ocupação para
-                 98%."
-               </p>
-               <div class="flex text-blue-400">★★★★★</div>
-             </div>
+            <div
+              class="bg-gray-800 p-4 sm:p-6 md:p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition transform hover:-translate-y-2"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <div class="flex items-center mb-4 sm:mb-6">
+                <div class="flex -space-x-2">
+                  <img
+                    class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-blue-500"
+                    src="https://randomuser.me/api/portraits/men/32.jpg"
+                    alt=""
+                  />
+                </div>
+                <div class="ml-3 sm:ml-4">
+                  <h4 class="font-semibold text-white text-sm sm:text-base">
+                    Carlos Mendes
+                  </h4>
+                  <p class="text-xs sm:text-sm text-gray-400">
+                    Shopping Vale Sul
+                  </p>
+                </div>
+              </div>
+              <p class="text-gray-300 italic mb-4 sm:mb-6 text-sm sm:text-base leading-relaxed">
+                "O InadiZero revolucionou nossa gestão de contratos. Reduzimos o
+                tempo de administração em 60% e aumentamos nossa ocupação para
+                98%."
+              </p>
+              <div class="flex text-blue-400 text-sm sm:text-base">★★★★★</div>
+            </div>
 
              <!-- Testimonial 2 -->
              <div
