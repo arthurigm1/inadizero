@@ -160,21 +160,56 @@ interface ResultadoInadimplentes {
           </div>
 
           <!-- Paginação -->
-          <div *ngIf="paginacao" class="mt-6 flex items-center gap-2">
-            <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-blue-900 rounded-lg disabled:opacity-50"
-                    [disabled]="!paginacao.temPaginaAnterior"
-                    (click)="irParaPagina(paginacao.paginaAtual - 1)">Anterior</button>
-            <div class="text-sm text-blue-900">Página {{ paginacao.paginaAtual }} de {{ paginacao.totalPaginas }}</div>
-            <button class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-blue-900 rounded-lg disabled:opacity-50"
-                    [disabled]="!paginacao.temProximaPagina"
-                    (click)="irParaPagina(paginacao.paginaAtual + 1)">Próxima</button>
-            <div class="ml-auto flex items-center gap-2">
-              <label class="text-sm text-blue-900">Limite</label>
-              <select [(ngModel)]="limite" name="limite" class="border rounded-lg p-1 text-blue-900" (change)="irParaPagina(1)">
-                <option [ngValue]="10">10</option>
-                <option [ngValue]="20">20</option>
-                <option [ngValue]="50">50</option>
-              </select>
+          <div *ngIf="paginacao && inquilinos.length > 0" class="mt-6">
+            <!-- Mobile: botões simples -->
+            <div class="flex items-center justify-between sm:hidden">
+              <button class="inline-flex items-center gap-1 rounded-md px-3 py-2 text-blue-900 ring-1 ring-inset ring-blue-200 hover:bg-blue-50 disabled:opacity-50"
+                      [disabled]="!paginacao.temPaginaAnterior"
+                      (click)="irParaPagina(paginacao.paginaAtual - 1)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 111.414 1.414L9.414 10l3.293 3.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Anterior
+              </button>
+              <button class="inline-flex items-center gap-1 rounded-md px-3 py-2 text-blue-900 ring-1 ring-inset ring-blue-200 hover:bg-blue-50 disabled:opacity-50"
+                      [disabled]="!paginacao.temProximaPagina"
+                      (click)="irParaPagina(paginacao.paginaAtual + 1)">
+                Próximo
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M7.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L10.586 10 7.293 6.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Desktop: texto de faixa + navegação -->
+            <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+              <p class="text-sm text-blue-900">{{ getDisplayRange() }}</p>
+              <div class="inline-flex -space-x-px rounded-md shadow-sm">
+                <button class="relative inline-flex items-center gap-1 rounded-l-md px-3 py-2 text-blue-900 ring-1 ring-inset ring-blue-200 hover:bg-blue-50 disabled:opacity-50"
+                        [disabled]="!paginacao.temPaginaAnterior"
+                        (click)="irParaPagina(paginacao.paginaAtual - 1)">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 111.414 1.414L9.414 10l3.293 3.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                  </svg>
+                  Anterior
+                </button>
+                <button class="relative inline-flex items-center gap-1 rounded-r-md px-3 py-2 text-blue-900 ring-1 ring-inset ring-blue-200 hover:bg-blue-50 disabled:opacity-50"
+                        [disabled]="!paginacao.temProximaPagina"
+                        (click)="irParaPagina(paginacao.paginaAtual + 1)">
+                  Próximo
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M7.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L10.586 10 7.293 6.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                <div class="ml-3 flex items-center gap-2">
+                  <label class="text-sm text-blue-900">Limite</label>
+                  <select [(ngModel)]="limite" name="limite" class="border rounded-lg p-1 text-blue-900" (change)="irParaPagina(1)">
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="20">20</option>
+                    <option [ngValue]="50">50</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -426,5 +461,13 @@ export class InadimplentesComponent implements OnInit {
     const date = typeof value === 'string' ? new Date(value) : value;
     if (isNaN(date.getTime())) return '—';
     return date.toLocaleDateString('pt-BR');
+  }
+
+  getDisplayRange(): string {
+    if (!this.paginacao) return '';
+    const start = (this.paginacao.paginaAtual - 1) * this.paginacao.limite + 1;
+    const total = this.paginacao.totalRegistros ?? this.inquilinos.length;
+    const end = Math.min(this.paginacao.paginaAtual * this.paginacao.limite, total);
+    return `Mostrando ${start} a ${end} de ${total} inadimplentes`;
   }
 }

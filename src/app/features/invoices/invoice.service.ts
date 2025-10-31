@@ -83,4 +83,23 @@ export class InvoiceService {
       })
     );
   }
+
+  getFaturaDetalhes(id: string): Observable<any> {
+    const token = this.authService.token;
+    if (!token) {
+      return this.handleAuthError();
+    }
+
+    const headers = this.getAuthHeaders();
+
+    return this.http.get<any>(`${this.apiUrl}/detalhes/${id}`, { headers }).pipe(
+      catchError((error) => {
+        console.error('Erro ao buscar detalhes da fatura:', error);
+        if (error.status === 401) {
+          return this.handleAuthError();
+        }
+        throw error;
+      })
+    );
+  }
 }

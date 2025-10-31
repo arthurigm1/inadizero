@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
 
-import { Fatura } from '../../interfaces/invoice.interface';
 import { InvoiceService } from './invoice.service';
+import { InvoiceDetailsComponent } from './invoice-details.component';
 
 @Component({
   selector: 'app-invoices',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, InvoiceDetailsComponent],
   template: `
-    <div class="space-y-6" [@fadeIn]>
+    <div *ngIf="!showDetails" class="space-y-6" [@fadeIn]>
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
@@ -100,8 +100,8 @@ import { InvoiceService } from './invoice.service';
             <select [(ngModel)]="selectedStatus" (change)="filterFaturas()" class="px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="">Todos</option>
               <option value="PENDENTE">Pendente</option>
-              <option value="PAGO">Pago</option>
-              <option value="VENCIDO">Vencido</option>
+              <option value="PAGA">Paga</option>
+              <option value="VENCIDA">Vencida</option>
             </select>
           </div>
           <div>
@@ -139,70 +139,52 @@ import { InvoiceService } from './invoice.service';
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
 
-      <!-- Faturas Table -->
-      <div *ngIf="!loading" class="bg-white border border-blue-200 rounded-xl overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-blue-200">
-            <thead class="bg-blue-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Fatura</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Inquilino</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Loja</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Valor</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Vencimento</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-blue-900 uppercase tracking-wider">Ações</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-blue-100">
-              <tr *ngFor="let fatura of filteredFaturas" class="hover:bg-blue-50 transition-colors">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div class="text-sm font-medium text-blue-900">{{getMonthName(fatura.mesReferencia)}}/{{fatura.anoReferencia}}</div>
-                    <div class="text-sm text-gray-500">{{fatura.id.substring(0, 8)}}...</div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div class="text-sm font-medium text-blue-900">{{fatura.contrato.inquilino.nome}}</div>
-                    <div class="text-sm text-gray-500">{{fatura.contrato.inquilino.email}}</div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div class="text-sm font-medium text-blue-900">{{fatura.contrato.loja.nome}}</div>
-                    <div class="text-sm text-gray-500">Nº {{fatura.contrato.loja.numero}}</div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-blue-900">{{formatCurrency(fatura.valorAluguel)}}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-blue-900">{{formatDate(fatura.dataVencimento)}}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span [class]="getStatusClass(fatura.status)" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                    {{getStatusText(fatura.status)}}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-2">
-                    <button class="text-blue-600 hover:text-blue-900 transition-colors" title="Ver detalhes">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                      </svg>
-                    </button>
-                    <button *ngIf="fatura.status === 'PENDENTE'" class="text-green-600 hover:text-green-900 transition-colors" title="Marcar como pago">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Faturas Cards -->
+      <div *ngIf="!loading" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div *ngFor="let fatura of filteredFaturas" class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 transition-all duration-300">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-sm text-blue-600">Referência</p>
+                <p class="text-lg font-semibold text-blue-900">{{fatura.referencia}}</p>
+                <p class="text-xs text-gray-500">ID {{fatura.id.substring(0, 8)}}...</p>
+              </div>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" [class]="getStatusClass(fatura.status)">
+                {{fatura.statusDescricao || getStatusText(fatura.status)}}
+              </span>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-sm text-blue-600">Inquilino</p>
+                <p class="text-sm font-medium text-blue-900">{{fatura.inquilino}}</p>
+              </div>
+              <div>
+                <p class="text-sm text-blue-600">Loja</p>
+                <p class="text-sm font-medium text-blue-900">{{fatura.loja}}</p>
+              </div>
+              <div>
+                <p class="text-sm text-blue-600">Valor</p>
+                <p class="text-sm font-semibold text-blue-900">{{fatura.valorFormatado}}</p>
+              </div>
+              <div>
+                <p class="text-sm text-blue-600">Vencimento</p>
+                <p class="text-sm font-semibold text-blue-900">{{formatDate(fatura.dataVencimento)}}</p>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center justify-between">
+              <div>
+                <span *ngIf="fatura.estaVencida" class="text-xs text-red-700 bg-red-50 border border-red-200 px-2 py-1 rounded">Vencida</span>
+                <span *ngIf="!fatura.estaVencida" class="text-xs text-green-700 bg-green-50 border border-green-200 px-2 py-1 rounded">No prazo</span>
+              </div>
+              <button class="text-blue-600 hover:text-blue-900 transition-colors flex items-center space-x-1" title="Ver detalhes" (click)="openDetails(fatura.id)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                <span>Ver detalhes</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Empty State -->
@@ -215,7 +197,7 @@ import { InvoiceService } from './invoice.service';
         </div>
 
         <!-- Pagination -->
-        <div *ngIf="totalPages > 1" class="bg-blue-50 px-6 py-3 flex items-center justify-between border-t border-blue-200">
+        <div *ngIf="totalFaturas > 0" class="bg-blue-50 px-6 py-3 flex items-center justify-between border border-blue-200 rounded-lg">
           <div class="flex-1 flex justify-between sm:hidden">
             <button (click)="previousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
               Anterior
@@ -251,6 +233,9 @@ import { InvoiceService } from './invoice.service';
         </div>
       </div>
     </div>
+    <div *ngIf="showDetails" class="space-y-6" [@fadeIn]>
+      <app-invoice-details [invoiceId]="selectedInvoiceId!" (closed)="closeDetails()"></app-invoice-details>
+    </div>
   `,
   animations: [
     trigger('fadeIn', [
@@ -262,13 +247,15 @@ import { InvoiceService } from './invoice.service';
   ]
 })
 export class InvoicesComponent implements OnInit {
-  faturas: Fatura[] = [];
-  filteredFaturas: Fatura[] = [];
+  faturas: FaturaResumo[] = [];
+  filteredFaturas: FaturaResumo[] = [];
   loading = false;
   searchTerm = '';
   selectedStatus = '';
   selectedMonth = '';
   selectedYear = '';
+  showDetails = false;
+  selectedInvoiceId: string | null = null;
   
   // Pagination
   currentPage = 1;
@@ -291,11 +278,22 @@ export class InvoicesComponent implements OnInit {
     this.invoiceService.getFaturas(this.currentPage, 10).subscribe({
       next: (response) => {
         if (response.sucesso) {
-          this.faturas = response.data.faturas;
+          this.faturas = response.data.faturas.map((f: any) => ({
+            id: f.id,
+            referencia: f.referencia || '',
+            valor: f.valor || 0,
+            valorFormatado: f.valorFormatado || this.formatCurrency(f.valor || 0),
+            dataVencimento: f.dataVencimento || '',
+            status: f.status || '',
+            statusDescricao: f.statusDescricao || this.getStatusText(f.status || ''),
+            estaVencida: f.estaVencida || false,
+            loja: f.loja || '',
+            inquilino: f.inquilino || ''
+          }));
           this.filteredFaturas = [...this.faturas];
           this.totalFaturas = response.data.total;
-          this.totalPages = response.data.totalPages;
-          this.currentPage = response.data.page;
+          this.totalPages = (response.data.totalPages || Math.ceil((this.totalFaturas || 0) / 10)) || 1;
+          this.currentPage = response.data.page || this.currentPage || 1;
           this.calculateStats();
         }
         this.loading = false;
@@ -308,25 +306,27 @@ export class InvoicesComponent implements OnInit {
   }
 
   calculateStats() {
-    this.faturasPagas = this.faturas.filter(f => f.status === 'PAGO').length;
+    this.faturasPagas = this.faturas.filter(f => f.status === 'PAGA' || f.status === 'PAGO').length;
     this.faturasPendentes = this.faturas.filter(f => f.status === 'PENDENTE').length;
-    this.faturasVencidas = this.faturas.filter(f => {
-      const vencimento = new Date(f.dataVencimento);
-      const hoje = new Date();
-      return f.status === 'PENDENTE' && vencimento < hoje;
-    }).length;
+    this.faturasVencidas = this.faturas.filter(f => f.estaVencida === true || f.status === 'VENCIDA' || f.status === 'VENCIDO').length;
   }
 
   filterFaturas() {
     this.filteredFaturas = this.faturas.filter(fatura => {
-      const matchesSearch = !this.searchTerm || 
-        fatura.contrato.inquilino.nome.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        fatura.contrato.loja.nome.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        fatura.contrato.loja.numero.includes(this.searchTerm);
-      
-      const matchesStatus = !this.selectedStatus || fatura.status === this.selectedStatus;
-      const matchesMonth = !this.selectedMonth || fatura.mesReferencia.toString() === this.selectedMonth;
-      const matchesYear = !this.selectedYear || fatura.anoReferencia.toString() === this.selectedYear;
+      const search = this.searchTerm?.toLowerCase() || '';
+      const matchesSearch = !search ||
+        (fatura.inquilino?.toLowerCase().includes(search)) ||
+        (fatura.loja?.toLowerCase().includes(search)) ||
+        (fatura.id?.toLowerCase().includes(search));
+
+      const status = fatura.status;
+      const matchesStatus = !this.selectedStatus || status === this.selectedStatus ||
+        (this.selectedStatus === 'PAGA' && status === 'PAGO') ||
+        (this.selectedStatus === 'VENCIDA' && status === 'VENCIDO');
+
+      const [mesRef, anoRef] = (fatura.referencia || '').split('/');
+      const matchesMonth = !this.selectedMonth || Number(mesRef) === Number(this.selectedMonth);
+      const matchesYear = !this.selectedYear || anoRef === this.selectedYear;
 
       return matchesSearch && matchesStatus && matchesMonth && matchesYear;
     });
@@ -349,10 +349,12 @@ export class InvoicesComponent implements OnInit {
   getStatusClass(status: string): string {
     switch (status) {
       case 'PAGO':
+      case 'PAGA':
         return 'bg-green-100 text-green-800';
       case 'PENDENTE':
         return 'bg-yellow-100 text-yellow-800';
       case 'VENCIDO':
+      case 'VENCIDA':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -362,11 +364,13 @@ export class InvoicesComponent implements OnInit {
   getStatusText(status: string): string {
     switch (status) {
       case 'PAGO':
-        return 'Pago';
+      case 'PAGA':
+        return 'Paga';
       case 'PENDENTE':
         return 'Pendente';
       case 'VENCIDO':
-        return 'Vencido';
+      case 'VENCIDA':
+        return 'Vencida';
       default:
         return status;
     }
@@ -391,4 +395,27 @@ export class InvoicesComponent implements OnInit {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR');
   }
+  openDetails(id: string) {
+    this.selectedInvoiceId = id;
+    this.showDetails = true;
+  }
+
+  closeDetails() {
+    this.showDetails = false;
+    this.selectedInvoiceId = null;
+  }
+}
+
+// Interface alinhada ao payload da API de listagem de faturas
+interface FaturaResumo {
+  id: string;
+  referencia: string;
+  valor: number;
+  valorFormatado: string;
+  dataVencimento: string;
+  status: string;
+  statusDescricao: string;
+  estaVencida: boolean;
+  loja: string;
+  inquilino: string;
 }

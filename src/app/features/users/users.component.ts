@@ -171,6 +171,88 @@ enum TipoUsuario {
         </div>
       </div>
 
+      <!-- Modal de confirmação de desativação -->
+      <div *ngIf="showDeactivateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
+        <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-blue-200">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-blue-700">Desativar Usuário</h2>
+            <button (click)="closeDeactivateModal()" class="text-gray-500 hover:text-blue-800 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="text-gray-700 mb-6">
+            <p>Tem certeza que deseja desativar o usuário <span class="font-semibold">{{ userToDeactivate?.name }}</span>?</p>
+            <p class="text-sm text-gray-500 mt-1">Esta ação impede o usuário de acessar o sistema.</p>
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              type="button"
+              (click)="closeDeactivateModal()"
+              class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              (click)="confirmDeactivateUser()"
+              [disabled]="isDeactivating"
+              class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span *ngIf="!isDeactivating">Desativar</span>
+              <span *ngIf="isDeactivating" class="flex items-center justify-center">
+                <i class="fas fa-spinner fa-spin mr-2"></i>
+                Desativando...
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal de confirmação de ativação -->
+      <div *ngIf="showActivateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
+        <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-blue-200">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-blue-700">Ativar Usuário</h2>
+            <button (click)="closeActivateModal()" class="text-gray-500 hover:text-blue-800 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="text-gray-700 mb-6">
+            <p>Tem certeza que deseja ativar o usuário <span class="font-semibold">{{ userToActivate?.name }}</span>?</p>
+            <p class="text-sm text-gray-500 mt-1">Esta ação permitirá o acesso do usuário ao sistema.</p>
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              type="button"
+              (click)="closeActivateModal()"
+              class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              (click)="confirmActivateUser()"
+              [disabled]="isActivating"
+              class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span *ngIf="!isActivating">Ativar</span>
+              <span *ngIf="isActivating" class="flex items-center justify-center">
+                <i class="fas fa-spinner fa-spin mr-2"></i>
+                Ativando...
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Actions Bar -->
       <div class="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center" [@slideIn]>
         <div class="flex flex-col sm:flex-row gap-4">
@@ -264,11 +346,10 @@ enum TipoUsuario {
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span [ngClass]="{
-                    'bg-green-100 text-green-800 border-green-200': user.status === 'active',
-                    'bg-red-100 text-red-800 border-red-200': user.status === 'inactive',
-                    'bg-yellow-100 text-yellow-800 border-yellow-200': user.status === 'pending'
+                    'bg-green-100 text-green-800 border-green-200': user.ativo === true,
+                    'bg-red-100 text-red-800 border-red-200': user.ativo === false
                   }" class="inline-flex px-3 py-1 text-xs font-semibold rounded-full border shadow-sm">
-                    {{ user.status === 'active' ? 'Ativo' : user.status === 'inactive' ? 'Inativo' : 'Pendente' }}
+                    {{ user.ativo ? 'Ativo' : 'Inativo' }}
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-700">
@@ -276,14 +357,19 @@ enum TipoUsuario {
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-2">
-                    <button class="p-2 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-800 transition-colors duration-200" title="Editar" aria-label="Editar usuário">
-                      <i class="fas fa-edit"></i>
+                    <button *ngIf="user.ativo === true" class="p-2 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-800 transition-colors duration-200 flex items-center gap-2" title="Desativar" aria-label="Desativar usuário" (click)="openDeactivateModal(user)">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        <path d="M12 14c-5 0-8 2.5-8 5v1h16v-1c0-2.5-3-5-8-5z" />
+                        <path stroke-linecap="round" d="M4 4l16 16" />
+                      </svg>
+                      <span class="text-sm font-semibold">Desativar</span>
                     </button>
-                    <button class="p-2 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-800 transition-colors duration-200" title="Visualizar" aria-label="Visualizar usuário">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="p-2 rounded-full hover:bg-red-50 text-red-500 hover:text-red-700 transition-colors duration-200" title="Excluir" aria-label="Excluir usuário">
-                      <i class="fas fa-trash"></i>
+                    <button *ngIf="user.ativo === false" class="p-2 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-800 transition-colors duration-200 flex items-center gap-2" title="Ativar" aria-label="Ativar usuário" (click)="openActivateModal(user)">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span class="text-sm font-semibold">Ativar</span>
                     </button>
                   </div>
                 </td>
@@ -302,38 +388,43 @@ enum TipoUsuario {
         </div>
       </div>
 
-      <!-- Pagination -->
-      <div class="mt-6 flex flex-col sm:flex-row justify-between items-center" [@slideIn]>
-        <div class="text-sm text-blue-600 mb-4 sm:mb-0">
-          Mostrando {{ getDisplayRange() }} de {{ totalItems }} usuários
+      <!-- Pagination (estilo alinhado ao invoices/lojas) -->
+      <div *ngIf="totalItems > 0" class="bg-blue-50 px-6 py-3 flex items-center justify-between border border-blue-200 rounded-lg mt-8" [@slideIn]>
+        <!-- Mobile -->
+        <div class="flex-1 flex justify-between sm:hidden">
+          <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
+            Anterior
+          </button>
+          <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
+            Próximo
+          </button>
         </div>
-        <div class="flex space-x-2" *ngIf="totalPages > 1">
-          <button 
-            (click)="goToPreviousPage()" 
-            [disabled]="!hasPreviousPage"
-            class="px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors duration-200 disabled:opacity-50"
-            [class.disabled]="!hasPreviousPage">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          
-          <button 
-            *ngFor="let page of getPageNumbers()" 
-            (click)="goToPage(page)"
-            [class.bg-blue-500]="page === currentPage"
-            [class.text-white]="page === currentPage"
-            [class.bg-blue-100]="page !== currentPage"
-            [class.text-blue-800]="page !== currentPage"
-            class="px-4 py-2 rounded-lg font-semibold hover:bg-blue-200 transition-colors duration-200">
-            {{ page }}
-          </button>
-          
-          <button 
-            (click)="goToNextPage()" 
-            [disabled]="!hasNextPage"
-            class="px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors duration-200 disabled:opacity-50"
-            [class.disabled]="!hasNextPage">
-            <i class="fas fa-chevron-right"></i>
-          </button>
+        <!-- Desktop -->
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-blue-700">
+              Mostrando <span class="font-medium">{{(currentPage - 1) * itemsPerPage + 1}}</span> a 
+              <span class="font-medium">{{currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage : totalItems}}</span> 
+              de <span class="font-medium">{{totalItems}}</span> usuários
+            </p>
+          </div>
+          <div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+              <span class="relative inline-flex items-center px-4 py-2 border border-blue-300 bg-white text-sm font-medium text-blue-700">
+                {{currentPage}} de {{totalPages}}
+              </span>
+              <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </nav>
+          </div>
         </div>
       </div>
     </div>
@@ -352,6 +443,16 @@ export class UsersComponent implements OnInit {
     title: '',
     message: ''
   };
+  
+  // Estado do diálogo de desativação
+  showDeactivateModal = false;
+  isDeactivating = false;
+  userToDeactivate: any | null = null;
+
+  // Estado do diálogo de ativação
+  showActivateModal = false;
+  isActivating = false;
+  userToActivate: any | null = null;
   
   // Propriedades de filtro
   selectedTypeFilter: TipoUsuario | 'todos' = 'todos';
@@ -504,7 +605,11 @@ export class UsersComponent implements OnInit {
         params = params.set('tipo', this.selectedTypeFilter);
       }
       if (this.selectedStatusFilter && this.selectedStatusFilter !== 'todos') {
-        params = params.set('status', this.selectedStatusFilter);
+        if (this.selectedStatusFilter === 'active') {
+          params = params.set('ativo', 'true');
+        } else if (this.selectedStatusFilter === 'inactive') {
+          params = params.set('ativo', 'false');
+        }
       }
       if (this.searchTerm && this.searchTerm.trim()) {
         params = params.set('busca', this.searchTerm.trim());
@@ -552,7 +657,8 @@ export class UsersComponent implements OnInit {
                name: user.nome || user.name,
                email: user.email,
                type: this.mapApiTypeToEnum(user.tipo || user.type),
-               status: user.status || 'active',
+               ativo: user.ativo === true, // usar booleano 'ativo' vindo do backend
+               status: user.ativo === true ? 'active' : 'inactive', // manter compatibilidade interna se usado em outros pontos
                lastAccess: user.ultimoAcesso || user.lastAccess || 'Nunca'
              }));
            } else {
@@ -618,6 +724,106 @@ export class UsersComponent implements OnInit {
   
   hideNotification(): void {
     this.notification.show = false;
+  }
+  
+  // Ações de desativação de usuário
+  openDeactivateModal(user: any): void {
+    this.userToDeactivate = user;
+    this.showDeactivateModal = true;
+  }
+  
+  closeDeactivateModal(): void {
+    this.showDeactivateModal = false;
+    this.userToDeactivate = null;
+    this.isDeactivating = false;
+  }
+  
+  confirmDeactivateUser(): void {
+    if (!this.userToDeactivate?.id) {
+      this.showNotification('error', 'Erro', 'Usuário inválido para desativação.');
+      return;
+    }
+    try {
+      const headers = this.getAuthHeaders();
+      this.isDeactivating = true;
+      this.http.patch(`${this.apiUrl}/desativar/${this.userToDeactivate.id}`, {}, { headers })
+        .pipe(
+          catchError((error) => {
+            console.error('Erro ao desativar usuário:', error);
+            if (error.status === 401) {
+              this.showNotification('error', 'Erro de Autenticação', 'Token inválido ou expirado. Faça login novamente.');
+            } else {
+              const message = error?.error?.message || 'Erro ao desativar usuário';
+              this.showNotification('error', 'Erro!', message);
+            }
+            return throwError(() => error);
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.isDeactivating = false;
+            this.closeDeactivateModal();
+            this.showNotification('success', 'Sucesso!', 'Usuário desativado com sucesso!');
+            this.loadUsuariosDaEmpresa(this.currentPage);
+          },
+          error: () => {
+            this.isDeactivating = false;
+          }
+        });
+    } catch (error: any) {
+      this.isDeactivating = false;
+      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao desativar usuário');
+    }
+  }
+
+  // Ações de ativação de usuário
+  openActivateModal(user: any): void {
+    this.userToActivate = user;
+    this.showActivateModal = true;
+  }
+
+  closeActivateModal(): void {
+    this.showActivateModal = false;
+    this.userToActivate = null;
+    this.isActivating = false;
+  }
+
+  confirmActivateUser(): void {
+    if (!this.userToActivate?.id) {
+      this.showNotification('error', 'Erro', 'Usuário inválido para ativação.');
+      return;
+    }
+    try {
+      const headers = this.getAuthHeaders();
+      this.isActivating = true;
+      this.http.patch(`${this.apiUrl}/ativar/${this.userToActivate.id}`, {}, { headers })
+        .pipe(
+          catchError((error) => {
+            console.error('Erro ao ativar usuário:', error);
+            if (error.status === 401) {
+              this.showNotification('error', 'Erro de Autenticação', 'Token inválido ou expirado. Faça login novamente.');
+            } else {
+              const message = error?.error?.message || 'Erro ao ativar usuário';
+              this.showNotification('error', 'Erro!', message);
+            }
+            return throwError(() => error);
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.isActivating = false;
+            this.closeActivateModal();
+            this.showNotification('success', 'Sucesso!', 'Usuário ativado com sucesso!');
+            this.loadUsuariosDaEmpresa(this.currentPage);
+          },
+          error: () => {
+            this.isActivating = false;
+          }
+        });
+    } catch (error: any) {
+      this.isActivating = false;
+      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao ativar usuário');
+    }
   }
   
   // Métodos de navegação de paginação
