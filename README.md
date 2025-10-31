@@ -1,59 +1,99 @@
-# Inadizero
+# Inadizero — Guia de Uso
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.5.
+Aplicação Angular para gestão de faturas, contratos, lojas, usuários e inadimplentes. Utiliza Tailwind CSS e componentes standalone do Angular.
 
-## Development server
+## Requisitos
 
-To start a local development server, run:
+- Node.js `>= 18`
+- npm `>= 9`
+- Angular CLI (recomendado) `>= 17`
+- Backend API acessível em `http://localhost:3010` (endpoints da empresa)
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Instalação
 
 ```bash
-ng generate component component-name
+cd inadizero
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Desenvolvimento
+
+- Iniciar servidor local:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
-
-To build the project run:
+- Acesse `http://localhost:4200/`.
+- Caso a porta 4200 esteja ocupada, execute:
 
 ```bash
-ng build
+npm run start -- --port 4300
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+E acesse `http://localhost:4300/`.
 
-## Running unit tests
+Hot-reload está habilitado: alterações em arquivos de `src/` recarregam a aplicação automaticamente.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Configuração de API e Autenticação
+
+- O app consome endpoints REST da empresa. Exemplo utilizado no módulo de inadimplentes:
+  - `GET http://localhost:3010/api/empresa/inadimplentes`
+  - Requer cabeçalho `Authorization: Bearer <token>` (gerenciado por `AuthService`).
+- Garanta que você está autenticado pela própria aplicação para preencher o token.
+- Se precisar alterar URLs de API, ajuste os serviços ou mova as URLs para `environment.ts` conforme sua preferência de configuração.
+
+## Scripts úteis
+
+- Build de produção:
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
+Os artefatos serão gerados em `dist/inadizero/`.
 
-For end-to-end (e2e) testing, run:
+- Testes unitários (se configurados):
 
 ```bash
-ng e2e
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- Lint (se disponível no `package.json`):
 
-## Additional Resources
+```bash
+npm run lint
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Padrões de UI e Paginação
+
+- A paginação segue um padrão responsivo unificado:
+  - Mobile: botões "Anterior" e "Próximo" com ícones e estados de desabilitado.
+  - Desktop: texto "Mostrando X a Y de Z resultados" com navegação por setas e seletor de limite quando aplicável.
+- Este padrão está aplicado em Faturas, Lojas, Usuários e Inadimplentes.
+
+## Estrutura do Projeto (resumo)
+
+- `src/app/features/` — módulos e componentes principais (ex.: `invoices`, `contracts`, `stores`, `users`, `dashboard/inadimplentes`).
+- `src/styles.css` — estilos globais e integração com Tailwind.
+- `tailwind.config.js` — configuração do Tailwind CSS.
+
+## Build e Deploy
+
+```bash
+npm run build
+```
+
+- Sirva o conteúdo de `dist/inadizero/` com um servidor estático (Nginx, Apache, ou qualquer serviço de hospedagem de SPA).
+
+## Troubleshooting
+
+- API indisponível/CORS: valide se o backend está rodando em `http://localhost:3010` e se as rotas estão acessíveis.
+- Token ausente: faça login pela aplicação; erros como "Token de autenticação não encontrado" indicam falta de autenticação.
+- Porta ocupada: utilize `--port 4300` para iniciar em outra porta.
+- Estilos não aplicados: confira `tailwind.config.js` e a importação do Tailwind em `styles.css`.
+
+## Referências
+
+- Angular CLI: https://angular.dev/tools/cli
+- Tailwind CSS: https://tailwindcss.com/
