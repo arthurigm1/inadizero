@@ -24,366 +24,369 @@ import { forkJoin } from 'rxjs';
     HttpClientModule
   ],
   template: `
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-25 relative overflow-hidden" [@pageEnter]>
-      
-      <!-- Background Elements Sutil -->
-      <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-10 left-10 w-72 h-72 bg-blue-200/20 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-10 right-10 w-72 h-72 bg-blue-300/10 rounded-full blur-3xl"></div>
-      </div>
+   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-25 relative overflow-hidden" [@pageEnter]>
+  
+  <!-- Background Elements Sutil -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-10 left-10 w-48 h-48 sm:w-72 sm:h-72 bg-blue-200/20 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-10 right-10 w-48 h-48 sm:w-72 sm:h-72 bg-blue-300/10 rounded-full blur-3xl"></div>
+  </div>
 
-      <!-- Header Simplificado -->
-      <header class="bg-white/90 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm" [@headerSlide]>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center justify-between h-16">
-              <div>
-                <h1 class="text-lg font-bold text-blue-900">Portal do Inquilino</h1>
-
-            </div>
-            
-            <!-- User Menu -->
-            <div class="flex items-center space-x-4">
-              <!-- Notifications -->
-              <button class="relative p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                    teste
-                <span *ngIf="unreadNotifications > 0" 
-                      class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
-                  {{ unreadNotifications }}
-                </span>
-              </button>
-
-              <!-- Profile -->
-              <div class="relative group">
-                <button class="flex items-center space-x-3 p-2 rounded-lg hover:bg-blue-50 transition-colors">
-                  <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-medium text-sm">
-                    {{ getInitials(portalData?.inquilino?.nome) }}
-                  </div>
-                  <div class="hidden md:block text-left">
-                    <p class="text-sm font-medium text-blue-900">{{ portalData?.inquilino?.nome }}</p>
-                  </div>
-                  <svg class="w-4 h-4 text-blue-500 transform group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                  </svg>
-                </button>
-
-                <!-- Dropdown -->
-                <div class="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-blue-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div class="px-4 py-2 border-b border-blue-50">
-                    <p class="text-sm font-medium text-blue-900">{{ portalData?.inquilino?.nome }}</p>
-                    <p class="text-xs text-blue-600 truncate">{{ portalData?.inquilino?.email }}</p>
-                  </div>
-                  <div class="py-1">
-                    <a class="flex items-center space-x-3 px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors">
-                      <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                      </svg>
-                      <span>Meu Perfil</span>
-                    </a>
-                    <a class="flex items-center space-x-3 px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors">
-                      <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                      </svg>
-                      <span>Configurações</span>
-                    </a>
-                  </div>
-                  <div class="border-t border-blue-50 pt-1">
-                    <button (click)="logout()" 
-                            class="flex items-center space-x-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full transition-colors">
-                      <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                      </svg>
-                      <span>Sair</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+  <!-- Header Simplificado -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm" [@headerSlide]>
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+      <div class="flex items-center justify-between h-14 sm:h-16">
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-blue-900">Portal do Inquilino</h1>
         </div>
-      </header>
-
-      <!-- Main Content -->
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- Navigation Tabs -->
-        <nav class="mb-8" [@navSlide]>
-          <div class="flex space-x-1 bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-sm border border-blue-100">
-            <button 
-              *ngFor="let section of navigationSections"
-              (click)="navigateToSection(section.id)"
-              [class]="'flex items-center space-x-3 px-6 py-4 rounded-xl transition-all duration-300 flex-1 text-center justify-center ' + 
-                       (isSectionActive(section.id) ? 
-                        'bg-blue-600 text-white shadow-lg' : 
-                        'text-blue-700 hover:bg-blue-50 hover:text-blue-900')"
-            >
-              <svg [class]="'w-5 h-5 ' + (isSectionActive(section.id) ? 'text-white' : 'text-blue-500')" 
-                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path *ngIf="section.id === 'dashboard'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                <path *ngIf="section.id === 'faturas'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                <path *ngIf="section.id === 'contratos'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                <path *ngIf="section.id === 'lojas'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                <path *ngIf="section.id === 'configuracoes'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <!-- User Menu -->
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <!-- Notifications -->
+          <button class="relative p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.24 8.56a5.97 5.97 0 01-4.66-7.4 1 1 0 00-1.2-1.2 5.97 5.97 0 01-7.4 4.66 1 1 0 00-1.2 1.2 5.97 5.97 0 014.66 7.4 1 1 0 001.2 1.2 5.97 5.97 0 017.4-4.66z"/>
+            </svg>
+            <span *ngIf="unreadNotifications > 0" 
+                  class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+              {{ unreadNotifications }}
+            </span>
+          </button>
+
+          <!-- Profile -->
+          <div class="relative group">
+            <button class="flex items-center space-x-2 sm:space-x-3 p-1.5 sm:p-2 rounded-lg hover:bg-blue-50 transition-colors">
+              <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-medium text-xs sm:text-sm">
+                {{ getInitials(portalData?.inquilino?.nome) }}
+              </div>
+              <div class="hidden sm:block text-left">
+                <p class="text-sm font-medium text-blue-900 truncate max-w-[120px] lg:max-w-none">
+                  {{ portalData?.inquilino?.nome }}
+                </p>
+              </div>
+              <svg class="w-4 h-4 text-blue-500 transform group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
-              <span class="font-medium text-sm">{{ section.title }}</span>
             </button>
-          </div>
-        </nav>
 
-        <!-- Loading State -->
-        <div *ngIf="loading" class="flex justify-center items-center min-h-[400px]" [@fadeIn]>
-          <div class="text-center">
-            <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="text-blue-700 font-medium">Carregando seu portal...</p>
-          </div>
-        </div>
-
-        <!-- Dashboard Content -->
-        <div *ngIf="!loading && portalData && isCurrentSection('dashboard')" class="space-y-8" [@staggerIn]>
-          
-          <!-- Welcome Header -->
-          <section class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-blue-900 mb-2">
-              Bem-vindo, {{ portalData.inquilino.nome ? portalData.inquilino.nome.split(' ')[0] : 'Usuário' }}!
-            </h1>
-            <p class="text-blue-600 text-lg">Aqui está o resumo das suas informações</p>
-          </section>
-
-          <!-- Financial Overview Cards -->
-          <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div *ngFor="let card of financialCards; let i = index" 
-                 class="bg-white rounded-2xl shadow-lg border border-blue-100 p-6 transform hover:scale-105 transition-all duration-300"
-                 [@cardStagger]="{value: '', params: {delay: i * 100}}">
-              
-              <div class="flex items-center justify-between mb-4">
-                <div>
-                  <p class="text-blue-600 text-sm font-medium mb-1">{{ card.title }}</p>
-                  <p class="text-2xl font-bold text-blue-900">{{ card.value }}</p>
-                </div>
-                <div class="w-12 h-12 rounded-xl flex items-center justify-center"
-                     [ngClass]="card.iconBg">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path *ngIf="card.title === 'Faturas Pendentes'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    <path *ngIf="card.title === 'Valor Total'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                    <path *ngIf="card.title === 'Em Atraso'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/>
-                    <path *ngIf="card.title === 'Progresso'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            <!-- Dropdown -->
+            <div class="absolute right-0 top-full mt-2 w-48 sm:w-56 bg-white rounded-xl shadow-lg border border-blue-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <div class="px-3 sm:px-4 py-2 border-b border-blue-50">
+                <p class="text-sm font-medium text-blue-900 truncate">{{ portalData?.inquilino?.nome }}</p>
+                <p class="text-xs text-blue-600 truncate">{{ portalData?.inquilino?.email }}</p>
+              </div>
+              <div class="py-1">
+                <a class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors">
+                  <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                   </svg>
-                </div>
+                  <span class="truncate">Meu Perfil</span>
+                </a>
+                <a class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors">
+                  <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <span class="truncate">Configurações</span>
+                </a>
               </div>
-              
-              <p class="text-blue-500 text-sm">{{ card.subtitle }}</p>
-              
-              <!-- Progress Bar -->
-              <div *ngIf="card.progress !== undefined" class="mt-4">
-                <div class="w-full bg-blue-100 rounded-full h-2">
-                  <div class="bg-blue-600 h-2 rounded-full transition-all duration-1000"
-                       [style.width.%]="card.progress"></div>
-                </div>
-                <p class="text-blue-600 text-xs mt-2 text-right">{{ card.progress }}% concluído</p>
+              <div class="border-t border-blue-50 pt-1">
+                <button (click)="logout()" 
+                        class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full transition-colors">
+                  <svg class="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                  </svg>
+                  <span>Sair</span>
+                </button>
               </div>
             </div>
-          </section>
-
-          <!-- Two Column Layout -->
-          <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-            
-            <!-- Left Column -->
-            <div class="xl:col-span-2 space-y-8">
-              
-              <!-- Stores Section -->
-              <section class="bg-white rounded-2xl shadow-lg border border-blue-100 overflow-hidden" [@slideInLeft]>
-                <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
-                  <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white flex items-center">
-                      <svg class="w-5 h-5 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                      </svg>
-                      Minhas Lojas
-                    </h3>
-                    <span class="text-blue-100 text-sm font-medium bg-white/20 px-3 py-1 rounded-full">
-                      {{ portalData.lojas.length }} ativa(s)
-                    </span>
-                  </div>
-                </div>
-                <div class="p-6">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div *ngFor="let loja of portalData.lojas; let i = index" 
-                         class="border border-blue-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-md transition-all duration-300 bg-white"
-                         [@staggerItem]="{value: '', params: {delay: i * 100}}">
-                      
-                      <div class="flex items-start justify-between mb-4">
-                        <h4 class="font-bold text-blue-900 text-lg">{{ loja.nome }}</h4>
-                        <span class="text-xs font-semibold px-3 py-1.5 rounded-full"
-                              [ngClass]="getStatusBadgeClass(loja.contrato.status)">
-                          {{ loja.contrato.status }}
-                        </span>
-                      </div>
-                      
-                      <div class="space-y-3 text-sm">
-                        <div class="flex justify-between items-center py-2 border-b border-blue-50">
-                          <span class="text-blue-600">Número:</span>
-                          <span class="font-semibold text-blue-900">#{{ loja.numero }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-blue-50">
-                          <span class="text-blue-600">Aluguel Mensal:</span>
-                          <span class="font-bold text-blue-900">{{ loja.contrato.valorAluguel | currency:'BRL':'symbol':'1.2-2' }}</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                          <span class="text-blue-600">Vencimento:</span>
-                          <span class="font-semibold text-blue-900">Dia {{ loja.contrato.dataVencimento }}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-
-            <!-- Right Column -->
-            <div class="space-y-8">
-              
-              <!-- Pending Invoices -->
-              <section class="bg-white rounded-2xl shadow-lg border border-blue-100 overflow-hidden" [@slideInRight]>
-                <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4">
-                  <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-white flex items-center">
-                      <svg class="w-5 h-5 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                      </svg>
-                      Faturas Pendentes
-                    </h3>
-                    <span *ngIf="getAllPendingInvoices().length > 0" 
-                          class="bg-white/20 text-white text-sm px-3 py-1 rounded-full font-bold">
-                      {{ getAllPendingInvoices().length }}
-                    </span>
-                  </div>
-                </div>
-                <div class="p-6">
-                  <div class="space-y-4 max-h-96 overflow-y-auto">
-                    <div *ngFor="let fatura of getAllPendingInvoices(); let i = index" 
-                         class="border border-orange-200 rounded-xl p-4 bg-orange-50 hover:shadow-md transition-all duration-300"
-                         [@staggerItem]="{value: '', params: {delay: i * 50}}">
-                      
-                      <div class="flex justify-between items-start mb-3">
-                        <div>
-                          <p class="font-bold text-blue-900">{{ fatura.loja.nome }}</p>
-                          <p class="text-sm text-blue-600">Ref: {{ fatura.mesReferencia }}/{{ fatura.anoReferencia }}</p>
-                        </div>
-                        <span class="text-xs font-semibold px-2 py-1 rounded"
-                              [ngClass]="getUrgencyClass(fatura.diasParaVencimento)">
-                          {{ fatura.diasParaVencimento }} dias
-                        </span>
-                      </div>
-                      <div class="flex justify-between items-center">
-                        <span class="text-sm text-blue-600">
-                          Vence: {{ fatura.dataVencimento | date:'dd/MM/yyyy' }}
-                        </span>
-                        <span class="font-bold text-blue-900">
-                          {{ fatura.valorAluguel | currency:'BRL':'symbol':'1.2-2' }}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div *ngIf="getAllPendingInvoices().length === 0" class="text-center py-8">
-                      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                      </div>
-                      <p class="text-blue-900 font-semibold">Todas as faturas em dia!</p>
-                      <p class="text-blue-600 text-sm mt-1">Parabéns pelo controle</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <!-- Recent Activity -->
-              <section class="bg-white rounded-2xl shadow-lg border border-blue-100 overflow-hidden" [@slideInRight]>
-                <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
-                  <h3 class="text-lg font-semibold text-white flex items-center">
-                    <svg class="w-5 h-5 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.24 8.56a5.97 5.97 0 01-4.66-7.4 1 1 0 00-1.2-1.2 5.97 5.97 0 01-7.4 4.66 1 1 0 00-1.2 1.2 5.97 5.97 0 014.66 7.4 1 1 0 001.2 1.2 5.97 5.97 0 017.4-4.66z"/>
-                    </svg>
-                    Atividade Recente
-                  </h3>
-                </div>
-                <div class="p-6">
-                  <div class="space-y-4">
-                    <div *ngFor="let notificacao of portalData.notificacoes.slice(0, 4); let i = index" 
-                         class="flex items-start space-x-3 p-3 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
-                         [@staggerItem]="{value: '', params: {delay: i * 50}}">
-                      
-                      <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-blue-100 text-blue-600">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                      </div>
-                      
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm text-blue-900 mb-1 font-medium">
-                          {{ notificacao.mensagem }}
-                        </p>
-                        <p class="text-xs text-blue-600">
-                          {{ notificacao.enviadaEm | date:'dd/MM/yyyy • HH:mm' }}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div *ngIf="portalData.notificacoes.length === 0" class="text-center py-6">
-                      <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                      </div>
-                      <p class="text-blue-900 font-medium">Nenhuma notificação</p>
-                      <p class="text-blue-600 text-xs mt-1">Tudo tranquilo por aqui</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
-        </div>
-
-        <!-- Other Sections -->
-        <div *ngIf="!loading && portalData && !isCurrentSection('dashboard')">
-          <div *ngIf="isCurrentSection('faturas')">
-            <app-tenant-invoices [portalData]="portalData"></app-tenant-invoices>
-          </div>
-
-          <div *ngIf="isCurrentSection('contratos')">
-            <app-tenant-contracts [portalData]="portalData"></app-tenant-contracts>
-          </div>
-
-          <div *ngIf="isCurrentSection('lojas')">
-            <app-tenant-stores [portalData]="portalData"></app-tenant-stores>
-          </div>
-
-          <div *ngIf="isCurrentSection('configuracoes')">
-            <app-tenant-settings [portalData]="portalData"></app-tenant-settings>
-          </div>
-        </div>
-
-        <!-- Error State -->
-        <div *ngIf="!loading && !portalData" class="text-center py-16" [@fadeIn]>
-          <div class="max-w-md mx-auto">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/>
-              </svg>
-            </div>
-            <h3 class="text-xl font-bold text-blue-900 mb-2">Erro ao carregar</h3>
-            <p class="text-blue-600 mb-6">Não foi possível carregar suas informações.</p>
-            <button 
-              (click)="loadPortalData()"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-colors font-medium"
-            >
-              Tentar Novamente
-            </button>
           </div>
         </div>
       </div>
     </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+    
+    <!-- Navigation Tabs -->
+    <nav class="mb-6 sm:mb-8" [@navSlide]>
+      <div class="flex flex-wrap sm:flex-nowrap gap-1 sm:gap-2 bg-white/80 backdrop-blur-sm rounded-2xl p-1 sm:p-2 shadow-sm border border-blue-100">
+        <button 
+          *ngFor="let section of navigationSections"
+          (click)="navigateToSection(section.id)"
+          [class]="'flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 rounded-xl transition-all duration-300 flex-1 text-center justify-center min-w-0 ' + 
+                   (isSectionActive(section.id) ? 
+                    'bg-blue-600 text-white shadow-lg' : 
+                    'text-blue-700 hover:bg-blue-50 hover:text-blue-900')"
+        >
+          <svg [class]="'w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 ' + (isSectionActive(section.id) ? 'text-white' : 'text-blue-500')" 
+               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path *ngIf="section.id === 'dashboard'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            <path *ngIf="section.id === 'faturas'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            <path *ngIf="section.id === 'contratos'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            <path *ngIf="section.id === 'lojas'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            <path *ngIf="section.id === 'configuracoes'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          </svg>
+          <span class="font-medium text-xs sm:text-sm truncate">{{ section.title }}</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center min-h-[300px] sm:min-h-[400px]" [@fadeIn]>
+      <div class="text-center">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3 sm:mb-4"></div>
+        <p class="text-blue-700 font-medium text-sm sm:text-base">Carregando seu portal...</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div *ngIf="!loading && portalData && isCurrentSection('dashboard')" class="space-y-6 sm:space-y-8" [@staggerIn]>
+      
+      <!-- Welcome Header -->
+      <section class="text-center mb-6 sm:mb-8">
+        <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-900 mb-2">
+          Bem-vindo, {{ portalData.inquilino.nome ? portalData.inquilino.nome.split(' ')[0] : 'Usuário' }}!
+        </h1>
+        <p class="text-blue-600 text-sm sm:text-base lg:text-lg">Aqui está o resumo das suas informações</p>
+      </section>
+
+      <!-- Financial Overview Cards -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div *ngFor="let card of financialCards; let i = index" 
+             class="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-blue-100 p-4 sm:p-6 transform hover:scale-105 transition-all duration-300"
+             [@cardStagger]="{value: '', params: {delay: i * 100}}">
+          
+          <div class="flex items-center justify-between mb-3 sm:mb-4">
+            <div class="min-w-0 flex-1">
+              <p class="text-blue-600 text-xs sm:text-sm font-medium mb-1 truncate">{{ card.title }}</p>
+              <p class="text-lg sm:text-xl lg:text-2xl font-bold text-blue-900 truncate">{{ card.value }}</p>
+            </div>
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 ml-3"
+                 [ngClass]="card.iconBg">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path *ngIf="card.title === 'Faturas Pendentes'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                <path *ngIf="card.title === 'Valor Total'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                <path *ngIf="card.title === 'Em Atraso'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/>
+                <path *ngIf="card.title === 'Progresso'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+          </div>
+          
+          <p class="text-blue-500 text-xs sm:text-sm truncate">{{ card.subtitle }}</p>
+          
+          <!-- Progress Bar -->
+          <div *ngIf="card.progress !== undefined" class="mt-3 sm:mt-4">
+            <div class="w-full bg-blue-100 rounded-full h-1.5 sm:h-2">
+              <div class="bg-blue-600 h-1.5 sm:h-2 rounded-full transition-all duration-1000"
+                   [style.width.%]="card.progress"></div>
+            </div>
+            <p class="text-blue-600 text-xs mt-1 sm:mt-2 text-right">{{ card.progress }}% concluído</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Two Column Layout -->
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
+        
+        <!-- Left Column -->
+        <div class="xl:col-span-2 space-y-6 sm:space-y-8">
+          
+          <!-- Stores Section -->
+          <section class="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-blue-100 overflow-hidden" [@slideInLeft]>
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-4 sm:px-6 py-3 sm:py-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-base sm:text-lg font-semibold text-white flex items-center">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                  </svg>
+                  Minhas Lojas
+                </h3>
+                <span class="text-blue-100 text-xs sm:text-sm font-medium bg-white/20 px-2 sm:px-3 py-1 rounded-full">
+                  {{ portalData.lojas.length }} ativa(s)
+                </span>
+              </div>
+            </div>
+            <div class="p-4 sm:p-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <div *ngFor="let loja of portalData.lojas; let i = index" 
+                     class="border border-blue-200 rounded-lg sm:rounded-xl p-4 sm:p-6 hover:border-blue-300 hover:shadow-md transition-all duration-300 bg-white"
+                     [@staggerItem]="{value: '', params: {delay: i * 100}}">
+                  
+                  <div class="flex items-start justify-between mb-3 sm:mb-4">
+                    <h4 class="font-bold text-blue-900 text-base sm:text-lg truncate flex-1 mr-2">{{ loja.nome }}</h4>
+                    <span class="text-xs font-semibold px-2 sm:px-3 py-1 rounded-full flex-shrink-0"
+                          [ngClass]="getStatusBadgeClass(loja.contrato.status)">
+                      {{ loja.contrato.status }}
+                    </span>
+                  </div>
+                  
+                  <div class="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+                    <div class="flex justify-between items-center py-1.5 sm:py-2 border-b border-blue-50">
+                      <span class="text-blue-600">Número:</span>
+                      <span class="font-semibold text-blue-900">#{{ loja.numero }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5 sm:py-2 border-b border-blue-50">
+                      <span class="text-blue-600">Aluguel Mensal:</span>
+                      <span class="font-bold text-blue-900 text-sm">{{ loja.contrato.valorAluguel | currency:'BRL':'symbol':'1.2-2' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5 sm:py-2">
+                      <span class="text-blue-600">Vencimento:</span>
+                      <span class="font-semibold text-blue-900">Dia {{ loja.contrato.dataVencimento }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right Column -->
+        <div class="space-y-6 sm:space-y-8">
+          
+          <!-- Pending Invoices -->
+          <section class="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-blue-100 overflow-hidden" [@slideInRight]>
+            <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-4 sm:px-6 py-3 sm:py-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-base sm:text-lg font-semibold text-white flex items-center">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Faturas Pendentes
+                </h3>
+                <span *ngIf="getAllPendingInvoices().length > 0" 
+                      class="bg-white/20 text-white text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-bold">
+                  {{ getAllPendingInvoices().length }}
+                </span>
+              </div>
+            </div>
+            <div class="p-4 sm:p-6">
+              <div class="space-y-3 sm:space-y-4 max-h-64 sm:max-h-80 overflow-y-auto">
+                <div *ngFor="let fatura of getAllPendingInvoices(); let i = index" 
+                     class="border border-orange-200 rounded-lg sm:rounded-xl p-3 sm:p-4 bg-orange-50 hover:shadow-md transition-all duration-300"
+                     [@staggerItem]="{value: '', params: {delay: i * 50}}">
+                  
+                  <div class="flex justify-between items-start mb-2 sm:mb-3">
+                    <div class="min-w-0 flex-1 mr-2">
+                      <p class="font-bold text-blue-900 text-sm sm:text-base truncate">{{ fatura.loja.nome }}</p>
+                      <p class="text-xs text-blue-600">Ref: {{ fatura.mesReferencia }}/{{ fatura.anoReferencia }}</p>
+                    </div>
+                    <span class="text-xs font-semibold px-2 py-1 rounded flex-shrink-0"
+                          [ngClass]="getUrgencyClass(fatura.diasParaVencimento)">
+                      {{ fatura.diasParaVencimento }} dias
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-blue-600">
+                      Vence: {{ fatura.dataVencimento | date:'dd/MM/yyyy' }}
+                    </span>
+                    <span class="font-bold text-blue-900 text-sm">
+                      {{ fatura.valorAluguel | currency:'BRL':'symbol':'1.2-2' }}
+                    </span>
+                  </div>
+                </div>
+                
+                <div *ngIf="getAllPendingInvoices().length === 0" class="text-center py-6 sm:py-8">
+                  <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <p class="text-blue-900 font-semibold text-sm sm:text-base">Todas as faturas em dia!</p>
+                  <p class="text-blue-600 text-xs sm:text-sm mt-1">Parabéns pelo controle</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Recent Activity -->
+          <section class="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-blue-100 overflow-hidden" [@slideInRight]>
+            <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 sm:px-6 py-3 sm:py-4">
+              <h3 class="text-base sm:text-lg font-semibold text-white flex items-center">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.24 8.56a5.97 5.97 0 01-4.66-7.4 1 1 0 00-1.2-1.2 5.97 5.97 0 01-7.4 4.66 1 1 0 00-1.2 1.2 5.97 5.97 0 014.66 7.4 1 1 0 001.2 1.2 5.97 5.97 0 017.4-4.66z"/>
+                </svg>
+                Atividade Recente
+              </h3>
+            </div>
+            <div class="p-4 sm:p-6">
+              <div class="space-y-3 sm:space-y-4">
+                <div *ngFor="let notificacao of portalData.notificacoes.slice(0, 4); let i = index" 
+                     class="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
+                     [@staggerItem]="{value: '', params: {delay: i * 50}}">
+                  
+                  <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-blue-100 text-blue-600">
+                    <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm text-blue-900 mb-1 font-medium line-clamp-2">
+                      {{ notificacao.mensagem }}
+                    </p>
+                    <p class="text-xs text-blue-600">
+                      {{ notificacao.enviadaEm | date:'dd/MM/yyyy • HH:mm' }}
+                    </p>
+                  </div>
+                </div>
+                
+                <div *ngIf="portalData.notificacoes.length === 0" class="text-center py-4 sm:py-6">
+                  <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <p class="text-blue-900 font-medium text-sm sm:text-base">Nenhuma notificação</p>
+                  <p class="text-blue-600 text-xs mt-1">Tudo tranquilo por aqui</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Other Sections -->
+    <div *ngIf="!loading && portalData && !isCurrentSection('dashboard')">
+      <div *ngIf="isCurrentSection('faturas')">
+        <app-tenant-invoices [portalData]="portalData"></app-tenant-invoices>
+      </div>
+
+      <div *ngIf="isCurrentSection('contratos')">
+        <app-tenant-contracts [portalData]="portalData"></app-tenant-contracts>
+      </div>
+
+      <div *ngIf="isCurrentSection('lojas')">
+        <app-tenant-stores [portalData]="portalData"></app-tenant-stores>
+      </div>
+
+      <div *ngIf="isCurrentSection('configuracoes')">
+        <app-tenant-settings [portalData]="portalData"></app-tenant-settings>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && !portalData" class="text-center py-12 sm:py-16" [@fadeIn]>
+      <div class="max-w-md mx-auto px-4">
+        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg sm:text-xl font-bold text-blue-900 mb-2">Erro ao carregar</h3>
+        <p class="text-blue-600 mb-4 sm:mb-6 text-sm sm:text-base">Não foi possível carregar suas informações.</p>
+        <button 
+          (click)="loadPortalData()"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl transition-colors font-medium text-sm sm:text-base"
+        >
+          Tentar Novamente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
   `,
   animations: [
     trigger('pageEnter', [

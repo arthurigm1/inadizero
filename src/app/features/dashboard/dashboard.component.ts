@@ -22,428 +22,422 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule, BaseChartDirective, UsersComponent, StoresComponent, SettingsComponent, ContractsComponent, ContractDetailComponent, InvoicesComponent, NotificacoesComponent, InadimplentesComponent],
-  template: `
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50" [@fadeIn]>
-      <!-- Sidebar -->
-      <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white backdrop-blur-xl border-r border-blue-200 transform transition-transform duration-300 ease-in-out" 
-           [class.translate-x-0]="sidebarOpen" 
-           [class.-translate-x-full]="!sidebarOpen">
-        <div class="flex flex-col h-full">
-          <!-- Logo -->
-          <div class="flex items-center justify-center h-16 px-4 border-b border-blue-200">
-            <div class="flex items-center space-x-2">
-              <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+  template: `<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50" [@fadeIn]>
+  <!-- Sidebar -->
+  <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white backdrop-blur-xl border-r border-blue-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0" 
+       [class.translate-x-0]="sidebarOpen" 
+       [class.-translate-x-full]="!sidebarOpen">
+    <div class="flex flex-col h-full">
+      <!-- Logo -->
+      <div class="flex items-center justify-center h-16 px-4 border-b border-blue-200">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+            </svg>
+          </div>
+          <span class="text-xl font-bold text-blue-800">InadiZero</span>
+        </div>
+      </div>
+      
+      <!-- Navigation -->
+      <nav class="flex-1 px-4 py-6 space-y-2">
+        <a (click)="navigateTo('dashboard')" 
+           class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+           [class]="currentSection === 'dashboard' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+          </svg>
+          Dashboard
+        </a>
+        
+        <a (click)="navigateTo('users')" 
+           class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+           [class]="currentSection === 'users' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+          </svg>
+          Usuários
+        </a>
+        
+        <a (click)="navigateTo('stores')" 
+           class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+           [class]="currentSection === 'stores' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd"/>
+            <path d="M5 8a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"/>
+          </svg>
+          Lojas
+        </a>
+        
+        <a (click)="navigateTo('contracts')" 
+           class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+           [class]="currentSection === 'contracts' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm0 2h12v12H4V4z" clip-rule="evenodd"/>
+            <path d="M6 6h8v2H6V6zM6 10h8v2H6v-2zM6 14h5v2H6v-2z"/>
+          </svg>
+          Contratos
+        </a>
+        
+        <a (click)="navigateTo('invoices')" 
+           class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+           [class]="currentSection === 'invoices' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd"/>
+            <path d="M6 8h8v2H6V8zM6 12h8v2H6v-2z"/>
+          </svg>
+          Faturas
+        </a>
+        
+        <a (click)="navigateTo('settings')" 
+           class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+           [class]="currentSection === 'settings' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+          </svg>
+          Configurações
+        </a>
+        
+        <a (click)="navigateTo('notifications')"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+            [class]="currentSection === 'notifications' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+           <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+             <path d="M10 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 003 15h14a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+           </svg>
+           Notificações
+         </a>
+        <a (click)="navigateTo('inadimplentes')"
+           class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
+           [class]="currentSection === 'inadimplentes' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
+          <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M12 8c-1.657 0-3 1.343-3 3v5H5a2 2 0 01-2-2V7a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2h-4v-5c0-1.657-1.343-3-3-3z"/>
+          </svg>
+          Inadimplentes
+        </a>
+      </nav>
+      
+      <!-- User Profile -->
+      <div class="px-4 py-4 border-t border-blue-200">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+            <span class="text-xs font-bold text-white">AD</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-blue-900 truncate">Admin</p>
+            <p class="text-xs text-gray-500 truncate">admin&#64;inadizero.com</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden" *ngIf="sidebarOpen" (click)="toggleSidebar()"></div>
+  
+  <!-- Main Content -->
+  <div class="transition-all duration-300 ease-in-out lg:ml-64">
+    <!-- Header -->
+    <header class="bg-white backdrop-blur-xl border-b border-blue-200 sticky top-0 z-40">
+      <div class="px-4 sm:px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <button (click)="toggleSidebar()" class="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 lg:hidden">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+            </button>
+            <h1 class="text-xl sm:text-2xl font-bold text-blue-900">{{ getSectionTitle() }}</h1>
+          </div>
+          
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <input type="text" placeholder="Buscar..." 
+                     class="w-32 sm:w-40 md:w-64 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+              <svg class="absolute right-3 top-2.5 w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            
+            <div class="relative">
+              <button (click)="toggleNotifications()" class="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h10a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span *ngIf="getUnreadCount() > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">{{ getUnreadCount() }}</span>
+              </button>
+              
+              <div *ngIf="showNotifications" class="absolute right-0 mt-2 w-80 bg-white border border-blue-200 rounded-xl shadow-xl z-50">
+                <div class="p-4 border-b border-blue-200">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-blue-900">Notificações</h3>
+                    <button (click)="openNotificationDialog()" class="text-blue-600 hover:text-blue-800 text-sm">
+                      Ver importantes
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="max-h-96 overflow-y-auto">
+                  <div *ngFor="let notification of notifications.slice(0, 5)" class="p-4 border-b border-blue-100 hover:bg-blue-50 transition-colors">
+                    <div class="flex items-start space-x-3">
+                      <div [class]="getNotificationBgColor(notification.type)" class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg [class]="getNotificationColor(notification.type)" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getNotificationIcon(notification.type)"/>
+                        </svg>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-blue-900 font-medium text-sm truncate">{{ notification.title }}</p>
+                        <p class="text-gray-600 text-xs mt-1 line-clamp-2">{{ notification.message }}</p>
+                        <p class="text-gray-400 text-xs mt-1">{{ notification.time }}</p>
+                      </div>
+                      <div *ngIf="!notification.read" class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="p-4 border-t border-blue-200">
+                  <button (click)="markAllAsRead()" class="w-full text-center text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    Marcar todas como lidas
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Logout Button -->
+            <button (click)="logout()" class="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200" title="Sair">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Content Area -->
+    <main class="p-4 sm:p-6">
+      <!-- Dashboard Content -->
+      <div *ngIf="currentSection === 'dashboard'" [@slideIn]>
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <!-- Revenue Card -->
+          <div class="bg-white border border-blue-200 rounded-xl p-4 sm:p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-blue-600 text-sm font-medium">Receita Total</p>
+                <p class="text-2xl sm:text-3xl font-bold text-blue-900 mt-2">{{formatCurrency(dashboardStats.totalRevenue)}}</p>
+                <p class="text-green-600 text-sm mt-1 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                  Receita mensal
+                </p>
+              </div>
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                 </svg>
               </div>
-              <span class="text-xl font-bold text-blue-800">InadiZero</span>
             </div>
           </div>
           
-          <!-- Navigation -->
-          <nav class="flex-1 px-4 py-6 space-y-2">
-            <a (click)="navigateTo('dashboard')" 
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
-               [class]="currentSection === 'dashboard' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
-              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-              </svg>
-              Dashboard
-            </a>
-            
-            <a (click)="navigateTo('users')" 
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
-               [class]="currentSection === 'users' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
-              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-              </svg>
-              Usuários
-            </a>
-            
-            <a (click)="navigateTo('stores')" 
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
-               [class]="currentSection === 'stores' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
-              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd"/>
-                <path d="M5 8a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z"/>
-              </svg>
-              Lojas
-            </a>
-            
-            <a (click)="navigateTo('contracts')" 
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
-               [class]="currentSection === 'contracts' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
-              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm0 2h12v12H4V4z" clip-rule="evenodd"/>
-                <path d="M6 6h8v2H6V6zM6 10h8v2H6v-2zM6 14h5v2H6v-2z"/>
-              </svg>
-              Contratos
-            </a>
-            
-            <a (click)="navigateTo('invoices')" 
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
-               [class]="currentSection === 'invoices' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
-              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z" clip-rule="evenodd"/>
-                <path d="M6 8h8v2H6V8zM6 12h8v2H6v-2z"/>
-              </svg>
-              Faturas
-            </a>
-            
-            <a (click)="navigateTo('settings')" 
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
-               [class]="currentSection === 'settings' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
-              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
-              </svg>
-              Configurações
-            </a>
-            
-            <a (click)="navigateTo('notifications')"
-                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
-                [class]="currentSection === 'notifications' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
-               <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                 <path d="M10 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 003 15h14a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
-               </svg>
-               Notificações
-             </a>
-            <a (click)="navigateTo('inadimplentes')"
-               class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
-               [class]="currentSection === 'inadimplentes' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'">
-              <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M12 8c-1.657 0-3 1.343-3 3v5H5a2 2 0 01-2-2V7a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2h-4v-5c0-1.657-1.343-3-3-3z"/>
-              </svg>
-              Inadimplentes
-            </a>
-              
-          </nav>
-          
-          <!-- User Profile -->
-          <div class="px-4 py-4 border-t border-blue-200">
-            <div class="flex items-center space-x-3">
-              <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-                <span class="text-xs font-bold text-white">AD</span>
+          <!-- Properties Card -->
+          <div class="bg-white border border-blue-200 rounded-xl p-4 sm:p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-blue-600 text-sm font-medium">Propriedades</p>
+                <p class="text-2xl sm:text-3xl font-bold text-blue-900 mt-2">{{dashboardStats.totalProperties}}</p>
+                <p class="text-blue-600 text-sm mt-1 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                  </svg>
+                  {{dashboardStats.occupancyRate}}% ocupadas
+                </p>
               </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-blue-900 truncate">Admin</p>
-                <p class="text-xs text-gray-500 truncate">admin&#64;inadizero.com</p>
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Tenants Card -->
+          <div class="bg-white border border-blue-200 rounded-xl p-4 sm:p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-blue-600 text-sm font-medium">Inquilinos</p>
+                <p class="text-2xl sm:text-3xl font-bold text-blue-900 mt-2">{{dashboardStats.totalTenants}}</p>
+                <p class="text-red-600 text-sm mt-1 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                  {{dashboardStats.defaultRate}}% inadimplentes
+                </p>
+              </div>
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Maintenance Card -->
+          <div class="bg-white border border-blue-200 rounded-xl p-4 sm:p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-blue-600 text-sm font-medium">Manutenções</p>
+                <p class="text-2xl sm:text-3xl font-bold text-blue-900 mt-2">{{dashboardStats.maintenanceRequests}}</p>
+                <p class="text-orange-600 text-sm mt-1 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                  </svg>
+                  {{dashboardStats.pendingMaintenance}} pendentes
+                </p>
+              </div>
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Mobile Overlay -->
-      <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden" *ngIf="sidebarOpen" (click)="toggleSidebar()"></div>
-      
-      <!-- Main Content -->
-      <div class="transition-all duration-300 ease-in-out md:ml-64">
-        <!-- Header -->
-        <header class="bg-white backdrop-blur-xl border-b border-blue-200 sticky top-0 z-40">
-          <div class="px-6 py-4">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-4">
-                <button (click)="toggleSidebar()" class="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200">
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                  </svg>
-                </button>
-                <h1 class="text-2xl font-bold text-blue-900">{{ getSectionTitle() }}</h1>
-              </div>
-              
-              <div class="flex items-center space-x-4">
-                <div class="relative">
-                  <input type="text" placeholder="Buscar..." 
-                         class="w-40 sm:w-64 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
-                  <svg class="absolute right-3 top-2.5 w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                  </svg>
-                </div>
-                
-                <div class="relative">
-                  <button (click)="toggleNotifications()" class="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 relative">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h10a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                    <span *ngIf="getUnreadCount() > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">{{ getUnreadCount() }}</span>
-                  </button>
-                  
-                  <div *ngIf="showNotifications" class="absolute right-0 mt-2 w-80 bg-white border border-blue-200 rounded-xl shadow-xl z-50">
-                    <div class="p-4 border-b border-blue-200">
-                      <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-blue-900">Notificações</h3>
-                        <button (click)="openNotificationDialog()" class="text-blue-600 hover:text-blue-800 text-sm">
-                          Ver importantes
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div class="max-h-96 overflow-y-auto">
-                      <div *ngFor="let notification of notifications.slice(0, 5)" class="p-4 border-b border-blue-100 hover:bg-blue-50 transition-colors">
-                        <div class="flex items-start space-x-3">
-                          <div [class]="getNotificationBgColor(notification.type)" class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
-                            <svg [class]="getNotificationColor(notification.type)" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getNotificationIcon(notification.type)"/>
-                            </svg>
-                          </div>
-                          <div class="flex-1 min-w-0">
-                            <p class="text-blue-900 font-medium text-sm truncate">{{ notification.title }}</p>
-                            <p class="text-gray-600 text-xs mt-1 line-clamp-2">{{ notification.message }}</p>
-                            <p class="text-gray-400 text-xs mt-1">{{ notification.time }}</p>
-                          </div>
-                          <div *ngIf="!notification.read" class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div class="p-4 border-t border-blue-200">
-                      <button (click)="markAllAsRead()" class="w-full text-center text-blue-600 hover:text-blue-800 text-sm font-medium">
-                        Marcar todas como lidas
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Logout Button -->
-                <button (click)="logout()" class="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200" title="Sair">
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
         
-        <!-- Content Area -->
-        <main class="p-6">
-          <!-- Dashboard Content -->
-          <div *ngIf="currentSection === 'dashboard'" [@slideIn]>
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-              <!-- Revenue Card -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-blue-600 text-sm font-medium">Receita Total</p>
-                    <p class="text-3xl font-bold text-blue-900 mt-2">{{formatCurrency(dashboardStats.totalRevenue)}}</p>
-                    <p class="text-green-600 text-sm mt-1 flex items-center">
-                      <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                      </svg>
-                      Receita mensal
-                    </p>
-                  </div>
-                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Properties Card -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-blue-600 text-sm font-medium">Propriedades</p>
-                    <p class="text-3xl font-bold text-blue-900 mt-2">{{dashboardStats.totalProperties}}</p>
-                    <p class="text-blue-600 text-sm mt-1 flex items-center">
-                      <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                      </svg>
-                      {{dashboardStats.occupancyRate}}% ocupadas
-                    </p>
-                  </div>
-                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Tenants Card -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-blue-600 text-sm font-medium">Inquilinos</p>
-                    <p class="text-3xl font-bold text-blue-900 mt-2">{{dashboardStats.totalTenants}}</p>
-                    <p class="text-red-600 text-sm mt-1 flex items-center">
-                      <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                      </svg>
-                      {{dashboardStats.defaultRate}}% inadimplentes
-                    </p>
-                  </div>
-                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Maintenance Card -->
-              <div class="bg-white border border-blue-200 rounded-xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 transform hover:scale-105" [@cardHover]>
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-blue-600 text-sm font-medium">Manutenções</p>
-                    <p class="text-3xl font-bold text-blue-900 mt-2">{{dashboardStats.maintenanceRequests}}</p>
-                    <p class="text-orange-600 text-sm mt-1 flex items-center">
-                      <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                      </svg>
-                      {{dashboardStats.pendingMaintenance}} pendentes
-                    </p>
-                  </div>
-                  <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
+        <!-- Analytics Section -->
+        <div class="bg-white border border-blue-200 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
+          <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4 mb-6">
+            <div class="w-full sm:w-auto">
+              <label class="block text-sm font-medium text-blue-900 mb-1">Início</label>
+              <input type="date" [(ngModel)]="inicio" class="w-full sm:w-48 px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
-            
-            <!-- Analytics Section -->
-            <div class="bg-white border border-blue-200 rounded-xl p-6 mb-8">
-              <div class="flex flex-wrap items-end gap-4 mb-6">
-                <div class="w-full sm:w-auto">
-                  <label class="block text-sm font-medium text-blue-900 mb-1">Início</label>
-                  <input type="date" [(ngModel)]="inicio" class="w-full sm:w-48 px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div class="w-full sm:w-auto">
-                  <label class="block text-sm font-medium text-blue-900 mb-1">Fim</label>
-                  <input type="date" [(ngModel)]="fim" class="w-full sm:w-48 px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <button (click)="loadAnalytics()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Aplicar filtros</button>
-                <div class="flex items-center gap-2">
-                  <button (click)="setQuickRange('30d')" class="px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100">Últimos 30d</button>
-                  <button (click)="setQuickRange('90d')" class="px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100">Últimos 90d</button>
-                  <button (click)="setQuickRange('ytd')" class="px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100">Ano atual</button>
-                </div>
-                <div *ngIf="loadingAnalytics" class="text-blue-600 text-sm">Carregando dados...</div>
-                <div *ngIf="errorAnalytics" class="text-red-600 text-sm">{{ errorAnalytics }}</div>
-              </div>
-
-              <!-- KPIs -->
-              <div *ngIf="!loadingAnalytics; else kpiSkeleton" class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p class="text-xs text-blue-600">Entradas no período</p>
-                  <p class="text-xl font-bold text-blue-900">{{ analytics?.caixa?.entradas ? formatCurrency(analytics.caixa.entradas) : '-' }}</p>
-                </div>
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p class="text-xs text-blue-600">A receber no período</p>
-                  <p class="text-xl font-bold text-blue-900">{{ analytics?.caixa?.aReceber ? formatCurrency(analytics.caixa.aReceber) : '-' }}</p>
-                </div>
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p class="text-xs text-blue-600">Total atrasado</p>
-                  <p class="text-xl font-bold text-blue-900">{{ analytics?.inadimplencia?.valorTotalEmAtraso ? formatCurrency(analytics.inadimplencia.valorTotalEmAtraso) : '-' }}</p>
-                </div>
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p class="text-xs text-blue-600">Inquilinos inadimplentes</p>
-                  <p class="text-xl font-bold text-blue-900">{{ analytics?.inadimplencia?.totalInadimplentes ?? '-' }}</p>
-                </div>
-              </div>
-              <ng-template #kpiSkeleton>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
-                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
-                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
-                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
-                </div>
-              </ng-template>
-
-              <!-- Charts -->
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
-                  <h3 class="text-lg font-bold text-blue-900 mb-4">Recebimentos por mês</h3>
-                  <canvas baseChart [data]="lineRecebData" [options]="lineChartOptions" [type]="'line'" class="h-56 sm:h-64 md:h-80"></canvas>
-                </div>
-                <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
-                  <h3 class="text-lg font-bold text-blue-900 mb-4">A receber por mês</h3>
-                  <canvas baseChart [data]="lineAReceberData" [options]="lineChartOptions" [type]="'line'" class="h-56 sm:h-64 md:h-80"></canvas>
-                </div>
-                <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
-                  <h3 class="text-lg font-bold text-blue-900 mb-4">Top inadimplentes</h3>
-                  <canvas baseChart [data]="barTopData" [options]="barChartOptions" [type]="'bar'" class="h-56 sm:h-64 md:h-80"></canvas>
-                </div>
-                <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
-                  <h3 class="text-lg font-bold text-blue-900 mb-4">Distribuição por status</h3>
-                  <canvas baseChart [data]="pieStatusData" [options]="pieChartOptions" [type]="'pie'" class="h-56 sm:h-64 md:h-80"></canvas>
-                </div>
-              </div>
+            <div class="w-full sm:w-auto">
+              <label class="block text-sm font-medium text-blue-900 mb-1">Fim</label>
+              <input type="date" [(ngModel)]="fim" class="w-full sm:w-48 px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
-            
-            <!-- Recent Activity -->
-            <div class="bg-white border border-blue-200 rounded-xl p-6">
-              <h3 class="text-xl font-bold text-blue-900 mb-6">Atividades Recentes</h3>
-              <div class="space-y-4">
-                <div *ngFor="let activity of recentActivities" class="flex items-center space-x-4 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition">
-                  <div class="w-10 h-10 rounded-full flex items-center justify-center"
-                       [class]="'bg-' + activity.color + '-500/20'">
-                    <svg class="w-5 h-5" [class]="'text-' + activity.color + '-400'" fill="currentColor" viewBox="0 0 20 20">
-                      <path *ngIf="activity.icon === 'check'" fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                      <path *ngIf="activity.icon === 'user'" d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z"/>
-                      <path *ngIf="activity.icon === 'warning'" fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                  </div>
-                  <div class="flex-1">
-                    <p class="text-blue-900 font-medium">{{activity.title}}</p>
-                    <p class="text-blue-700 text-sm">{{activity.description}}</p>
-                  </div>
-                  <span class="text-blue-600 text-sm">{{activity.time}}</span>
-                </div>
-              </div>
+            <button (click)="loadAnalytics()" class="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Aplicar filtros</button>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button (click)="setQuickRange('30d')" class="flex-1 sm:flex-none px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100">Últimos 30d</button>
+              <button (click)="setQuickRange('90d')" class="flex-1 sm:flex-none px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100">Últimos 90d</button>
+              <button (click)="setQuickRange('ytd')" class="flex-1 sm:flex-none px-3 py-2 text-sm bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100">Ano atual</button>
+            </div>
+            <div *ngIf="loadingAnalytics" class="text-blue-600 text-sm">Carregando dados...</div>
+            <div *ngIf="errorAnalytics" class="text-red-600 text-sm">{{ errorAnalytics }}</div>
+          </div>
+
+          <!-- KPIs -->
+          <div *ngIf="!loadingAnalytics; else kpiSkeleton" class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p class="text-xs text-blue-600">Entradas no período</p>
+              <p class="text-xl font-bold text-blue-900">{{ analytics?.caixa?.entradas ? formatCurrency(analytics.caixa.entradas) : '-' }}</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p class="text-xs text-blue-600">A receber no período</p>
+              <p class="text-xl font-bold text-blue-900">{{ analytics?.caixa?.aReceber ? formatCurrency(analytics.caixa.aReceber) : '-' }}</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p class="text-xs text-blue-600">Total atrasado</p>
+              <p class="text-xl font-bold text-blue-900">{{ analytics?.inadimplencia?.valorTotalEmAtraso ? formatCurrency(analytics.inadimplencia.valorTotalEmAtraso) : '-' }}</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p class="text-xs text-blue-600">Inquilinos inadimplentes</p>
+              <p class="text-xl font-bold text-blue-900">{{ analytics?.inadimplencia?.totalInadimplentes ?? '-' }}</p>
             </div>
           </div>
-          
-          <!-- Users Section -->
-          <div *ngIf="currentSection === 'users'" [@slideIn]>
-            <app-users></app-users>
-          </div>
-          
-          <!-- Stores Section -->
-          <div *ngIf="currentSection === 'stores'" [@slideIn]>
-            <app-stores></app-stores>
-          </div>
-          
-          <!-- Contracts Section -->
-          <div *ngIf="currentSection === 'contracts'" [@slideIn]>
-            <app-contracts (contractSelected)="navigateToContractDetail($event)"></app-contracts>
-          </div>
+          <ng-template #kpiSkeleton>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-6">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-pulse h-20"></div>
+            </div>
+          </ng-template>
 
-          <!-- Contract Detail Section -->
-          <div *ngIf="currentSection === 'contract-detail'" [@slideIn]>
-            <app-contract-detail 
-              [contractId]="selectedContractId" 
-              (backToList)="navigateBackToContracts()"
-              (editContractEvent)="handleEditContract($event)">
-            </app-contract-detail>
+          <!-- Charts -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
+              <h3 class="text-lg font-bold text-blue-900 mb-4">Recebimentos por mês</h3>
+              <canvas baseChart [data]="lineRecebData" [options]="lineChartOptions" [type]="'line'" class="h-64 sm:h-80"></canvas>
+            </div>
+            <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
+              <h3 class="text-lg font-bold text-blue-900 mb-4">A receber por mês</h3>
+              <canvas baseChart [data]="lineAReceberData" [options]="lineChartOptions" [type]="'line'" class="h-64 sm:h-80"></canvas>
+            </div>
+            <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
+              <h3 class="text-lg font-bold text-blue-900 mb-4">Top inadimplentes</h3>
+              <canvas baseChart [data]="barTopData" [options]="barChartOptions" [type]="'bar'" class="h-64 sm:h-80"></canvas>
+            </div>
+            <div class="bg-white border border-blue-200 rounded-xl p-4 hover:shadow-lg transition">
+              <h3 class="text-lg font-bold text-blue-900 mb-4">Distribuição por status</h3>
+              <canvas baseChart [data]="pieStatusData" [options]="pieChartOptions" [type]="'pie'" class="h-64 sm:h-80"></canvas>
+            </div>
           </div>
-
-          <!-- Invoices Section -->
-          <div *ngIf="currentSection === 'invoices'" [@slideIn]>
-            <app-invoices></app-invoices>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="bg-white border border-blue-200 rounded-xl p-4 sm:p-6">
+          <h3 class="text-xl font-bold text-blue-900 mb-6">Atividades Recentes</h3>
+          <div class="space-y-4">
+            <div *ngFor="let activity of recentActivities" class="flex items-center space-x-4 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                   [class]="'bg-' + activity.color + '-500/20'">
+                <svg class="w-5 h-5" [class]="'text-' + activity.color + '-400'" fill="currentColor" viewBox="0 0 20 20">
+                  <path *ngIf="activity.icon === 'check'" fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  <path *ngIf="activity.icon === 'user'" d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z"/>
+                  <path *ngIf="activity.icon === 'warning'" fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <p class="text-blue-900 font-medium">{{activity.title}}</p>
+                <p class="text-blue-700 text-sm">{{activity.description}}</p>
+              </div>
+              <span class="text-blue-600 text-sm">{{activity.time}}</span>
+            </div>
           </div>
-
-          <!-- Settings Section -->
-          <div *ngIf="currentSection === 'settings'" [@slideIn]>
-            <app-settings></app-settings>
-          </div>
-           <div *ngIf="currentSection === 'notifications'" [@slideIn]>
-            <app-notificacoes></app-notificacoes>
-          </div>
-          <!-- Inadimplentes Section -->
-          <div *ngIf="currentSection === 'inadimplentes'" [@slideIn]>
-            <app-inadimplentes></app-inadimplentes>
-          </div>
-        </main>
+        </div>
       </div>
-    </div>
+      
+      <!-- Outras seções -->
+      <div *ngIf="currentSection === 'users'" [@slideIn]>
+        <app-users></app-users>
+      </div>
+      
+      <div *ngIf="currentSection === 'stores'" [@slideIn]>
+        <app-stores></app-stores>
+      </div>
+      
+      <div *ngIf="currentSection === 'contracts'" [@slideIn]>
+        <app-contracts (contractSelected)="navigateToContractDetail($event)"></app-contracts>
+      </div>
+
+      <div *ngIf="currentSection === 'contract-detail'" [@slideIn]>
+        <app-contract-detail 
+          [contractId]="selectedContractId" 
+          (backToList)="navigateBackToContracts()"
+          (editContractEvent)="handleEditContract($event)">
+        </app-contract-detail>
+      </div>
+
+      <div *ngIf="currentSection === 'invoices'" [@slideIn]>
+        <app-invoices></app-invoices>
+      </div>
+
+      <div *ngIf="currentSection === 'settings'" [@slideIn]>
+        <app-settings></app-settings>
+      </div>
+      
+      <div *ngIf="currentSection === 'notifications'" [@slideIn]>
+        <app-notificacoes></app-notificacoes>
+      </div>
+      
+      <div *ngIf="currentSection === 'inadimplentes'" [@slideIn]>
+        <app-inadimplentes></app-inadimplentes>
+      </div>
+    </main>
+  </div>
+</div>
   `,
   animations: [
     trigger('fadeIn', [
