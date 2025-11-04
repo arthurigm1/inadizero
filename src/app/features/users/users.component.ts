@@ -53,11 +53,11 @@ enum TipoUsuario {
     ])
   ],
   template: `
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 p-6">
+    <div class="min-h-screen p-4 sm:p-6">
       <!-- Header -->
       <div class="mb-8" [@fadeIn]>
-        <h1 class="text-4xl font-bold text-blue-800 mb-2">Gerenciamento de Usuários</h1>
-        <p class="text-gray-600">Gerencie todos os usuários do sistema com busca e filtros</p>
+        <h1 class="text-2xl sm:text-4xl font-bold text-blue-800 mb-2">Gerenciamento de Usuários</h1>
+        <p class="text-sm sm:text-base text-gray-600">Gerencie todos os usuários do sistema com busca e filtros</p>
       </div>
 
       <!-- Modal para Criar Inquilino -->
@@ -256,11 +256,11 @@ enum TipoUsuario {
       <!-- Actions Bar -->
       <div class="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center" [@slideIn]>
         <div class="flex flex-col sm:flex-row gap-4">
-          <button (click)="openCreateTenantModal()" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+          <button (click)="openCreateTenantModal()" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 shadow-lg w-full sm:w-auto">
             <i class="fas fa-plus mr-2"></i>
             Novo Inquilino
           </button>
-          <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold transition-all duration-300">
+          <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold transition-all duration-300 w-full sm:w-auto">
             <i class="fas fa-download mr-2"></i>
             Exportar
           </button>
@@ -268,7 +268,7 @@ enum TipoUsuario {
         
         <div class="flex flex-wrap gap-4">
           <!-- Campo de busca -->
-          <div class="relative flex-1 min-w-64 sm:w-80 md:w-[28rem]">
+          <div class="relative flex-1 min-w-0 w-full sm:w-80 md:w-[28rem]">
             <input 
               type="text" 
               placeholder="Buscar por nome ou email..."
@@ -283,7 +283,7 @@ enum TipoUsuario {
           <select 
             [(ngModel)]="selectedTypeFilter"
             (change)="onTypeFilterChange()"
-            class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 min-w-48">
+            class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 min-w-48 w-full sm:w-auto">
             <option *ngFor="let type of userTypes" [value]="type.value">{{ type.label }}</option>
           </select>
           
@@ -291,14 +291,14 @@ enum TipoUsuario {
           <select 
             [(ngModel)]="selectedStatusFilter"
             (change)="onStatusFilterChange()"
-            class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 min-w-40">
+            class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 min-w-40 w-full sm:w-auto">
             <option *ngFor="let status of statusTypes" [value]="status.value">{{ status.label }}</option>
           </select>
           
           <!-- Botão limpar filtros -->
           <button 
             (click)="clearFilters()"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2">
+            class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 w-full sm:w-auto">
             <i class="fas fa-times"></i>
             Limpar
           </button>
@@ -311,30 +311,30 @@ enum TipoUsuario {
           <table class="w-full table-auto">
             <thead class="bg-blue-50">
               <tr>
-                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Usuário</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Email</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Tipo</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Último Acesso</th>
-                <th class="px-6 py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Ações</th>
+                <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Usuário</th>
+                <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Email</th>
+                <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Tipo</th>
+                <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Status</th>
+                <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Último Acesso</th>
+                <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-blue-100">
               <tr *ngFor="let user of users" class="group hover:bg-blue-50 transition-colors duration-200">
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold mr-4 ring-2 ring-blue-200">
+                    <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold mr-3 sm:mr-4 ring-2 ring-blue-200">
                       {{ user.name.charAt(0).toUpperCase() }}
                     </div>
                     <div>
-                      <div class="text-base font-semibold text-blue-900">{{ user.name }}</div>
+                      <div class="text-sm sm:text-base font-semibold text-blue-900">{{ user.name }}</div>
                     </div>
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                   <a [href]="'mailto:' + user.email" class="text-sm text-blue-700 hover:text-blue-900 hover:underline truncate max-w-[240px] inline-block">{{ user.email }}</a>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                   <span [ngClass]="{
                     'bg-red-100 text-red-800 border-red-200': user.type === 'ADMIN_EMPRESA',
                     'bg-blue-100 text-blue-800 border-blue-200': user.type === 'FUNCIONARIO',
@@ -344,7 +344,7 @@ enum TipoUsuario {
                     {{ getUserTypeLabel(user.type) }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                   <span [ngClass]="{
                     'bg-green-100 text-green-800 border-green-200': user.ativo === true,
                     'bg-red-100 text-red-800 border-red-200': user.ativo === false
@@ -352,10 +352,10 @@ enum TipoUsuario {
                     {{ user.ativo ? 'Ativo' : 'Inativo' }}
                   </span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-700">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-blue-700">
                   {{ user.lastAccess }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-2">
                     <button *ngIf="user.ativo === true" class="p-2 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-800 transition-colors duration-200 flex items-center gap-2" title="Desativar" aria-label="Desativar usuário" (click)="openDeactivateModal(user)">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -363,13 +363,13 @@ enum TipoUsuario {
                         <path d="M12 14c-5 0-8 2.5-8 5v1h16v-1c0-2.5-3-5-8-5z" />
                         <path stroke-linecap="round" d="M4 4l16 16" />
                       </svg>
-                      <span class="text-sm font-semibold">Desativar</span>
+                      <span class="hidden sm:inline text-sm font-semibold">Desativar</span>
                     </button>
                     <button *ngIf="user.ativo === false" class="p-2 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-800 transition-colors duration-200 flex items-center gap-2" title="Ativar" aria-label="Ativar usuário" (click)="openActivateModal(user)">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
-                      <span class="text-sm font-semibold">Ativar</span>
+                      <span class="hidden sm:inline text-sm font-semibold">Ativar</span>
                     </button>
                   </div>
                 </td>
@@ -611,8 +611,29 @@ export class UsersComponent implements OnInit {
           params = params.set('ativo', 'false');
         }
       }
+      // Busca: usar q (genérico), ou nome/email específicos
       if (this.searchTerm && this.searchTerm.trim()) {
-        params = params.set('busca', this.searchTerm.trim());
+        const raw = this.searchTerm.trim();
+        const lower = raw.toLowerCase();
+
+        // Suporte a prefixos explícitos: "nome:" e "email:"
+        if (lower.startsWith('email:')) {
+          const emailValue = raw.slice(raw.indexOf(':') + 1).trim();
+          if (emailValue) {
+            params = params.set('email', emailValue);
+          }
+        } else if (lower.startsWith('nome:')) {
+          const nomeValue = raw.slice(raw.indexOf(':') + 1).trim();
+          if (nomeValue) {
+            params = params.set('nome', nomeValue);
+          }
+        } else if (/@/.test(raw)) {
+          // Heurística: se contém '@', tratar como filtro de email específico
+          params = params.set('email', raw);
+        } else {
+          // Busca genérica por qualquer termo (nome OU email)
+          params = params.set('q', raw);
+        }
       }
 
 

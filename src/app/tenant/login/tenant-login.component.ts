@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { trigger, transition, style, animate, state } from '@angular/animations';
 import { TenantService } from '../tenant.service';
 
@@ -47,7 +48,18 @@ interface NotificationMessage {
       </div>
 
       <!-- Right Side - Login Form -->
-      <div class="flex-1 flex items-center justify-center px-6 py-12 lg:px-8 bg-white">
+      <div class="flex-1 flex items-center justify-center px-6 py-12 lg:px-8 bg-white relative">
+        <!-- Top-right back button -->
+        <div class="absolute top-4 right-6">
+          <button type="button"
+                  (click)="goHome()"
+                  class="inline-flex items-center text-gray-700 hover:text-gray-900 font-medium transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span class="ml-2">Voltar para início</span>
+          </button>
+        </div>
         <div class="w-full max-w-md" [@formSlide]>
           
           <!-- Header -->
@@ -111,9 +123,9 @@ interface NotificationMessage {
                 <label for="senha" class="block text-sm font-medium text-gray-700">
                   Senha
                 </label>
-                <a href="#" class="text-sm text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                <button type="button" (click)="openResetRequestModal()" class="text-sm text-blue-600 hover:text-blue-500 transition-colors duration-200">
                   Esqueceu a senha?
-                </a>
+                </button>
               </div>
               <div class="relative group">
                 <input
@@ -257,6 +269,58 @@ interface NotificationMessage {
           </div>
         </div>
       </div>
+
+      <!-- Reset Request Modal (email only) -->
+      <div *ngIf="resetRequestModalOpen" class="fixed inset-0 z-50 flex items-center justify-center" [@modalFade]>
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeResetRequestModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4" [@modalSlide]>
+          <div class="px-6 pt-6 pb-4 border-b">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12V8a4 4 0 10-8 0v4M5 12h14l-1 8H6l-1-8z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900">Esqueci minha senha</h3>
+                  <p class="text-sm text-gray-600">Informe seu email para receber o link</p>
+                </div>
+              </div>
+              <button (click)="closeResetRequestModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <form [formGroup]="resetRequestForm" (ngSubmit)="onSubmitResetRequest()" class="px-6 py-4 space-y-5">
+            <div>
+              <label for="emailRecuperacao" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input id="emailRecuperacao" type="email" formControlName="email" placeholder="seu.email@exemplo.com"
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400">
+              <div *ngIf="resetRequestForm.get('email')?.invalid && resetRequestForm.get('email')?.touched" class="mt-2 text-sm text-red-600">
+                Informe um email válido.
+              </div>
+            </div>
+
+            <div class="pt-2">
+              <button type="submit" [disabled]="resetRequestForm.invalid || isRequestingReset" class="w-full flex justify-center items-center py-3 px-4 rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                <svg *ngIf="isRequestingReset" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>{{ isRequestingReset ? 'Enviando...' : 'Enviar link de redefinição' }}</span>
+              </button>
+            </div>
+
+            <div class="text-center pb-4">
+              <p class="text-xs text-gray-500">Você receberá um email com instruções para redefinir sua senha.</p>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   `,
   animations: [
@@ -328,6 +392,24 @@ interface NotificationMessage {
         animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', 
           style({ transform: 'translateX(100%)', opacity: 0 }))
       ])
+    ]),
+    trigger('modalFade', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('150ms ease-in', style({ opacity: 0 }))
+      ])
+    ]),
+    trigger('modalSlide', [
+      transition(':enter', [
+        style({ transform: 'translateY(16px)', opacity: 0 }),
+        animate('250ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ transform: 'translateY(12px)', opacity: 0 }))
+      ])
     ])
   ]
 })
@@ -335,6 +417,9 @@ export class TenantLoginComponent {
   loginForm: FormGroup;
   isLoading = false;
   showPassword = false;
+  resetRequestModalOpen = false;
+  resetRequestForm: FormGroup;
+  isRequestingReset = false;
   notification: NotificationMessage = {
     type: 'info',
     title: '',
@@ -345,16 +430,25 @@ export class TenantLoginComponent {
   constructor(
     private fb: FormBuilder,
     private tenantService: TenantService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required]],
     });
+
+    this.resetRequestForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
   }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+
+  goHome() {
+    this.router.navigate(['/']);
   }
 
   showNotification(type: 'success' | 'error' | 'info', title: string, message: string) {
@@ -375,6 +469,41 @@ export class TenantLoginComponent {
 
   hideNotification() {
     this.notification.show = false;
+  }
+
+  openResetRequestModal() {
+    this.resetRequestModalOpen = true;
+  }
+
+  closeResetRequestModal() {
+    this.resetRequestModalOpen = false;
+    this.resetRequestForm.reset();
+  }
+
+  onSubmitResetRequest() {
+    if (this.resetRequestForm.invalid) {
+      this.resetRequestForm.get('email')?.markAsTouched();
+      return;
+    }
+
+    const { email } = this.resetRequestForm.value;
+    const apiBaseUrl = 'http://localhost:3010/api';
+
+    this.isRequestingReset = true;
+    this.http.post(`${apiBaseUrl}/usuario/solicitar-redefinicao-senha`, { email }).subscribe({
+      next: () => {
+        this.isRequestingReset = false;
+        this.showNotification('success', 'Verifique seu email', 'Se o email existir, enviamos o link de redefinição.');
+        this.closeResetRequestModal();
+      },
+      error: (err) => {
+        this.isRequestingReset = false;
+        const rawMessage = (err?.error?.message || err?.message || '').toString();
+        const message = rawMessage || 'Não foi possível enviar o email de redefinição.';
+        this.showNotification('error', 'Erro ao enviar', message);
+        console.error('Reset request error:', err);
+      }
+    });
   }
 
   onSubmit() {

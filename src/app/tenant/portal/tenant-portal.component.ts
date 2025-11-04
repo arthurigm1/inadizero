@@ -42,16 +42,47 @@ import { forkJoin } from 'rxjs';
         
         <!-- User Menu -->
         <div class="flex items-center space-x-2 sm:space-x-3">
-          <!-- Notifications -->
-          <button class="relative p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.24 8.56a5.97 5.97 0 01-4.66-7.4 1 1 0 00-1.2-1.2 5.97 5.97 0 01-7.4 4.66 1 1 0 00-1.2 1.2 5.97 5.97 0 014.66 7.4 1 1 0 001.2 1.2 5.97 5.97 0 017.4-4.66z"/>
-            </svg>
-            <span *ngIf="unreadNotifications > 0" 
-                  class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
-              {{ unreadNotifications }}
-            </span>
-          </button>
+          <!-- Notifications Dropdown -->
+          <div class="relative">
+<button (click)="toggleNotificationsMenu()" class="relative p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+          d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+  </svg>
+  <span *ngIf="unreadNotifications > 0" 
+        class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+    {{ unreadNotifications }}
+  </span>
+</button>
+
+            <!-- Dropdown de Notificações -->
+            <div *ngIf="notificationsMenuOpen" class="absolute right-0 top-full mt-2 w-96 bg-white rounded-xl shadow-lg border border-blue-100 py-2 z-50">
+              <div class="flex items-center justify-between px-3 py-2 border-b border-blue-50">
+                <span class="text-sm font-semibold text-blue-900">Notificações</span>
+                <div class="flex items-center gap-2">
+                  <button (click)="openNotificationsPanel()" class="text-xs text-blue-600 hover:text-blue-800">Abrir painel</button>
+                  <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:text-blue-800">Marcar todas lidas</button>
+                  <button (click)="closeNotificationsMenu()" class="text-xs text-gray-500 hover:text-gray-700">Fechar</button>
+                </div>
+              </div>
+              <div class="max-h-64 overflow-y-auto">
+                <div *ngFor="let n of portalData?.notificacoes" class="px-3 py-2 hover:bg-blue-50 flex items-start gap-2">
+                  <div class="mt-0.5">
+                    <span [ngClass]="n.lida ? 'bg-gray-300' : 'bg-blue-600'" class="inline-block w-2 h-2 rounded-full"></span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-blue-900 truncate">{{ n.tipo || 'Notificação' }}</p>
+                    <p class="text-xs text-blue-700/80 truncate">{{ n.mensagem }}</p>
+                    <p *ngIf="n.enviadaEm" class="text-[10px] text-blue-500 mt-0.5">{{ n.enviadaEm | date:'short' }}</p>
+                  </div>
+                  <div class="flex-shrink-0">
+                    <button *ngIf="!n.lida" (click)="markNotificationAsRead(n.id)" class="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded">Marcar lida</button>
+                  </div>
+                </div>
+                <div *ngIf="(portalData?.notificacoes?.length || 0) === 0" class="px-3 py-4 text-center text-sm text-blue-700">Sem notificações</div>
+              </div>
+            </div>
+          </div>
 
           <!-- Profile -->
           <div class="relative group">
@@ -132,6 +163,60 @@ import { forkJoin } from 'rxjs';
         </button>
       </div>
     </nav>
+
+    <!-- Toast de Notificações ao entrar -->
+    <div *ngIf="showUnreadToast" class="fixed top-16 right-4 z-50" [@fadeIn]>
+      <div class="bg-white shadow-xl border border-blue-100 rounded-xl px-4 py-3 flex items-start gap-3 w-[320px]">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+          </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-blue-900 truncate">{{ unreadToastTitle || 'Você tem novas notificações' }}</p>
+          <p class="text-xs text-blue-700/80 truncate">Você tem {{ unreadToastCount }} notificações não lidas</p>
+          <div class="mt-2 flex items-center gap-3">
+            <button (click)="openNotificationsFromToast()" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Ver todas</button>
+            <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:text-blue-800">Marcar todas lidas</button>
+          </div>
+        </div>
+        <button (click)="closeUnreadToast()" class="text-blue-400 hover:text-blue-600 ml-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Painel Lateral de Notificações Pendentes -->
+    <div *ngIf="showNotificationsPanel" class="fixed inset-0 z-[60]" [@fadeIn]>
+      <div class="absolute inset-0 bg-black/20" (click)="closeNotificationsPanel()"></div>
+      <div class="absolute top-0 right-0 h-full w-[360px] sm:w-[420px] lg:w-[480px] bg-white shadow-2xl border-l border-blue-100" [@slideInRight]>
+        <div class="px-4 py-3 border-b border-blue-50 flex items-center justify-between">
+          <span class="text-sm font-semibold text-blue-900">Notificações Pendentes ({{ unreadNotifications }})</span>
+          <div class="flex items-center gap-2">
+            <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:text-blue-800">Marcar todas lidas</button>
+            <button (click)="closeNotificationsPanel()" class="text-xs text-gray-500 hover:text-gray-700">Fechar</button>
+          </div>
+        </div>
+        <div class="overflow-y-auto h-[calc(100%-56px)]">
+          <div *ngFor="let n of unreadNotificationsList" class="px-4 py-3 border-b border-blue-50 flex items-start gap-3">
+            <div class="mt-0.5">
+              <span class="inline-block w-2 h-2 rounded-full bg-blue-600"></span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-medium text-blue-900 truncate">{{ n.tipo || 'Notificação' }}</p>
+              <p class="text-xs text-blue-700/80 truncate">{{ n.mensagem }}</p>
+              <p *ngIf="n.enviadaEm" class="text-[10px] text-blue-500 mt-0.5">{{ n.enviadaEm | date:'short' }}</p>
+            </div>
+            <div class="flex-shrink-0">
+              <button (click)="markNotificationAsRead(n.id)" class="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded">Marcar lida</button>
+            </div>
+          </div>
+          <div *ngIf="unreadNotifications === 0" class="px-4 py-6 text-center text-sm text-blue-700">Sem notificações pendentes</div>
+        </div>
+      </div>
+    </div>
 
     <!-- Loading State -->
     <div *ngIf="loading" class="flex justify-center items-center min-h-[300px] sm:min-h-[400px]" [@fadeIn]>
@@ -300,50 +385,7 @@ import { forkJoin } from 'rxjs';
             </div>
           </section>
 
-          <!-- Recent Activity -->
-          <section class="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-blue-100 overflow-hidden" [@slideInRight]>
-            <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 sm:px-6 py-3 sm:py-4">
-              <h3 class="text-base sm:text-lg font-semibold text-white flex items-center">
-                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.24 8.56a5.97 5.97 0 01-4.66-7.4 1 1 0 00-1.2-1.2 5.97 5.97 0 01-7.4 4.66 1 1 0 00-1.2 1.2 5.97 5.97 0 014.66 7.4 1 1 0 001.2 1.2 5.97 5.97 0 017.4-4.66z"/>
-                </svg>
-                Atividade Recente
-              </h3>
-            </div>
-            <div class="p-4 sm:p-6">
-              <div class="space-y-3 sm:space-y-4">
-                <div *ngFor="let notificacao of portalData.notificacoes.slice(0, 4); let i = index" 
-                     class="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
-                     [@staggerItem]="{value: '', params: {delay: i * 50}}">
-                  
-                  <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-blue-100 text-blue-600">
-                    <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                  </div>
-                  
-                  <div class="flex-1 min-w-0">
-                    <p class="text-xs sm:text-sm text-blue-900 mb-1 font-medium line-clamp-2">
-                      {{ notificacao.mensagem }}
-                    </p>
-                    <p class="text-xs text-blue-600">
-                      {{ notificacao.enviadaEm | date:'dd/MM/yyyy • HH:mm' }}
-                    </p>
-                  </div>
-                </div>
-                
-                <div *ngIf="portalData.notificacoes.length === 0" class="text-center py-4 sm:py-6">
-                  <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                  </div>
-                  <p class="text-blue-900 font-medium text-sm sm:text-base">Nenhuma notificação</p>
-                  <p class="text-blue-600 text-xs mt-1">Tudo tranquilo por aqui</p>
-                </div>
-              </div>
-            </div>
-          </section>
+          <!-- Atividade Recente removida conforme solicitado -->
         </div>
       </div>
     </div>
@@ -471,6 +513,17 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
   
   currentSection: 'dashboard' | 'faturas' | 'contratos' | 'lojas' | 'configuracoes' = 'dashboard';
   
+  // Estado do menu de notificações
+  notificationsMenuOpen: boolean = false;
+  
+  // Painel lateral de notificações
+  showNotificationsPanel: boolean = false;
+  
+  // Toast de notificações ao entrar
+  showUnreadToast: boolean = false;
+  unreadToastCount: number = 0;
+  unreadToastTitle: string = '';
+  
   // Cache para performance
   private _cachedFinancialCards: any[] = [];
   private _cachedPendingInvoices: IFaturaInquilino[] = [];
@@ -554,6 +607,35 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
     return this.portalData?.notificacoes.filter(n => !n.lida).length || 0;
   }
 
+  get unreadNotificationsList(): INotificacaoInquilino[] {
+    return (this.portalData?.notificacoes || []).filter(n => !n.lida);
+  }
+
+  toggleNotificationsMenu() {
+    this.notificationsMenuOpen = !this.notificationsMenuOpen;
+  }
+
+  closeNotificationsMenu() {
+    this.notificationsMenuOpen = false;
+  }
+
+  openNotificationsFromToast() {
+    this.showNotificationsPanel = true;
+    this.showUnreadToast = false;
+  }
+
+  closeUnreadToast() {
+    this.showUnreadToast = false;
+  }
+
+  openNotificationsPanel() {
+    this.showNotificationsPanel = true;
+  }
+
+  closeNotificationsPanel() {
+    this.showNotificationsPanel = false;
+  }
+
   constructor(
     private tenantService: TenantService,
     private router: Router,
@@ -590,6 +672,16 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
           if (!skipChargeRefresh) {
             this.refreshChargesFromEfi();
           }
+
+          // Abre painel lateral com notificações pendentes ao entrar
+          const unread = this.unreadNotifications;
+          if (unread > 0) {
+            this.unreadToastCount = unread;
+            const firstUnread = this.portalData?.notificacoes.find(n => !n.lida);
+            this.unreadToastTitle = firstUnread?.tipo || 'Você tem novas notificações';
+            this.showUnreadToast = false;
+            this.showNotificationsPanel = true;
+          }
         }, 600);
       },
       error: (err: any) => {
@@ -603,6 +695,47 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
         if (err.status === 401) {
           this.router.navigate(['/tenant/login']);
         }
+      }
+    });
+  }
+
+  markNotificationAsRead(id: string | number) {
+    if (!id) return;
+    this.tenantService.markNotificationAsRead(String(id)).subscribe({
+      next: () => {
+        if (this.portalData?.notificacoes) {
+          this.portalData.notificacoes = this.portalData.notificacoes.map(n => {
+            if (String(n.id) === String(id)) {
+              return { ...n, lida: true } as INotificacaoInquilino;
+            }
+            return n;
+          });
+          // Fecha painel/menus se não houver mais não lidas
+          if (this.unreadNotifications === 0) {
+            this.closeUnreadToast();
+            this.closeNotificationsPanel();
+            this.closeNotificationsMenu();
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao marcar notificação como lida:', err);
+      }
+    });
+  }
+
+  markAllNotificationsAsRead() {
+    this.tenantService.markAllNotificationsAsRead().subscribe({
+      next: () => {
+        if (this.portalData?.notificacoes) {
+          this.portalData.notificacoes = this.portalData.notificacoes.map(n => ({ ...n, lida: true } as INotificacaoInquilino));
+        }
+        this.closeUnreadToast();
+        this.closeNotificationsPanel();
+        this.closeNotificationsMenu();
+      },
+      error: (err) => {
+        console.error('Erro ao marcar todas notificações como lidas:', err);
       }
     });
   }

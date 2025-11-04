@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } 
 
 import { trigger, transition, style, animate } from '@angular/animations';
 import { StoreService, Store, CreateStoreData, UpdateStoreData, StoreResponse, PaginationParams, Tenant, TenantsResponse } from './store.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 
 @Component({
@@ -31,7 +32,7 @@ import { AuthService } from '../../auth/auth.service';
     ])
   ],
   template: `
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 p-4 sm:p-6">
+  <div class="min-h-screen  p-4 sm:p-6">
   <!-- Store List View -->
   <div *ngIf="viewMode === 'list'">
     <!-- Header -->
@@ -125,7 +126,7 @@ import { AuthService } from '../../auth/auth.service';
         </button>
         <button 
           (click)="showFilters = !showFilters" 
-          class="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base">
+          class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base">
           <i class="fas fa-filter mr-2"></i>
           Filtros
         </button>
@@ -133,23 +134,9 @@ import { AuthService } from '../../auth/auth.service';
       
       <!-- Busca e Filtros -->
       <div class="flex flex-col lg:flex-row gap-3">
-        <div class="relative flex-1">
-          <input 
-            type="text" 
-            placeholder="Buscar lojas..."
-            class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 pl-10 text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 w-full text-sm sm:text-base"
-          >
-          <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400"></i>
-        </div>
+
         
-        <div class="flex flex-col sm:flex-row gap-3 flex-1">
-          <select class="bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 w-full text-sm sm:text-base">
-            <option value="all">Todas as lojas</option>
-            <option value="occupied">Ocupadas</option>
-            <option value="vacant">Vagas</option>
-            <option value="maintenance">Em Manutenção</option>
-          </select>
-        </div>
+
       </div>
     </div>
 
@@ -165,7 +152,7 @@ import { AuthService } from '../../auth/auth.service';
               type="text"
               formControlName="nome"
               placeholder="Buscar por nome..."
-              class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm"
+              class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm"
             />
           </div>
 
@@ -175,7 +162,7 @@ import { AuthService } from '../../auth/auth.service';
             <select
               id="filterStatus"
               formControlName="status"
-              class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm"
+              class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm"
             >
               <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
             </select>
@@ -189,7 +176,7 @@ import { AuthService } from '../../auth/auth.service';
               type="text"
               formControlName="numero"
               placeholder="Buscar por número..."
-              class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm"
+              class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm"
             />
           </div>
 
@@ -201,50 +188,29 @@ import { AuthService } from '../../auth/auth.service';
               type="text"
               formControlName="localizacao"
               placeholder="Buscar por localização..."
-              class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm"
+              class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm"
             />
           </div>
+        </div>
+        <div class="flex justify-end gap-2 sm:gap-3 mt-2">
+          <button
+            type="button"
+            (click)="clearFilters()"
+            class="px-3 sm:px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors text-sm sm:text-base">
+            Limpar
+          </button>
+          <button
+            type="button"
+            (click)="applyFilters()"
+            class="px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base">
+            <i class="fas fa-check mr-1 sm:mr-2"></i>
+            Aplicar filtros
+          </button>
         </div>
       </form>
     </div>
 
-    <!-- Pagination (estilo alinhado ao invoices) -->
-    <div *ngIf="showFilters && !loading && !error && (getDisplayTotalItems() > 0)" class="bg-blue-50 px-6 py-3 flex items-center justify-between border border-blue-200 rounded-lg mb-6" [@slideIn]>
-      <div class="flex-1 flex justify-between sm:hidden">
-        <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
-          Anterior
-        </button>
-        <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
-          Próximo
-        </button>
-      </div>
-      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-        <div>
-          <p class="text-sm text-blue-700">
-            Mostrando <span class="font-medium">{{(currentPage - 1) * itemsPerPage + 1}}</span> a 
-            <span class="font-medium">{{currentPage * itemsPerPage < getDisplayTotalItems() ? currentPage * itemsPerPage : getDisplayTotalItems()}}</span> 
-            de <span class="font-medium">{{getDisplayTotalItems()}}</span> resultados
-          </p>
-        </div>
-        <div>
-          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-            <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
-              </svg>
-            </button>
-            <span class="relative inline-flex items-center px-4 py-2 border border-blue-300 bg-white text-sm font-medium text-blue-700">
-              {{currentPage}} de {{totalPages}}
-            </span>
-            <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
-              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-              </svg>
-            </button>
-          </nav>
-        </div>
-      </div>
-    </div>
+    <!-- Pagination dentro de filtros removida para padronização com Usuários -->
 
     <!-- Stores Grid -->
     <div *ngIf="!loading && !error" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" [@fadeIn]>
@@ -319,66 +285,44 @@ import { AuthService } from '../../auth/auth.service';
       </div>
     </div>
 
-    <!-- Pagination -->
-    <div *ngIf="!loading && !error && (totalItems > 0 || stores.length > 0)" class="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-between items-center gap-4" [@slideIn]>
-      <div class="text-xs sm:text-sm text-blue-600">
-        Mostrando {{ getStartItem() }} a {{ getEndItem() }} de {{ getDisplayTotalItems() }} lojas
+    <!-- Pagination (estilo alinhado ao Usuários) -->
+    <div *ngIf="totalItems > 0" class="bg-blue-50 px-6 py-3 flex items-center justify-between border border-blue-200 rounded-lg mt-8" [@slideIn]>
+      <!-- Mobile -->
+      <div class="flex-1 flex justify-between sm:hidden">
+        <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
+          Anterior
+        </button>
+        <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
+          Próximo
+        </button>
       </div>
-      <div class="flex items-center space-x-1 sm:space-x-2">
-        <!-- Botão Primeira Página -->
-        <button 
-          (click)="goToPage(1)"
-          [disabled]="currentPage === 1"
-          class="px-2 sm:px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-          title="Primeira página">
-          <i class="fas fa-angle-double-left"></i>
-        </button>
-        
-        <!-- Botão Página Anterior -->
-        <button 
-          (click)="goToPreviousPage()"
-          [disabled]="currentPage === 1"
-          class="px-2 sm:px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-          title="Página anterior">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        
-        <!-- Números das Páginas -->
-        <div class="flex space-x-1">
-          <button 
-            *ngFor="let page of getPageNumbers()"
-            (click)="goToPage(page)"
-            [class]="page === currentPage ? 
-              'px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-bold shadow-lg' : 
-              'px-3 sm:px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors duration-200'"
-            class="min-w-[35px] sm:min-w-[40px] transition-all duration-200 text-sm">
-            {{ page }}
-          </button>
+      <!-- Desktop -->
+      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-blue-700">
+            Mostrando <span class="font-medium">{{(currentPage - 1) * itemsPerPage + 1}}</span> a 
+            <span class="font-medium">{{currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage : totalItems}}</span> 
+            de <span class="font-medium">{{totalItems}}</span> lojas
+          </p>
         </div>
-        
-        <!-- Botão Próxima Página -->
-        <button 
-          (click)="goToNextPage()"
-          [disabled]="currentPage === totalPages"
-          class="px-2 sm:px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-          title="Próxima página">
-          <i class="fas fa-chevron-right"></i>
-        </button>
-        
-        <!-- Botão Última Página -->
-        <button 
-          (click)="goToPage(totalPages)"
-          [disabled]="currentPage === totalPages"
-          class="px-2 sm:px-3 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-          title="Última página">
-          <i class="fas fa-angle-double-right"></i>
-        </button>
+        <div>
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+            <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <span class="relative inline-flex items-center px-4 py-2 border border-blue-300 bg-white text-sm font-medium text-blue-700">
+              {{currentPage}} de {{totalPages}}
+            </span>
+            <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </nav>
+        </div>
       </div>
-    </div>
-    
-    <!-- Informações adicionais de paginação -->
-    <div *ngIf="!loading && !error && (totalItems > 0 || stores.length > 0)" class="mt-3 sm:mt-4 text-center text-xs sm:text-sm text-blue-500">
-      Página {{ currentPage }} de {{ totalPages }} • {{ itemsPerPage }} itens por página
     </div>
   </div>
 
@@ -944,6 +888,13 @@ export class StoresComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadStores();
+
+    // Auto-aplicar filtros com debounce para evitar chamadas excessivas
+    this.filterForm.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(() => {
+        this.applyFilters();
+      });
   }
 
   loadStores(page: number = this.currentPage, filters?: any): void {

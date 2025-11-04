@@ -35,13 +35,20 @@ interface EfiFaturaResponse {
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-blue-600 bg-clip-text text-transparent flex items-center">
-            <i class="fas fa-file-invoice-dollar mr-3 text-blue-600"></i>
+            <svg class="w-6 h-6 mr-3 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v6h6" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 12h4M9 16h6" />
+            </svg>
             Minhas Faturas
           </h2>
           <p class="text-blue-600/60 mt-1">Gerencie todas as suas faturas em um só lugar</p>
         </div>
         <div class="flex items-center space-x-2 text-sm text-blue-600/60">
-          <i class="fas fa-sync-alt text-xs"></i>
+          <svg class="w-3 h-3 text-blue-600/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke-width="2" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v5l3 3" />
+          </svg>
           <span>Atualizado agora</span>
         </div>
       </div>
@@ -55,7 +62,10 @@ interface EfiFaturaResponse {
               <p class="text-2xl font-bold text-amber-600">{{ getPendingInvoices().length }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center">
-              <i class="fas fa-clock text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="12" cy="12" r="8" stroke-width="2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" />
+              </svg>
             </div>
           </div>
         </div>
@@ -67,7 +77,11 @@ interface EfiFaturaResponse {
               <p class="text-2xl font-bold text-red-600">{{ getOverdueInvoices().length }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-              <i class="fas fa-exclamation-triangle text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4l8 14H4L12 4z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v4" />
+                <circle cx="12" cy="17" r="1" stroke-width="2" />
+              </svg>
             </div>
           </div>
         </div>
@@ -79,7 +93,10 @@ interface EfiFaturaResponse {
               <p class="text-2xl font-bold text-green-600">{{ getPaidInvoices().length }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-              <i class="fas fa-check-circle text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2m0 0l4-4m-4 4L9 10" />
+                <circle cx="12" cy="12" r="8" stroke-width="2" />
+              </svg>
             </div>
           </div>
         </div>
@@ -91,7 +108,10 @@ interface EfiFaturaResponse {
               <p class="text-2xl font-bold text-blue-600">{{ getAllInvoices().length }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <i class="fas fa-file-invoice text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="6" y="3" width="12" height="18" rx="2" ry="2" stroke-width="2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6M9 12h6M9 16h4" />
+              </svg>
             </div>
           </div>
         </div>
@@ -192,7 +212,11 @@ interface EfiFaturaResponse {
                         [disabled]="loadingFatura === fatura.id"
                         class="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
                   <div *ngIf="loadingFatura === fatura.id" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  <i *ngIf="loadingFatura !== fatura.id" class="fas fa-credit-card mr-2"></i>
+                  <svg *ngIf="loadingFatura !== fatura.id" class="w-4 h-4 mr-2 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <rect x="3" y="6" width="18" height="12" rx="2" ry="2" stroke-width="2" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18" />
+                    <rect x="6" y="13" width="6" height="2" rx="1" ry="1" stroke-width="2" />
+                  </svg>
                   {{ loadingFatura === fatura.id ? 'Processando...' : 'Pagar' }}
                 </button>
                 <button (click)="baixarFatura(fatura)"

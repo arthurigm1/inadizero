@@ -12,13 +12,19 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-blue-600 bg-clip-text text-transparent flex items-center">
-            <i class="fas fa-store mr-3 text-blue-600"></i>
+            <svg class="w-6 h-6 mr-3 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <rect x="4" y="10" width="16" height="10" rx="2" ry="2" stroke-width="2" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18l-2 3H5L3 7z" />
+            </svg>
             Minhas Lojas
           </h2>
           <p class="text-blue-600/60 mt-1">Gerencie todas as suas lojas e espaços comerciais</p>
         </div>
         <div class="flex items-center space-x-2 text-sm text-blue-600/60">
-          <i class="fas fa-sync-alt text-xs"></i>
+          <svg class="w-3 h-3 text-blue-600/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke-width="2" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v5l3 3" />
+          </svg>
           <span>Atualizado agora</span>
         </div>
       </div>
@@ -32,7 +38,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
               <p class="text-2xl font-bold text-blue-600">{{ getStores().length }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <i class="fas fa-store text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="4" y="10" width="16" height="10" rx="2" ry="2" stroke-width="2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18l-2 3H5L3 7z" />
+              </svg>
             </div>
           </div>
         </div>
@@ -44,7 +53,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
               <p class="text-2xl font-bold text-green-600">{{ getTotalArea() }} m²</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-              <i class="fas fa-ruler-combined text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="4" y="6" width="16" height="4" rx="1" ry="1" stroke-width="2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 10v4M10 10v4M14 10v4M18 10v4" />
+              </svg>
             </div>
           </div>
         </div>
@@ -56,7 +68,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
               <p class="text-2xl font-bold text-purple-600">{{ getTotalMonthlyValue() | currency:'BRL':'symbol':'1.0-0' }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <i class="fas fa-dollar-sign text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="3" y="6" width="18" height="12" rx="2" ry="2" stroke-width="2" />
+                <circle cx="12" cy="12" r="3" stroke-width="2" />
+              </svg>
             </div>
           </div>
         </div>
@@ -68,7 +83,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
               <p class="text-2xl font-bold text-amber-600">{{ getUniqueCategories().length }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center">
-              <i class="fas fa-tags text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h8l4 4-8 8-4-4V7z" />
+                <circle cx="9.5" cy="11.5" r="1.5" stroke-width="2" />
+              </svg>
             </div>
           </div>
         </div>
@@ -121,21 +139,33 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-2">
                 <div class="flex items-center text-sm text-blue-600/60">
-                  <i class="fas fa-map-marker-alt w-4 mr-2"></i>
+                  <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21s-6-5.373-6-10a6 6 0 1112 0c0 4.627-6 10-6 10z" />
+                    <circle cx="12" cy="11" r="3" stroke-width="2" />
+                  </svg>
                   <span>{{ loja.localizacao }}</span>
                 </div>
                 <div class="flex items-center text-sm text-blue-600/60">
-                  <i class="fas fa-ruler-combined w-4 mr-2"></i>
+                  <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <rect x="4" y="6" width="16" height="4" rx="1" ry="1" stroke-width="2" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 10v4M10 10v4M14 10v4M18 10v4" />
+                  </svg>
                   <span>{{ loja.area }} m²</span>
                 </div>
               </div>
               <div class="space-y-2">
                 <div class="flex items-center text-sm text-blue-600/60">
-                  <i class="fas fa-calendar-alt w-4 mr-2"></i>
+                  <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <rect x="4" y="6" width="16" height="14" rx="2" ry="2" stroke-width="2" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3v4M16 3v4M4 10h16" />
+                  </svg>
                   <span>Desde {{ loja.contrato.dataInicio | date:'MM/yyyy' }}</span>
                 </div>
                 <div class="flex items-center text-sm text-blue-600/60">
-                  <i class="fas fa-clock w-4 mr-2"></i>
+                  <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <circle cx="12" cy="12" r="8" stroke-width="2" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" />
+                  </svg>
                   <span>{{ getContractTimeRemaining(loja) }}</span>
                 </div>
               </div>
@@ -144,7 +174,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
             <!-- Informações Financeiras -->
             <div class="bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-lg p-4">
               <h4 class="font-semibold text-blue-900 mb-3 flex items-center">
-                <i class="fas fa-dollar-sign mr-2"></i>
+                <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <rect x="3" y="6" width="18" height="12" rx="2" ry="2" stroke-width="2" />
+                  <circle cx="12" cy="12" r="3" stroke-width="2" />
+                </svg>
                 Informações Financeiras
               </h4>
               
@@ -172,7 +205,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
             <div class="flex items-center justify-between p-3 rounded-lg"
                  [ngClass]="getContractStatusClass(loja)">
               <div class="flex items-center">
-                <i class="fas fa-file-contract mr-2"></i>
+                <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <rect x="6" y="3" width="12" height="18" rx="2" ry="2" stroke-width="2" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6M9 12h6M9 16h4" />
+                </svg>
                 <span class="font-medium">{{ getContractStatus(loja) }}</span>
               </div>
               <span class="text-sm">{{ getContractExpiryDate(loja) }}</span>
@@ -208,7 +244,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
         <!-- Estado vazio -->
         <div *ngIf="getFilteredStores().length === 0" class="col-span-full text-center py-12">
           <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-store text-3xl text-blue-400"></i>
+            <svg class="w-10 h-10 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <rect x="4" y="10" width="16" height="10" rx="2" ry="2" stroke-width="2" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18l-2 3H5L3 7z" />
+            </svg>
           </div>
           <p class="text-blue-900/60 font-semibold text-lg">Nenhuma loja encontrada</p>
           <p class="text-blue-900/40 text-sm mt-2">{{ getEmptyStateMessage() }}</p>
@@ -218,7 +257,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
       <!-- Estatísticas por Categoria -->
       <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-6">
         <h3 class="text-lg font-semibold text-blue-900 mb-4 flex items-center">
-          <i class="fas fa-chart-pie mr-2"></i>
+          <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="12" cy="12" r="8" stroke-width="2" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12L12 4M12 12L18 12" />
+          </svg>
           Estatísticas por Categoria
         </h3>
         

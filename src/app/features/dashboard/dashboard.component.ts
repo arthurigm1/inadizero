@@ -148,68 +148,18 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
               </svg>
             </button>
             <h1 class="text-xl sm:text-2xl font-bold text-blue-900">{{ getSectionTitle() }}</h1>
-          </div>
           
-          <div class="flex items-center space-x-4">
-            <div class="relative">
-              <input type="text" placeholder="Buscar..." 
-                     class="w-32 sm:w-40 md:w-64 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
-              <svg class="absolute right-3 top-2.5 w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-              </svg>
-            </div>
-            
-            <div class="relative">
-              <button (click)="toggleNotifications()" class="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 relative">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h10a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-                <span *ngIf="getUnreadCount() > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">{{ getUnreadCount() }}</span>
-              </button>
-              
-              <div *ngIf="showNotifications" class="absolute right-0 mt-2 w-80 bg-white border border-blue-200 rounded-xl shadow-xl z-50">
-                <div class="p-4 border-b border-blue-200">
-                  <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-blue-900">Notificações</h3>
-                    <button (click)="openNotificationDialog()" class="text-blue-600 hover:text-blue-800 text-sm">
-                      Ver importantes
-                    </button>
-                  </div>
-                </div>
-                
-                <div class="max-h-96 overflow-y-auto">
-                  <div *ngFor="let notification of notifications.slice(0, 5)" class="p-4 border-b border-blue-100 hover:bg-blue-50 transition-colors">
-                    <div class="flex items-start space-x-3">
-                      <div [class]="getNotificationBgColor(notification.type)" class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg [class]="getNotificationColor(notification.type)" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getNotificationIcon(notification.type)"/>
-                        </svg>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-blue-900 font-medium text-sm truncate">{{ notification.title }}</p>
-                        <p class="text-gray-600 text-xs mt-1 line-clamp-2">{{ notification.message }}</p>
-                        <p class="text-gray-400 text-xs mt-1">{{ notification.time }}</p>
-                      </div>
-                      <div *ngIf="!notification.read" class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="p-4 border-t border-blue-200">
-                  <button (click)="markAllAsRead()" class="w-full text-center text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    Marcar todas como lidas
-                  </button>
-                </div>
-              </div>
-            </div>
+          
+
             
             <!-- Logout Button -->
-            <button (click)="logout()" class="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200" title="Sair">
+      
+          </div>
+                <button (click)="logout()" class="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200" title="Sair">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
               </svg>
             </button>
-          </div>
         </div>
       </div>
     </header>
@@ -376,27 +326,7 @@ import { InadimplentesComponent } from './inadimplentes/inadimplentes.component'
           </div>
         </div>
         
-        <!-- Recent Activity -->
-        <div class="bg-white border border-blue-200 rounded-xl p-4 sm:p-6">
-          <h3 class="text-xl font-bold text-blue-900 mb-6">Atividades Recentes</h3>
-          <div class="space-y-4">
-            <div *ngFor="let activity of recentActivities" class="flex items-center space-x-4 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center"
-                   [class]="'bg-' + activity.color + '-500/20'">
-                <svg class="w-5 h-5" [class]="'text-' + activity.color + '-400'" fill="currentColor" viewBox="0 0 20 20">
-                  <path *ngIf="activity.icon === 'check'" fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                  <path *ngIf="activity.icon === 'user'" d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z"/>
-                  <path *ngIf="activity.icon === 'warning'" fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
-              </div>
-              <div class="flex-1">
-                <p class="text-blue-900 font-medium">{{activity.title}}</p>
-                <p class="text-blue-700 text-sm">{{activity.description}}</p>
-              </div>
-              <span class="text-blue-600 text-sm">{{activity.time}}</span>
-            </div>
-          </div>
-        </div>
+
       </div>
       
       <!-- Outras seções -->

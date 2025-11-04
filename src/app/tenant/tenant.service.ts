@@ -38,6 +38,7 @@ export interface TenantLoginData {
 })
 export class TenantService {
   private apiUrl = 'http://localhost:3010/api/usuario';
+  private notificationApiUrl = 'http://localhost:3010/api/notificacao';
   private currentTenantSubject = new BehaviorSubject<Tenant | null>(null);
   public currentTenant$ = this.currentTenantSubject.asObservable();
 
@@ -53,6 +54,28 @@ export class TenantService {
     return this.http.post<any>(`${this.apiUrl}/login-inquilino`, loginData).pipe(
       map((response) => {
         const tenant = response.inquilino || response;
+
+        // Detecta estados de desativação mesmo em respostas 200
+        const isDeactivated =
+          response?.desativado === true ||
+          response?.code === 'USER_DEACTIVATED' ||
+          response?.motivo === 'DESATIVADO' ||
+          (tenant?.status && typeof tenant.status === 'string' &&
+            ['DESATIVADO', 'INATIVO'].includes(tenant.status.toUpperCase()));
+
+        if (isDeactivated) {
+          // Lança um erro estruturado com a mensagem no topo para o componente exibir
+          throw {
+            message: 'Usuário desativado. Contate o administrador.',
+            error: {
+              desativado: true,
+              code: 'USER_DEACTIVATED',
+              motivo: 'DESATIVADO',
+              message: 'Usuário desativado. Contate o administrador.'
+            }
+          };
+        }
+
         if (tenant && response.token) {
           tenant.token = response.token;
           localStorage.setItem('currentTenant', JSON.stringify(tenant));
@@ -63,7 +86,34 @@ export class TenantService {
       }),
       catchError((error) => {
         console.error('Erro no login do inquilino:', error);
-        return throwError(() => new Error(error.error?.message || 'Erro ao fazer login'));
+        // Mantém erro do fluxo interno que marca usuário desativado
+        if (error?.error?.desativado === true) {
+          return throwError(() => error);
+        }
+        // Mapeia 403 para erro personalizado de usuário desativado
+        if (error?.status === 403) {
+          const deactivatedError = {
+            message: 'Usuário desativado. Contate o administrador.',
+            error: {
+              desativado: true,
+              code: 'USER_DEACTIVATED',
+              motivo: 'DESATIVADO',
+              message: 'Usuário desativado. Contate o administrador.'
+            },
+            status: 403
+          };
+          return throwError(() => deactivatedError);
+        }
+        // Qualquer outro erro vira erro de validação de dados
+        const validationError = {
+          message: 'Erro na validação de dados',
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Erro na validação de dados'
+          },
+          status: 400
+        };
+        return throwError(() => validationError);
       })
     );
   }
@@ -118,5 +168,35 @@ export class TenantService {
           return throwError(() => error);
         })
       );
+  }
+
+  // Marca uma notificação como lida
+  markNotificationAsRead(id: string): Observable<{success: boolean, message: string}> {
+    const token = localStorage.getItem('tenantToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.patch<{success: boolean, message: string}>(`${this.notificationApiUrl}/marcar-lida/${id}`, {}, { headers }).pipe(
+      catchError(error => {
+        console.error('Erro ao marcar notificação como lida:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // Marca todas as notificações como lidas
+  markAllNotificationsAsRead(): Observable<{success: boolean, message: string, updatedCount?: number}> {
+    const token = localStorage.getItem('tenantToken');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.patch<{success: boolean, message: string, updatedCount?: number}>(`${this.notificationApiUrl}/marcar-todas-lidas`, {}, { headers }).pipe(
+      catchError(error => {
+        console.error('Erro ao marcar todas notificações como lidas:', error);
+        return throwError(() => error);
+      })
+    );
   }
 }

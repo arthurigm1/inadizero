@@ -21,6 +21,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'redefinir-senha',
+    loadComponent: () =>
+      import('./auth/redefinir-senha/redefinir-senha.component').then(
+        (m) => m.RedefinirSenhaComponent
+      ),
+  },
+  {
     path: '',
     loadComponent: () =>
       import('./core/layout/main-layout.component').then(

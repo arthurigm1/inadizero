@@ -12,16 +12,16 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
   selector: 'app-contracts',
   standalone: true,
   imports: [CommonModule, FormsModule, ContractEditModalComponent],
-  template: `<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50" [@fadeIn]>
+  template: `<div class="min-h-screen " [@fadeIn]>
   <!-- Header -->
-  <div class="bg-white border-b border-blue-200 p-4 sm:p-6">
+  <div class="mb-6 sm:mb-8 p-4 sm:p-6">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div class="flex-1 min-w-0">
-        <h1 class="text-2xl sm:text-3xl font-bold text-blue-900">Contratos</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold text-blue-900">Gerenciamento de Contratos</h1>
         <p class="text-gray-600 mt-1 text-sm sm:text-base">Gerencie todos os contratos de locação</p>
       </div>
       <button (click)="openCreateContractModal()" 
-              class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base">
+              class="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center space-x-2 text-sm sm:text-base">
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
@@ -101,7 +101,7 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
           <select [(ngModel)]="filters.status" (ngModelChange)="applyFilters()" 
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                  class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
             <option value="">Todos</option>
             <option value="ATIVO">Ativo</option>
             <option value="VENCIDO">Vencido</option>
@@ -112,7 +112,7 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Loja</label>
           <select [(ngModel)]="filters.lojaId" (ngModelChange)="applyFilters()" 
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                  class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
             <option value="">Todas</option>
             <option *ngFor="let store of stores" [value]="store.id">{{store.nome}}</option>
           </select>
@@ -120,18 +120,18 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Data Início</label>
           <input type="date" [(ngModel)]="filters.dataInicioMin" (ngModelChange)="applyFilters()" 
-                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                 class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Data Fim</label>
           <input type="date" [(ngModel)]="filters.dataFimMax" (ngModelChange)="applyFilters()" 
-                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                 class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
         </div>
       </div>
     </div>
 
     <!-- Contracts Cards -->
-    <div class="bg-white border border-blue-200 rounded-xl p-4 sm:p-6">
+    <div class="bg-white backdrop-blur-sm border border-blue-200 rounded-xl p-4 sm:p-6">
       <div class="mb-4 sm:mb-6">
         <h3 class="text-lg font-semibold text-blue-900">Lista de Contratos</h3>
       </div>
@@ -185,81 +185,46 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
             </div>
           </div>
 
-          <!-- Pagination (estilo alinhado ao invoices) -->
-          <div *ngIf="totalContracts > 0" class="bg-blue-50 px-6 py-3 flex items-center justify-between border border-blue-200 rounded-lg mt-6">
-            <div class="flex-1 flex justify-between sm:hidden">
-              <button (click)="previousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
-                Anterior
-              </button>
-              <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
-                Próximo
-              </button>
-            </div>
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <p class="text-sm text-blue-700">
-                  Mostrando <span class="font-medium">{{(currentPage - 1) * pageSize + 1}}</span> a 
-                  <span class="font-medium">{{currentPage * pageSize < totalContracts ? currentPage * pageSize : totalContracts}}</span> 
-                  de <span class="font-medium">{{totalContracts}}</span> resultados
-                </p>
-              </div>
-              <div>
-                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                  <button (click)="previousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
-                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                  </button>
-                  <span class="relative inline-flex items-center px-4 py-2 border border-blue-300 bg-white text-sm font-medium text-blue-700">
-                    {{currentPage}} de {{totalPages}}
-                  </span>
-                  <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
-                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                    </svg>
-                  </button>
-                </nav>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
 
-      <!-- Pagination -->
-      <div class="px-4 sm:px-6 py-3 border-t border-blue-200 bg-blue-50 mt-6">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div class="text-xs sm:text-sm text-gray-700">
-            Mostrando {{getDisplayStart()}} a {{getDisplayEnd()}} de {{totalContracts}} contratos
+      <!-- Pagination (estilo alinhado ao Usuários) -->
+      <div *ngIf="totalContracts > 0" class="bg-blue-50 px-6 py-3 flex items-center justify-between border border-blue-200 rounded-lg mt-6" [@slideIn]>
+        <!-- Mobile -->
+        <div class="flex-1 flex justify-between sm:hidden">
+          <button (click)="previousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
+            Anterior
+          </button>
+          <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
+            Próximo
+          </button>
+        </div>
+        <!-- Desktop -->
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-blue-700">
+              Mostrando <span class="font-medium">{{(currentPage - 1) * pageSize + 1}}</span> a 
+              <span class="font-medium">{{currentPage * pageSize < totalContracts ? currentPage * pageSize : totalContracts}}</span> 
+              de <span class="font-medium">{{totalContracts}}</span> contratos
+            </p>
           </div>
-          <div class="flex items-center space-x-1">
-            <!-- Botão Anterior -->
-            <button (click)="previousPage()" [disabled]="!hasPreviousPage()" 
-                    class="relative inline-flex items-center px-2 sm:px-3 py-2 rounded-l-md border border-gray-300 bg-white text-xs sm:text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-              <span class="hidden sm:inline">Anterior</span>
-              <svg class="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-              </svg>
-            </button>
-            
-            <!-- Números das páginas -->
-            <button 
-              *ngFor="let page of getPageNumbers()"
-              (click)="goToPage(page)"
-              [class]="page === currentPage ? 
-                'z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-3 sm:px-4 py-2 border text-xs sm:text-sm font-medium' :
-                'bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-3 sm:px-4 py-2 border text-xs sm:text-sm font-medium'
-              ">
-              {{ page }}
-            </button>
-            
-            <!-- Botão Próximo -->
-            <button (click)="nextPage()" [disabled]="!hasNextPage()" 
-                    class="relative inline-flex items-center px-2 sm:px-3 py-2 rounded-r-md border border-gray-300 bg-white text-xs sm:text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-              <span class="hidden sm:inline">Próximo</span>
-              <svg class="w-4 h-4 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </button>
+          <div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <button (click)="previousPage()" [disabled]="currentPage === 1" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+              <span class="relative inline-flex items-center px-4 py-2 border border-blue-300 bg-white text-sm font-medium text-blue-700">
+                {{currentPage}} de {{totalPages}}
+              </span>
+              <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-blue-300 bg-white text-sm font-medium text-blue-500 hover:bg-blue-50 disabled:opacity-50">
+                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </nav>
           </div>
         </div>
       </div>
@@ -283,7 +248,7 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Loja *</label>
             <select [(ngModel)]="newContract.lojaId" name="lojaId" required 
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
               <option value="">Selecione uma loja</option>
               <option *ngFor="let store of stores" [value]="store.id">{{store.nome}}</option>
             </select>
@@ -292,7 +257,7 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Inquilino *</label>
             <select [(ngModel)]="newContract.inquilinoId" name="inquilinoId" required 
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
               <option value="">Selecione um inquilino</option>
               <option *ngFor="let tenant of tenants" [value]="tenant.id">{{tenant.nome}}</option>
             </select>
@@ -302,7 +267,7 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
             <label class="block text-sm font-medium text-gray-700 mb-2">Valor do Aluguel *</label>
             <input type="number" [(ngModel)]="newContract.valorAluguel" name="valorAluguel" required 
                    step="0.01" min="0" placeholder="0.00"
-                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                   class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
           </div>
 
           <div class="flex items-center md:items-end">
@@ -316,37 +281,37 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Data de Início *</label>
             <input type="date" [(ngModel)]="newContract.dataInicio" name="dataInicio" required 
-                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                   class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Data de Fim *</label>
             <input type="date" [(ngModel)]="newContract.dataFim" name="dataFim" required 
-                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                   class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Dia de Vencimento *</label>
             <input type="number" [(ngModel)]="newContract.dataVencimento" name="dataVencimento" required 
                    min="1" max="31" placeholder="Ex: 10"
-                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                   class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
           </div>
         </div>
 
         <div class="mt-4 sm:mt-6">
           <label class="block text-sm font-medium text-gray-700 mb-2">Observações</label>
           <textarea [(ngModel)]="newContract.observacoes" name="observacoes" rows="3" 
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm"
                     placeholder="Observações adicionais sobre o contrato..."></textarea>
         </div>
 
         <div class="flex flex-col sm:flex-row justify-end gap-3 mt-6 sm:mt-8">
           <button type="button" (click)="closeCreateModal()" 
-                  class="w-full sm:w-auto px-4 sm:px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm sm:text-base">
+                  class="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 sm:px-6 py-2 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base">
             Cancelar
           </button>
           <button type="submit" [disabled]="!contractForm.form.valid || isCreating" 
-                  class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm sm:text-base">
+                  class="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold transition-all duration-300 disabled:opacity-50 text-sm sm:text-base">
             <span *ngIf="!isCreating">Criar Contrato</span>
             <span *ngIf="isCreating">Criando...</span>
           </button>

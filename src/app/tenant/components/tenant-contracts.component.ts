@@ -12,13 +12,19 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-800 to-blue-600 bg-clip-text text-transparent flex items-center">
-            <i class="fas fa-file-contract mr-3 text-blue-600"></i>
+            <svg class="w-6 h-6 mr-3 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 3h7l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3v6h6" />
+            </svg>
             Meus Contratos
           </h2>
           <p class="text-blue-600/60 mt-1">Visualize e gerencie todos os seus contratos de locação</p>
         </div>
         <div class="flex items-center space-x-2 text-sm text-blue-600/60">
-          <i class="fas fa-sync-alt text-xs"></i>
+          <svg class="w-3 h-3 text-blue-600/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke-width="2" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v5l3 3" />
+          </svg>
           <span>Atualizado agora</span>
         </div>
       </div>
@@ -32,7 +38,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
               <p class="text-2xl font-bold text-blue-600">{{ getActiveContracts().length }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <i class="fas fa-file-contract text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="6" y="3" width="12" height="18" rx="2" ry="2" stroke-width="2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6M9 12h6M9 16h4" />
+              </svg>
             </div>
           </div>
         </div>
@@ -44,7 +53,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
               <p class="text-2xl font-bold text-green-600">{{ getActiveContracts().length }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-              <i class="fas fa-check-circle text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2m0 0l4-4m-4 4L9 10" />
+                <circle cx="12" cy="12" r="8" stroke-width="2" />
+              </svg>
             </div>
           </div>
         </div>
@@ -56,7 +68,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
               <p class="text-2xl font-bold text-amber-600">{{ getContractsNearExpiry().length }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center">
-              <i class="fas fa-calendar-alt text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="4" y="6" width="16" height="14" rx="2" ry="2" stroke-width="2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 3v4M16 3v4M4 10h16" />
+              </svg>
             </div>
           </div>
         </div>
@@ -68,7 +83,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
               <p class="text-2xl font-bold text-purple-600">{{ getTotalMonthlyValue() | currency:'BRL':'symbol':'1.0-0' }}</p>
             </div>
             <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <i class="fas fa-dollar-sign text-white"></i>
+              <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <rect x="3" y="6" width="18" height="12" rx="2" ry="2" stroke-width="2" />
+                <circle cx="12" cy="12" r="3" stroke-width="2" />
+              </svg>
             </div>
           </div>
         </div>
@@ -130,15 +148,24 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
                   
                   <div class="space-y-2">
                     <div class="flex items-center text-sm text-blue-600/60">
-                      <i class="fas fa-map-marker-alt w-4 mr-2"></i>
+                      <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21s-6-5.373-6-10a6 6 0 1112 0c0 4.627-6 10-6 10z" />
+                        <circle cx="12" cy="11" r="3" stroke-width="2" />
+                      </svg>
                       <span>{{ loja.localizacao }}</span>
                     </div>
                     <div class="flex items-center text-sm text-blue-600/60">
-                      <i class="fas fa-ruler-combined w-4 mr-2"></i>
+                      <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <rect x="4" y="6" width="16" height="4" rx="1" ry="1" stroke-width="2" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 10v4M10 10v4M14 10v4M18 10v4" />
+                      </svg>
                       <span>{{ loja.area }} m²</span>
                     </div>
                     <div class="flex items-center text-sm text-blue-600/60">
-                      <i class="fas fa-tag w-4 mr-2"></i>
+                      <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h8l4 4-8 8-4-4V7z" />
+                        <circle cx="9.5" cy="11.5" r="1.5" stroke-width="2" />
+                      </svg>
                       <span>{{ loja.categoria }}</span>
                     </div>
                   </div>
@@ -209,7 +236,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
                 </button>
                 <button *ngIf="isNearExpiry(loja)" 
                         class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-                  <i class="fas fa-redo mr-2"></i>
+                  <svg class="w-4 h-4 mr-2 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h10l-2-2m2 2-2 2" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 17H10l2 2m-2-2 2-2" />
+                  </svg>
                   Renovar
                 </button>
               </div>
@@ -218,7 +248,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
             <!-- Estado vazio -->
             <div *ngIf="getFilteredContracts().length === 0" class="text-center py-12">
               <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-file-contract text-3xl text-blue-400"></i>
+                <svg class="w-10 h-10 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <rect x="6" y="3" width="12" height="18" rx="2" ry="2" stroke-width="2" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6M9 12h6M9 16h4" />
+                </svg>
               </div>
               <p class="text-blue-900/60 font-semibold text-lg">Nenhum contrato encontrado</p>
               <p class="text-blue-900/40 text-sm mt-2">{{ getEmptyStateMessage() }}</p>

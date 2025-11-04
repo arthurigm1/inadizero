@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 import { AuthService } from '../auth.service';
 import { DialogService } from '../../services/dialog.service';
@@ -51,8 +52,21 @@ import { DialogComponent } from '../../core/components/dialog/dialog.component';
       </div>
 
       <!-- Right Side - Login Form -->
-      <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 lg:flex-none">
+      <div class="relative flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 lg:flex-none">
+        <!-- Top-right back button only on the right panel -->
+        <div class="absolute top-4 right-4">
+          <button type="button"
+                  (click)="goHome()"
+                  class="inline-flex items-center text-gray-700 hover:text-gray-900 font-medium transition-colors duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span class="ml-2">Voltar para início</span>
+          </button>
+        </div>
         <div class="mx-auto w-full max-w-sm lg:w-96">
+          <!-- Back to Home Button -->
+
           <!-- Mobile Logo -->
           <div class="lg:hidden flex justify-center mb-8">
             <div class="flex items-center space-x-3">
@@ -145,6 +159,7 @@ import { DialogComponent } from '../../core/components/dialog/dialog.component';
                   </label>
                   <a
                     href="#"
+                    (click)="openResetModal($event)"
                     class="text-sm text-blue-600 hover:text-blue-500 font-medium transition-colors duration-300"
                   >
                     Esqueceu a senha?
@@ -232,10 +247,56 @@ import { DialogComponent } from '../../core/components/dialog/dialog.component';
           </div>
         </div>
       </div>
-      </div>
+    </div>
       
       <!-- Dialog Component -->
       <app-dialog></app-dialog>
+
+      <!-- Visitor Lock Overlay -->
+      <div *ngIf="showVisitorLock" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md text-center">
+          <h3 class="text-xl font-semibold text-red-600 mb-2">Acesso bloqueado</h3>
+          <p class="text-gray-700 mb-6">
+            Seu perfil de visitante não tem permissão para acessar este sistema.<br/>
+            Contate o administrador.
+          </p>
+          <button (click)="handleVisitorExit()"
+                  class="w-full py-3 px-4 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+            Sair
+          </button>
+        </div>
+      </div>
+
+      <!-- Reset Password Modal -->
+      <div *ngIf="showResetModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Redefinir senha</h3>
+          <p class="text-gray-600 text-sm mb-4">Informe seu email. Se o email existir, você receberá instruções para redefinir sua senha.</p>
+          <form [formGroup]="resetForm" (ngSubmit)="submitResetRequest()" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email"
+                     formControlName="email"
+                     placeholder="seu@email.com"
+                     class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                     [class.border-red-300]="resetForm.get('email')?.invalid && (resetForm.get('email')?.touched || resetForm.get('email')?.dirty)" />
+              <div *ngIf="resetForm.get('email')?.invalid && (resetForm.get('email')?.touched || resetForm.get('email')?.dirty)" class="mt-1 text-xs text-red-600">
+                {{ resetForm.get('email')?.errors?.['required'] ? 'Email é obrigatório' : resetForm.get('email')?.errors?.['email'] ? 'Email inválido' : '' }}
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button type="button"
+                      (click)="closeResetModal()"
+                      class="flex-1 py-2 px-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">Cancelar</button>
+              <button type="submit"
+                      [disabled]="resetForm.invalid || resetLoading"
+                      class="flex-1 py-2 px-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">
+                {{ resetLoading ? 'Enviando...' : 'Enviar' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     `,
   animations: [
     trigger('formAnimation', [
@@ -251,17 +312,26 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
   showPassword = false;
+  showVisitorLock = false;
+  showResetModal = false;
+  resetLoading = false;
+  resetForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
+    private http: HttpClient,
     private dialogService: DialogService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false],
+    });
+
+    this.resetForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
     });
   }
 
@@ -285,6 +355,10 @@ export class LoginComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
+  goHome() {
+    this.router.navigate(['/']);
+  }
+
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -302,20 +376,25 @@ export class LoginComponent implements OnInit {
     this.authService.login(email, password).subscribe({
       next: (user) => {
         this.loading = false;
+        const isVisitor = this.isVisitorUser(user);
+
+        if (isVisitor) {
+          this.showVisitorLock = true;
+          this.dialogService.showError(
+            'Acesso bloqueado',
+            'Seu perfil de visitante não tem permissão para usar este sistema. Contate o administrador.'
+          );
+          return;
+        }
+
         this.dialogService.showSuccess(
           'Login realizado com sucesso!',
           'Bem-vindo de volta! Você será redirecionado em instantes.',
           3000
         );
-        
-        // Redirecionar após um pequeno delay para mostrar o dialog
+
         setTimeout(() => {
-          // Redireciona baseado no role
-          if (this.authService.hasRole('visitante')) {
-            this.router.navigate(['/dashboard-limited']);
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
+          this.router.navigate(['/dashboard']);
         }, 1500);
       },
       error: (err) => {
@@ -339,6 +418,87 @@ export class LoginComponent implements OnInit {
           errorMessage
         );
       },
+    });
+  }
+
+  handleVisitorExit() {
+    try {
+      // Encerra a sessão e retorna para a tela de login
+      (this.authService as any)?.logout?.();
+    } catch {}
+    this.showVisitorLock = false;
+    this.router.navigate(['/login']);
+  }
+
+  private isVisitorUser(user: any): boolean {
+    const directTipo = (user?.tipo || user?.role || user?.perfil || user?.usuario?.tipo || user?.usuario?.role || '')
+      .toString()
+      .toUpperCase();
+    if (directTipo === 'VISITANTE') return true;
+
+    const token: string | undefined = user?.token || user?.jwt || user?.accessToken;
+    if (typeof token === 'string') {
+      try {
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          const payloadStr = atob(parts[1]);
+          const payload = JSON.parse(payloadStr);
+          const claimTipo = (payload?.tipo || payload?.role || '')
+            .toString()
+            .toUpperCase();
+          if (claimTipo === 'VISITANTE') return true;
+        }
+      } catch {}
+    }
+
+    try {
+      if ((this.authService as any)?.hasRole?.('visitante')) return true;
+    } catch {}
+    return false;
+  }
+
+  openResetModal(event?: Event) {
+    if (event) event.preventDefault();
+    this.showResetModal = true;
+    // Preencher email se já digitado no formulário principal
+    const currentEmail = this.loginForm.get('email')?.value;
+    if (currentEmail) {
+      this.resetForm.get('email')?.setValue(currentEmail);
+    }
+  }
+
+  closeResetModal() {
+    this.showResetModal = false;
+    this.resetForm.reset();
+    this.resetLoading = false;
+  }
+
+  submitResetRequest() {
+    if (this.resetForm.invalid) {
+      this.resetForm.markAllAsTouched();
+      return;
+    }
+    this.resetLoading = true;
+    const email = this.resetForm.value.email;
+    const url = 'http://localhost:3010/api/usuario/solicitar-redefinicao-senha';
+    this.http.post(url, { email }).subscribe({
+      next: (resp: any) => {
+        this.resetLoading = false;
+        this.dialogService.showInfo(
+          'Solicitação enviada',
+          'Se o email existir, você receberá instruções para redefinir sua senha.'
+        );
+        this.closeResetModal();
+      },
+      error: (err) => {
+        this.resetLoading = false;
+        // Por segurança, mensagem sempre genérica
+        this.dialogService.showInfo(
+          'Solicitação enviada',
+          'Se o email existir, você receberá instruções para redefinir sua senha.'
+        );
+        this.closeResetModal();
+      }
     });
   }
 }
