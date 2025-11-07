@@ -233,4 +233,29 @@ export class TenantService {
       })
     );
   }
+
+  // Alterar senha do inquilino autenticado usando o token do tenant
+  changePassword(senhaAtual: string, novaSenha: string): Observable<{ sucesso: boolean; mensagem?: string } | any> {
+    const token = localStorage.getItem('tenantToken');
+    if (!token) {
+      return throwError(() => new Error('Inquilino não autenticado.'));
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const body = { senhaAtual, novaSenha };
+
+    return this.http.post<{ sucesso: boolean; mensagem?: string }>(`${this.apiUrl}/redefinir-senha`, body, { headers }).pipe(
+      tap(() => {
+        // Se o backend retornar novo token para o inquilino, poderíamos atualizá-lo aqui.
+      }),
+      catchError((error) => {
+        const msg = error?.error?.mensagem || error?.error?.message || 'Falha ao alterar a senha. Verifique os dados e tente novamente.';
+        return throwError(() => new Error(msg));
+      })
+    );
+  }
 }

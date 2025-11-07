@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -147,6 +147,31 @@ export class AuthService {
         return throwError(
           () => new Error('Falha ao carregar empresas.')
         );
+      })
+    );
+  }
+
+  // POST /redefinir-senha - Alterar senha do usuário autenticado
+  changePassword(senhaAtual: string, novaSenha: string): Observable<{ sucesso: boolean; mensagem?: string } | any> {
+    const token = this.token;
+    if (!token) {
+      return throwError(() => new Error('Usuário não autenticado.')); 
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+
+    const body = { senhaAtual, novaSenha };
+
+    return this.http.post<{ sucesso: boolean; mensagem?: string }>(`${this.apiUrl}/redefinir-senha`, body, { headers }).pipe(
+      tap(() => {
+        // Opcional: permanecer logado; se o backend retornar novo token, poderíamos atualizá-lo aqui.
+      }),
+      catchError((error) => {
+        const msg = error?.error?.mensagem || 'Falha ao alterar a senha. Verifique os dados e tente novamente.';
+        return throwError(() => new Error(msg));
       })
     );
   }

@@ -1,6 +1,6 @@
 export const environment = {
   // Base URL do backend; ajuste via file replacements no build se necessário
-  //apiBaseUrl: 'https://backend-production-d59b.up.railway.app'
-  apiBaseUrl: 'http://localhost:3010',
+  apiBaseUrl: 'https://backend-production-d59b.up.railway.app'
+  //apiBaseUrl: 'http://localhost:3010',
 
 };
