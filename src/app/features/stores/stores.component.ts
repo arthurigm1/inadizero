@@ -5,12 +5,15 @@ import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } 
 import { trigger, transition, style, animate } from '@angular/animations';
 import { StoreService, Store, CreateStoreData, UpdateStoreData, StoreResponse, PaginationParams, Tenant, TenantsResponse } from './store.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../auth/auth.service';
+import { DialogService } from '../../services/dialog.service';
+import { DialogComponent } from '../../core/components/dialog/dialog.component';
 
 @Component({
   selector: 'app-stores',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, DialogComponent],
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
@@ -421,10 +424,7 @@ import { AuthService } from '../../auth/auth.service';
           </div>
         </div>
 
-        <!-- Erro de criação -->
-        <div *ngIf="createError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-          <p class="text-red-600 text-sm">{{ createError }}</p>
-        </div>
+
 
         <!-- Botões -->
         <div class="flex flex-col sm:flex-row justify-end gap-3">
@@ -909,9 +909,10 @@ import { AuthService } from '../../auth/auth.service';
       </div>
     </div>
   </div>
-</div>
-    `
- })
+ </div>
+   <app-dialog></app-dialog>
+     `
+  })
 export class StoresComponent implements OnInit {
   stores: Store[] = [];
   loading = false;
@@ -961,17 +962,20 @@ export class StoresComponent implements OnInit {
     { value: 'INATIVA', label: 'Inativa' }
   ];
 
-  // Contadores derivados para o template (evitam arrow functions no HTML)
+  // Totais vindos do backend (ocupadas, vagas, inativas)
+  backendTotals: { ocupadas: number; vagas: number; inativas: number } | null = null;
+
+  // Contadores exibidos nos cards: usam backend se disponível, senão derivam da lista
   get occupiedCount(): number {
-    return this.stores.filter(s => s.status === 'OCUPADA').length;
+    return this.backendTotals ? this.backendTotals.ocupadas : this.stores.filter(s => s.status === 'OCUPADA').length;
   }
 
   get vacantCount(): number {
-    return this.stores.filter(s => s.status === 'VAGA').length;
+    return this.backendTotals ? this.backendTotals.vagas : this.stores.filter(s => s.status === 'VAGA').length;
   }
 
   get inactiveCount(): number {
-    return this.stores.filter(s => s.status === 'INATIVA').length;
+    return this.backendTotals ? this.backendTotals.inativas : this.stores.filter(s => s.status === 'INATIVA').length;
   }
   
   // Propriedades de paginação
@@ -982,7 +986,8 @@ export class StoresComponent implements OnInit {
 
   constructor(
     private storeService: StoreService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialogService: DialogService
   ) {
     this.createForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(1)]],
@@ -1031,6 +1036,8 @@ export class StoresComponent implements OnInit {
     this.storeService.getStores(params).subscribe({
       next: (response: StoreResponse)  =>  {
         this.stores = response.lojas || [];
+        // Aplicar totais vindos do backend, se presentes
+        this.backendTotals = response.totais ?? null;
         
         if (response.paginacao) {
           this.currentPage = response.paginacao.paginaAtual;
@@ -1100,18 +1107,69 @@ export class StoresComponent implements OnInit {
         m2: formData.m2 != null && formData.m2 !== '' ? Number(formData.m2) : undefined,
       };
 
-      this.storeService.createStore(createData).subscribe({
-        next: (newStore) => {
-          this.creating = false;
-          this.closeCreateModal();
-          this.loadStores(); // Recarrega a lista de lojas
-        },
-        error: (err) => {
-          this.creating = false;
-          this.createError = err.message || 'Erro ao criar a loja. Tente novamente.';
-        }
-      });
+      this.storeService.createStore(createData)
+        .pipe(finalize(() => { this.creating = false; }))
+        .subscribe({
+          next: (newStore) => {
+            this.closeCreateModal();
+            this.loadStores(); // Recarrega a lista de lojas
+          },
+          error: (err) => {
+            const message = this.extractBackendErrorMessage(err);
+            this.createError = message;
+            // Exibe diálogo com a mensagem retornada pelo backend
+            this.dialogService.showError('Erro ao criar loja', message);
+          }
+        });
     }
+  }
+
+  private extractBackendErrorMessage(err: any): string {
+    const backend = err?.error;
+
+    // Quando o backend retorna string diretamente
+    if (typeof backend === 'string' && backend.trim()) {
+      return backend.trim();
+    }
+
+    // Campos comuns em payloads de erro
+    if (typeof backend?.error === 'string' && backend.error.trim()) {
+      return backend.error.trim();
+    }
+    if (typeof backend?.message === 'string' && backend.message.trim()) {
+      return backend.message.trim();
+    }
+    console.log(backend)
+    // Coleção de mensagens em arrays (errors, details, violations)
+    const collect = (arr: any[]) => arr
+      .map((item) => {
+        if (typeof item === 'string') return item;
+        if (typeof item?.message === 'string') return item.message;
+        if (typeof item?.detail === 'string') return item.detail;
+        if (typeof item?.error === 'string') return item.error;
+        return '';
+      })
+      .filter(Boolean)
+      .join('; ');
+
+    if (Array.isArray(backend?.errors) && backend.errors.length) {
+      const m = collect(backend.errors);
+      if (m) return m;
+    }
+    if (Array.isArray(backend?.details) && backend.details.length) {
+      const m = collect(backend.details);
+      if (m) return m;
+    }
+    if (Array.isArray(backend?.violations) && backend.violations.length) {
+      const m = collect(backend.violations);
+      if (m) return m;
+    }
+
+    // Fallbacks
+    if (typeof err?.message === 'string' && err.message.trim()) {
+      return err.message.trim();
+    }
+    return 'Erro ao criar a loja. Tente novamente.';
   }
 
   openCreateModal(): void {

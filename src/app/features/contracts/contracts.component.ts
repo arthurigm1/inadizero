@@ -7,6 +7,7 @@ import { ContractService } from './contract.service';
 import { Contract, ContractStats, StoreOption, TenantOption, CreateContractRequest, ContractStatus, ContractFilters } from './contract.interfaces';
 import { StoreService, Tenant } from '../stores/store.service';
 import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-modal.component';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contracts',
@@ -321,12 +322,51 @@ import { ContractEditModalComponent } from './contract-edit-modal/contract-edit-
   </div>
 
   <!-- Edit Contract Modal -->
-  <app-contract-edit-modal
+  <app-contract-edit-modal 
     [isVisible]="showEditModal"
     [contractToEdit]="contractToEdit"
     (onCancel)="closeEditModal()"
     (onSave)="onContractSaved($event)">
   </app-contract-edit-modal>
+
+  <!-- Error Dialog: criação de contrato -->
+  <div *ngIf="showErrorDialog" class="fixed inset-0 z-[60] flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/40" (click)="closeErrorDialog()"></div>
+    <div class="relative bg-white rounded-xl shadow-xl w-[92%] max-w-lg p-6" [@slideIn]>
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center space-x-3">
+          <svg class="w-6 h-6 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke-width="2" />
+            <line x1="12" y1="7" x2="12" y2="13" stroke-width="2" stroke-linecap="round" />
+            <circle cx="12" cy="17" r="1.5" fill="currentColor" />
+          </svg>
+          <h2 class="text-xl sm:text-2xl font-bold text-blue-900">{{ errorDialogTitle }}</h2>
+        </div>
+        <button (click)="closeErrorDialog()" class="text-gray-500 hover:text-gray-700">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div *ngFor="let item of errorDialogItems" class="flex items-start space-x-2">
+          <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" stroke-width="2" />
+            <circle cx="12" cy="12" r="3" fill="currentColor" />
+          </svg>
+          <div class="text-sm text-gray-700">
+            <div>{{ item.message }}</div>
+            <div *ngIf="item.path?.length" class="text-xs text-gray-500">Campo: {{ getPathString(item) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <button (click)="closeErrorDialog()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">Entendi</button>
+      </div>
+    </div>
+  </div>
 </div>
   `,
   animations: [
@@ -376,6 +416,11 @@ export class ContractsComponent implements OnInit {
   isCreating = false;
   showEditModal = false;
   contractToEdit: Contract | null = null;
+
+  // Error dialog state (creation failures)
+  showErrorDialog = false;
+  errorDialogTitle: string = '';
+  errorDialogItems: { message: string; path?: string[] }[] = [];
   
   newContract: CreateContractRequest = {
     lojaId: '',
@@ -594,16 +639,17 @@ loadContracts(): void {
     if (this.isCreating) return;
     
     this.isCreating = true;
-    this.contractService.createContract(this.newContract).subscribe({
+    this.contractService.createContract(this.newContract)
+      .pipe(finalize(() => { this.isCreating = false; }))
+      .subscribe({
       next: (contract) => {
         // Removido log de sucesso na criação de contrato
         this.closeCreateModal();
         this.loadContracts();
-        this.isCreating = false;
       },
       error: (error) => {
         console.error('Erro ao criar contrato:', error);
-        this.isCreating = false;
+        this.openErrorDialogFromHttpError(error);
       }
     });
   }
@@ -671,6 +717,39 @@ loadContracts(): void {
     // Removido log de sucesso ao salvar contrato
     this.closeEditModal();
     this.loadContracts();
+  }
+
+  // Error dialog helpers
+  openErrorDialogFromHttpError(err: any): void {
+    const payload = (err && err.error) ? err.error : err;
+    const title = (payload && typeof payload.error === 'string' && payload.error.trim())
+      ? payload.error
+      : 'Erro ao criar contrato';
+
+    const details = Array.isArray(payload?.details) ? payload.details : [];
+    const items = details.map((d: any) => {
+      const msg = (d && typeof d.message === 'string') ? d.message : 'Erro inesperado';
+      const path = Array.isArray(d?.path) ? d.path : undefined;
+      return { message: msg, path };
+    });
+
+    // Fallback when backend returns a simple string or other shape
+    if (!items.length) {
+      const fallbackMsg = typeof payload === 'string' ? payload : (payload?.message || 'Não foi possível criar o contrato.');
+      items.push({ message: fallbackMsg });
+    }
+
+    this.errorDialogTitle = title;
+    this.errorDialogItems = items;
+    this.showErrorDialog = true;
+  }
+
+  closeErrorDialog(): void {
+    this.showErrorDialog = false;
+  }
+
+  getPathString(item: { path?: string[] }): string {
+    return Array.isArray(item.path) ? item.path.join('.') : '';
   }
 
   Math = Math;

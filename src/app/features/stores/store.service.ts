@@ -66,6 +66,11 @@ export interface TenantsResponse {
 export interface StoreResponse {
   sucesso: boolean;
   lojas: Store[];
+  totais?: {
+    ocupadas: number;
+    vagas: number;
+    inativas: number;
+  };
   paginacao?: {
     paginaAtual: number;
     totalPaginas: number;
@@ -224,20 +229,10 @@ export class StoreService {
       .pipe(
         map(response => response.loja || response),
         catchError(error => {
+          // Preserve o erro original do backend para que o componente
+          // consiga extrair a mensagem exata (ex.: { error: "Já existe..." })
           console.error('Erro ao criar loja:', error);
-          let errorMessage = 'Erro ao criar a loja. Tente novamente.';
-          
-          if (error.status === 401) {
-            errorMessage = 'Sessão expirada. Faça login novamente.';
-          } else if (error.status === 403) {
-            errorMessage = 'Você não tem permissão para criar lojas.';
-          } else if (error.status === 400) {
-            errorMessage = error.error?.message || 'Dados inválidos. Verifique os campos.';
-          } else if (error.status === 0) {
-            errorMessage = 'Erro de conexão. Verifique sua internet.';
-          }
-          
-          return throwError(() => new Error(errorMessage));
+          return throwError(() => error);
         })
       );
   }

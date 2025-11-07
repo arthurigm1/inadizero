@@ -483,7 +483,6 @@ export class UsersComponent implements OnInit {
     { value: 'todos', label: 'Todos os status' },
     { value: 'active', label: 'Ativo' },
     { value: 'inactive', label: 'Inativo' },
-    { value: 'pending', label: 'Pendente' }
   ];
   
   private apiUrl = `${environment.apiBaseUrl}/api/usuario`;
