@@ -12,6 +12,8 @@ import { trigger, transition, style, animate, query, stagger } from '@angular/an
 import { AuthService } from '../auth.service';
 import { DialogService } from '../../services/dialog.service';
 import { DialogComponent } from '../../core/components/dialog/dialog.component';
+import { environment } from '../../../environments/environment';
+
 
 @Component({
   selector: 'app-login',
@@ -480,7 +482,7 @@ export class LoginComponent implements OnInit {
     }
     this.resetLoading = true;
     const email = this.resetForm.value.email;
-    const url = 'http://localhost:3010/api/usuario/solicitar-redefinicao-senha';
+    const url = `${environment.apiBaseUrl}/api/usuario/solicitar-redefinicao-senha`;
     this.http.post(url, { email }).subscribe({
       next: (resp: any) => {
         this.resetLoading = false;

@@ -4,12 +4,11 @@ import { TenantService } from './tenant.service';
 
 export const tenantGuard: CanActivateFn = (route, state) => {
   const tenantService = inject(TenantService);
-  const router = inject(Router);
-
+  // Se autenticado e token válido, permite navegação
   if (tenantService.isAuthenticated()) {
     return true;
   }
-
-  router.navigate(['/tenant/login'], { queryParams: { returnUrl: state.url }});
+  // Caso contrário, garante limpeza de sessão e redireciona pelo próprio serviço
+  tenantService.logout();
   return false;
 };

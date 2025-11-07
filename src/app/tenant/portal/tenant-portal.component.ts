@@ -11,6 +11,7 @@ import { TenantSettingsComponent } from '../components/tenant-settings.component
 import { HttpClient } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-tenant-portal',
@@ -28,65 +29,85 @@ import { forkJoin } from 'rxjs';
   
   <!-- Background Elements Sutil -->
   <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-10 left-10 w-48 h-48 sm:w-72 sm:h-72 bg-blue-200/20 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-10 right-10 w-48 h-48 sm:w-72 sm:h-72 bg-blue-300/10 rounded-full blur-3xl"></div>
+    <div class="absolute top-10 left-10 w-32 h-32 sm:w-48 sm:h-48 lg:w-72 lg:h-72 bg-blue-200/20 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-10 right-10 w-32 h-32 sm:w-48 sm:h-48 lg:w-72 lg:h-72 bg-blue-300/10 rounded-full blur-3xl"></div>
   </div>
 
-  <!-- Header Simplificado -->
-  <header class="bg-white/90 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm" [@headerSlide]>
+  <!-- Header Mobile Optimized -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50 shadow-sm" [@headerSlide]>
     <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-      <div class="flex items-center justify-between h-14 sm:h-16">
-        <div>
-          <h1 class="text-base sm:text-lg font-bold text-blue-900">Portal do Inquilino</h1>
+      <div class="flex items-center justify-between h-14">
+        <!-- Logo/Menu Hamburger para Mobile -->
+        <div class="flex items-center space-x-2">
+          <button *ngIf="isMobile()" (click)="toggleMobileMenu()" class="p-2 text-blue-600 rounded-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+          <h1 class="text-base font-bold text-blue-900 truncate max-w-[120px] sm:max-w-none">Portal do Inquilino</h1>
         </div>
         
         <!-- User Menu -->
-        <div class="flex items-center space-x-2 sm:space-x-3">
+        <div class="flex items-center space-x-1 sm:space-x-3">
           <!-- Notifications Dropdown -->
           <div class="relative">
-<button (click)="toggleNotificationsMenu()" class="relative p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-          d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
-  </svg>
-  <span *ngIf="unreadNotifications > 0" 
-        class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
-    {{ unreadNotifications }}
-  </span>
-</button>
+            <button (click)="toggleNotificationsMenu()" class="relative p-1.5 sm:p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+              </svg>
+              <span *ngIf="unreadNotifications > 0" 
+                    class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-medium">
+                {{ unreadNotifications > 99 ? '99+' : unreadNotifications }}
+              </span>
+            </button>
 
-            <!-- Dropdown de Notificações -->
-            <div *ngIf="notificationsMenuOpen" class="absolute right-0 top-full mt-2 w-96 bg-white rounded-xl shadow-lg border border-blue-100 py-2 z-50">
-              <div class="flex items-center justify-between px-3 py-2 border-b border-blue-50">
+            <!-- Dropdown de Notificações Mobile -->
+            <div *ngIf="notificationsMenuOpen" 
+                 class="fixed inset-0 z-50 bg-white sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-96 max-w-none sm:max-w-[92vw] rounded-none sm:rounded-xl shadow-lg border-0 sm:border border-blue-100"
+                 [class]="isMobile() ? 'fixed inset-0 z-50 bg-white' : 'absolute right-0 top-full mt-2 w-96 max-w-[92vw] bg-white rounded-xl shadow-lg border border-blue-100'">
+              
+              <div class="flex items-center justify-between px-4 py-3 border-b border-blue-50 bg-white sticky top-0">
                 <span class="text-sm font-semibold text-blue-900">Notificações</span>
                 <div class="flex items-center gap-2">
                   <button (click)="openNotificationsPanel()" class="text-xs text-blue-600 hover:text-blue-800">Abrir painel</button>
-                  <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:text-blue-800">Marcar todas lidas</button>
-                  <button (click)="closeNotificationsMenu()" class="text-xs text-gray-500 hover:text-gray-700">Fechar</button>
+                  <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:text-blue-800">Marcar todas</button>
+                  <button (click)="closeNotificationsMenu()" class="text-xs text-gray-500 hover:text-gray-700">
+                    {{ isMobile() ? 'Voltar' : 'Fechar' }}
+                  </button>
                 </div>
               </div>
-              <div class="max-h-64 overflow-y-auto">
-                <div *ngFor="let n of portalData?.notificacoes" class="px-3 py-2 hover:bg-blue-50 flex items-start gap-2">
-                  <div class="mt-0.5">
+              
+              <div class="h-[calc(100vh-56px)] sm:max-h-64 overflow-y-auto">
+                <div *ngFor="let n of portalData?.notificacoes" 
+                     class="px-4 py-3 hover:bg-blue-50 flex items-start gap-3 border-b border-blue-50">
+                  <div class="mt-0.5 flex-shrink-0">
                     <span [ngClass]="n.lida ? 'bg-gray-300' : 'bg-blue-600'" class="inline-block w-2 h-2 rounded-full"></span>
                   </div>
                   <div class="min-w-0 flex-1">
-                    <p class="text-sm font-medium text-blue-900 truncate">{{ n.tipo || 'Notificação' }}</p>
-                    <p class="text-xs text-blue-700/80 truncate">{{ n.mensagem }}</p>
-                    <p *ngIf="n.enviadaEm" class="text-[10px] text-blue-500 mt-0.5">{{ n.enviadaEm | date:'short' }}</p>
+                    <p class="text-sm font-medium text-blue-900 break-words">{{ n.tipo || 'Notificação' }}</p>
+                    <p class="text-xs text-blue-700/80 break-words mt-1">{{ n.mensagem }}</p>
+                    <p *ngIf="n.enviadaEm" class="text-[10px] text-blue-500 mt-1">{{ n.enviadaEm | date:'short' }}</p>
                   </div>
                   <div class="flex-shrink-0">
-                    <button *ngIf="!n.lida" (click)="markNotificationAsRead(n.id)" class="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded">Marcar lida</button>
+                    <button *ngIf="!n.lida" (click)="markNotificationAsRead(n.id)" 
+                            class="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded bg-blue-50">
+                      Marcar lida
+                    </button>
                   </div>
                 </div>
-                <div *ngIf="(portalData?.notificacoes?.length || 0) === 0" class="px-3 py-4 text-center text-sm text-blue-700">Sem notificações</div>
+                <div *ngIf="(portalData?.notificacoes?.length || 0) === 0" class="px-4 py-8 text-center text-sm text-blue-700">
+                  Sem notificações
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Profile -->
-          <div class="relative group">
-            <button class="flex items-center space-x-2 sm:space-x-3 p-1.5 sm:p-2 rounded-lg hover:bg-blue-50 transition-colors">
+          <!-- Profile Menu Mobile -->
+          <div class="relative">
+            <button (click)="profileMenuOpen = !profileMenuOpen" 
+                    [attr.aria-expanded]="profileMenuOpen ? 'true' : 'false'" 
+                    class="flex items-center space-x-2 p-1.5 sm:p-2 rounded-lg hover:bg-blue-50 transition-colors">
               <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-medium text-xs sm:text-sm">
                 {{ getInitials(portalData?.inquilino?.nome) }}
               </div>
@@ -95,36 +116,51 @@ import { forkJoin } from 'rxjs';
                   {{ portalData?.inquilino?.nome }}
                 </p>
               </div>
-              <svg class="w-4 h-4 text-blue-500 transform group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-blue-500 transform transition-transform" 
+                   [class.rotate-180]="profileMenuOpen"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
               </svg>
             </button>
 
-            <!-- Dropdown -->
-            <div class="absolute right-0 top-full mt-2 w-48 sm:w-56 bg-white rounded-xl shadow-lg border border-blue-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-              <div class="px-3 sm:px-4 py-2 border-b border-blue-50">
-                <p class="text-sm font-medium text-blue-900 truncate">{{ portalData?.inquilino?.nome }}</p>
-                <p class="text-xs text-blue-600 truncate">{{ portalData?.inquilino?.email }}</p>
+            <!-- Dropdown Profile Mobile -->
+            <div class="fixed inset-0 z-50 bg-white sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-56 max-w-none sm:max-w-[92vw] rounded-none sm:rounded-xl shadow-lg border-0 sm:border border-blue-100 py-2"
+                 [class]="isMobile() && profileMenuOpen ? 'fixed inset-0 z-50 bg-white' : (profileMenuOpen ? 'absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-blue-100 py-2 opacity-100 visible' : 'opacity-0 invisible')">
+              
+              <div *ngIf="isMobile()" class="flex items-center justify-between px-4 py-3 border-b border-blue-50 bg-white sticky top-0">
+                <span class="text-sm font-semibold text-blue-900">Meu Perfil</span>
+                <button (click)="profileMenuOpen = false" class="text-gray-500 hover:text-gray-700">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
               </div>
+              
+              <div class="px-4 py-3 border-b border-blue-50">
+                <p class="text-sm font-medium text-blue-900 break-words">{{ portalData?.inquilino?.nome }}</p>
+                <p class="text-xs text-blue-600 break-words mt-1">{{ portalData?.inquilino?.email }}</p>
+              </div>
+              
               <div class="py-1">
-                <a class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors">
-                  <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a class="flex items-center space-x-3 px-4 py-3 text-sm text-blue-700 hover:bg-blue-50 transition-colors border-b border-blue-50">
+                  <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                   </svg>
-                  <span class="truncate">Meu Perfil</span>
+                  <span>Meu Perfil</span>
                 </a>
-                <a class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors">
-                  <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a class="flex items-center space-x-3 px-4 py-3 text-sm text-blue-700 hover:bg-blue-50 transition-colors border-b border-blue-50">
+                  <svg class="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                   </svg>
-                  <span class="truncate">Configurações</span>
+                  <span>Configurações</span>
                 </a>
               </div>
+              
               <div class="border-t border-blue-50 pt-1">
                 <button (click)="logout()" 
-                        class="flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full transition-colors">
-                  <svg class="w-4 h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="flex items-center space-x-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 w-full transition-colors">
+                  <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                   </svg>
                   <span>Sair</span>
@@ -137,11 +173,48 @@ import { forkJoin } from 'rxjs';
     </div>
   </header>
 
+  <!-- Mobile Menu Overlay -->
+  <div *ngIf="mobileMenuOpen && isMobile()" class="fixed inset-0 z-40 bg-white" [@slideInLeft]>
+    <div class="flex flex-col h-full">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-blue-100 bg-white">
+        <h2 class="text-lg font-bold text-blue-900">Menu</h2>
+        <button (click)="mobileMenuOpen = false" class="p-2 text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="flex-1 overflow-y-auto py-4">
+        <div class="space-y-1 px-3">
+          <button 
+            *ngFor="let section of navigationSections"
+            (click)="navigateToSection(section.id); mobileMenuOpen = false"
+            [class]="'flex items-center space-x-3 w-full px-4 py-3 rounded-xl transition-all duration-300 text-left ' + 
+                     (isSectionActive(section.id) ? 
+                      'bg-blue-600 text-white shadow-lg' : 
+                      'text-blue-700 hover:bg-blue-50 hover:text-blue-900')"
+          >
+            <svg [class]="'w-5 h-5 flex-shrink-0 ' + (isSectionActive(section.id) ? 'text-white' : 'text-blue-500')" 
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path *ngIf="section.id === 'dashboard'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              <path *ngIf="section.id === 'faturas'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              <path *ngIf="section.id === 'contratos'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              <path *ngIf="section.id === 'lojas'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              <path *ngIf="section.id === 'configuracoes'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            </svg>
+            <span class="font-medium text-base">{{ section.title }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Content -->
   <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
     
-    <!-- Navigation Tabs -->
-    <nav class="mb-6 sm:mb-8" [@navSlide]>
+    <!-- Navigation Tabs - Hidden on Mobile when menu is available -->
+    <nav *ngIf="!isMobile()" class="mb-6 sm:mb-8" [@navSlide]>
       <div class="flex flex-wrap sm:flex-nowrap gap-1 sm:gap-2 bg-white/80 backdrop-blur-sm rounded-2xl p-1 sm:p-2 shadow-sm border border-blue-100">
         <button 
           *ngFor="let section of navigationSections"
@@ -164,23 +237,23 @@ import { forkJoin } from 'rxjs';
       </div>
     </nav>
 
-    <!-- Toast de Notificações ao entrar -->
-    <div *ngIf="showUnreadToast" class="fixed top-16 right-4 z-50" [@fadeIn]>
-      <div class="bg-white shadow-xl border border-blue-100 rounded-xl px-4 py-3 flex items-start gap-3 w-[320px]">
-        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+    <!-- Toast de Notificações Mobile -->
+    <div *ngIf="showUnreadToast" class="fixed top-16 left-2 right-2 z-50" [@fadeIn]>
+      <div class="bg-white shadow-xl border border-blue-100 rounded-xl px-4 py-3 flex items-start gap-3 w-full">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white flex-shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
           </svg>
         </div>
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-semibold text-blue-900 truncate">{{ unreadToastTitle || 'Você tem novas notificações' }}</p>
-          <p class="text-xs text-blue-700/80 truncate">Você tem {{ unreadToastCount }} notificações não lidas</p>
-          <div class="mt-2 flex items-center gap-3">
-            <button (click)="openNotificationsFromToast()" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Ver todas</button>
-            <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:text-blue-800">Marcar todas lidas</button>
+          <p class="text-sm font-semibold text-blue-900 break-words">{{ unreadToastTitle || 'Você tem novas notificações' }}</p>
+          <p class="text-xs text-blue-700/80 break-words mt-1">Você tem {{ unreadToastCount }} notificações não lidas</p>
+          <div class="mt-2 flex items-center gap-3 flex-wrap">
+            <button (click)="openNotificationsFromToast()" class="text-xs text-blue-600 hover:text-blue-800 font-medium bg-blue-50 px-3 py-1 rounded">Ver todas</button>
+            <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1 rounded">Marcar lidas</button>
           </div>
         </div>
-        <button (click)="closeUnreadToast()" class="text-blue-400 hover:text-blue-600 ml-1">
+        <button (click)="closeUnreadToast()" class="text-blue-400 hover:text-blue-600 ml-1 flex-shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -188,69 +261,75 @@ import { forkJoin } from 'rxjs';
       </div>
     </div>
 
-    <!-- Painel Lateral de Notificações Pendentes -->
+    <!-- Painel Lateral de Notificações Mobile -->
     <div *ngIf="showNotificationsPanel" class="fixed inset-0 z-[60]" [@fadeIn]>
       <div class="absolute inset-0 bg-black/20" (click)="closeNotificationsPanel()"></div>
-      <div class="absolute top-0 right-0 h-full w-[360px] sm:w-[420px] lg:w-[480px] bg-white shadow-2xl border-l border-blue-100" [@slideInRight]>
-        <div class="px-4 py-3 border-b border-blue-50 flex items-center justify-between">
-          <span class="text-sm font-semibold text-blue-900">Notificações Pendentes ({{ unreadNotifications }})</span>
+      <div class="absolute top-0 right-0 h-full w-full bg-white shadow-2xl border-l border-blue-100" 
+           [class]="isMobile() ? 'w-full' : 'sm:w-[420px] lg:w-[480px]'" 
+           [@slideInRight]>
+        <div class="px-4 py-3 border-b border-blue-50 flex items-center justify-between bg-white sticky top-0">
+          <span class="text-sm font-semibold text-blue-900">Notificações ({{ unreadNotifications }})</span>
           <div class="flex items-center gap-2">
-            <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:text-blue-800">Marcar todas lidas</button>
+            <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded">Marcar todas</button>
             <button (click)="closeNotificationsPanel()" class="text-xs text-gray-500 hover:text-gray-700">Fechar</button>
           </div>
         </div>
         <div class="overflow-y-auto h-[calc(100%-56px)]">
           <div *ngFor="let n of unreadNotificationsList" class="px-4 py-3 border-b border-blue-50 flex items-start gap-3">
-            <div class="mt-0.5">
+            <div class="mt-0.5 flex-shrink-0">
               <span class="inline-block w-2 h-2 rounded-full bg-blue-600"></span>
             </div>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-blue-900 truncate">{{ n.tipo || 'Notificação' }}</p>
-              <p class="text-xs text-blue-700/80 truncate">{{ n.mensagem }}</p>
-              <p *ngIf="n.enviadaEm" class="text-[10px] text-blue-500 mt-0.5">{{ n.enviadaEm | date:'short' }}</p>
+              <p class="text-sm font-medium text-blue-900 break-words">{{ n.tipo || 'Notificação' }}</p>
+              <p class="text-xs text-blue-700/80 break-words mt-1">{{ n.mensagem }}</p>
+              <p *ngIf="n.enviadaEm" class="text-[10px] text-blue-500 mt-1">{{ n.enviadaEm | date:'short' }}</p>
             </div>
             <div class="flex-shrink-0">
-              <button (click)="markNotificationAsRead(n.id)" class="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded">Marcar lida</button>
+              <button (click)="markNotificationAsRead(n.id)" class="text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded bg-blue-50">
+                Marcar lida
+              </button>
             </div>
           </div>
-          <div *ngIf="unreadNotifications === 0" class="px-4 py-6 text-center text-sm text-blue-700">Sem notificações pendentes</div>
+          <div *ngIf="unreadNotifications === 0" class="px-4 py-8 text-center text-sm text-blue-700">
+            Sem notificações pendentes
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="loading" class="flex justify-center items-center min-h-[300px] sm:min-h-[400px]" [@fadeIn]>
+    <!-- Loading State Mobile -->
+    <div *ngIf="loading" class="flex justify-center items-center min-h-[50vh]" [@fadeIn]>
       <div class="text-center">
-        <div class="w-10 h-10 sm:w-12 sm:h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3 sm:mb-4"></div>
-        <p class="text-blue-700 font-medium text-sm sm:text-base">Carregando seu portal...</p>
+        <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <p class="text-blue-700 font-medium text-sm">Carregando seu portal...</p>
       </div>
     </div>
 
-    <!-- Dashboard Content -->
-    <div *ngIf="!loading && portalData && isCurrentSection('dashboard')" class="space-y-6 sm:space-y-8" [@staggerIn]>
+    <!-- Dashboard Content Mobile -->
+    <div *ngIf="!loading && portalData && isCurrentSection('dashboard')" class="space-y-6" [@staggerIn]>
       
-      <!-- Welcome Header -->
-      <section class="text-center mb-6 sm:mb-8">
-        <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-900 mb-2">
+      <!-- Welcome Header Mobile -->
+      <section class="text-center mb-6">
+        <h1 class="text-xl font-bold text-blue-900 mb-2 break-words">
           Bem-vindo, {{ portalData.inquilino.nome ? portalData.inquilino.nome.split(' ')[0] : 'Usuário' }}!
         </h1>
-        <p class="text-blue-600 text-sm sm:text-base lg:text-lg">Aqui está o resumo das suas informações</p>
+        <p class="text-blue-600 text-sm">Aqui está o resumo das suas informações</p>
       </section>
 
-      <!-- Financial Overview Cards -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <!-- Resumo Financeiro - Cards em grid responsivo -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div *ngFor="let card of financialCards; let i = index" 
-             class="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-blue-100 p-4 sm:p-6 transform hover:scale-105 transition-all duration-300"
+             class="bg-white rounded-xl shadow-lg border border-blue-100 p-4 transform hover:scale-105 transition-all duration-300"
              [@cardStagger]="{value: '', params: {delay: i * 100}}">
           
-          <div class="flex items-center justify-between mb-3 sm:mb-4">
+          <div class="flex items-center justify-between mb-3">
             <div class="min-w-0 flex-1">
-              <p class="text-blue-600 text-xs sm:text-sm font-medium mb-1 truncate">{{ card.title }}</p>
-              <p class="text-lg sm:text-xl lg:text-2xl font-bold text-blue-900 truncate">{{ card.value }}</p>
+              <p class="text-blue-600 text-xs font-medium mb-1 truncate">{{ card.title }}</p>
+              <p class="text-lg font-bold text-blue-900 truncate">{{ card.value }}</p>
             </div>
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 ml-3"
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ml-3"
                  [ngClass]="card.iconBg">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path *ngIf="card.title === 'Faturas Pendentes'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 <path *ngIf="card.title === 'Valor Total'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
                 <path *ngIf="card.title === 'Em Atraso'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/>
@@ -259,134 +338,124 @@ import { forkJoin } from 'rxjs';
             </div>
           </div>
           
-          <p class="text-blue-500 text-xs sm:text-sm truncate">{{ card.subtitle }}</p>
+          <p class="text-blue-500 text-xs truncate">{{ card.subtitle }}</p>
           
           <!-- Progress Bar -->
-          <div *ngIf="card.progress !== undefined" class="mt-3 sm:mt-4">
-            <div class="w-full bg-blue-100 rounded-full h-1.5 sm:h-2">
-              <div class="bg-blue-600 h-1.5 sm:h-2 rounded-full transition-all duration-1000"
+          <div *ngIf="card.progress !== undefined" class="mt-3">
+            <div class="w-full bg-blue-100 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full transition-all duration-1000"
                    [style.width.%]="card.progress"></div>
             </div>
-            <p class="text-blue-600 text-xs mt-1 sm:mt-2 text-right">{{ card.progress }}% concluído</p>
+            <p class="text-blue-600 text-xs mt-1 text-right">{{ card.progress }}% concluído</p>
           </div>
         </div>
       </section>
 
-      <!-- Two Column Layout -->
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
+      <!-- Lojas e Faturas em grid responsivo -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        <!-- Left Column -->
-        <div class="xl:col-span-2 space-y-6 sm:space-y-8">
-          
-          <!-- Stores Section -->
-          <section class="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-blue-100 overflow-hidden" [@slideInLeft]>
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-4 sm:px-6 py-3 sm:py-4">
-              <div class="flex items-center justify-between">
-                <h3 class="text-base sm:text-lg font-semibold text-white flex items-center">
-                  <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                  </svg>
-                  Minhas Lojas
-                </h3>
-                <span class="text-blue-100 text-xs sm:text-sm font-medium bg-white/20 px-2 sm:px-3 py-1 rounded-full">
-                  {{ portalData.lojas.length }} ativa(s)
-                </span>
-              </div>
+        <!-- Stores Section Mobile -->
+        <section class="bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden" [@slideInLeft]>
+          <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-semibold text-white flex items-center">
+                <svg class="w-4 h-4 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+                Minhas Lojas
+              </h3>
+              <span class="text-blue-100 text-xs font-medium bg-white/20 px-2 py-1 rounded-full">
+                {{ portalData.lojas.length }} ativa(s)
+              </span>
             </div>
-            <div class="p-4 sm:p-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <div *ngFor="let loja of portalData.lojas; let i = index" 
-                     class="border border-blue-200 rounded-lg sm:rounded-xl p-4 sm:p-6 hover:border-blue-300 hover:shadow-md transition-all duration-300 bg-white"
-                     [@staggerItem]="{value: '', params: {delay: i * 100}}">
-                  
-                  <div class="flex items-start justify-between mb-3 sm:mb-4">
-                    <h4 class="font-bold text-blue-900 text-base sm:text-lg truncate flex-1 mr-2">{{ loja.nome }}</h4>
-                    <span class="text-xs font-semibold px-2 sm:px-3 py-1 rounded-full flex-shrink-0"
-                          [ngClass]="getStatusBadgeClass(loja.contrato.status)">
-                      {{ loja.contrato.status }}
-                    </span>
-                  </div>
-                  
-                  <div class="space-y-2 sm:space-y-3 text-xs sm:text-sm">
-                    <div class="flex justify-between items-center py-1.5 sm:py-2 border-b border-blue-50">
-                      <span class="text-blue-600">Número:</span>
-                      <span class="font-semibold text-blue-900">#{{ loja.numero }}</span>
-                    </div>
-                    <div class="flex justify-between items-center py-1.5 sm:py-2 border-b border-blue-50">
-                      <span class="text-blue-600">Aluguel Mensal:</span>
-                      <span class="font-bold text-blue-900 text-sm">{{ loja.contrato.valorAluguel | currency:'BRL':'symbol':'1.2-2' }}</span>
-                    </div>
-                    <div class="flex justify-between items-center py-1.5 sm:py-2">
-                      <span class="text-blue-600">Vencimento:</span>
-                      <span class="font-semibold text-blue-900">Dia {{ loja.contrato.dataVencimento }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <!-- Right Column -->
-        <div class="space-y-6 sm:space-y-8">
-          
-          <!-- Pending Invoices -->
-          <section class="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-blue-100 overflow-hidden" [@slideInRight]>
-            <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-4 sm:px-6 py-3 sm:py-4">
-              <div class="flex items-center justify-between">
-                <h3 class="text-base sm:text-lg font-semibold text-white flex items-center">
-                  <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  Faturas Pendentes
-                </h3>
-                <span *ngIf="getAllPendingInvoices().length > 0" 
-                      class="bg-white/20 text-white text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full font-bold">
-                  {{ getAllPendingInvoices().length }}
-                </span>
-              </div>
-            </div>
-            <div class="p-4 sm:p-6">
-              <div class="space-y-3 sm:space-y-4 max-h-64 sm:max-h-80 overflow-y-auto">
-                <div *ngFor="let fatura of getAllPendingInvoices(); let i = index" 
-                     class="border border-orange-200 rounded-lg sm:rounded-xl p-3 sm:p-4 bg-orange-50 hover:shadow-md transition-all duration-300"
-                     [@staggerItem]="{value: '', params: {delay: i * 50}}">
-                  
-                  <div class="flex justify-between items-start mb-2 sm:mb-3">
-                    <div class="min-w-0 flex-1 mr-2">
-                      <p class="font-bold text-blue-900 text-sm sm:text-base truncate">{{ fatura.loja.nome }}</p>
-                      <p class="text-xs text-blue-600">Ref: {{ fatura.mesReferencia }}/{{ fatura.anoReferencia }}</p>
-                    </div>
-                    <span class="text-xs font-semibold px-2 py-1 rounded flex-shrink-0"
-                          [ngClass]="getUrgencyClass(fatura.diasParaVencimento)">
-                      {{ fatura.diasParaVencimento }} dias
-                    </span>
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <span class="text-xs text-blue-600">
-                      Vence: {{ fatura.dataVencimento | date:'dd/MM/yyyy' }}
-                    </span>
-                    <span class="font-bold text-blue-900 text-sm">
-                      {{ fatura.valorAluguel | currency:'BRL':'symbol':'1.2-2' }}
-                    </span>
-                  </div>
+          </div>
+          <div class="p-4">
+            <div class="space-y-4">
+              <div *ngFor="let loja of portalData.lojas; let i = index" 
+                   class="border border-blue-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all duration-300 bg-white"
+                   [@staggerItem]="{value: '', params: {delay: i * 100}}">
+                
+                <div class="flex items-start justify-between mb-3">
+                  <h4 class="font-bold text-blue-900 text-base break-words flex-1 mr-2">{{ loja.nome }}</h4>
+                  <span class="text-xs font-semibold px-2 py-1 rounded-full flex-shrink-0 ml-2"
+                        [ngClass]="getStatusBadgeClass(loja.contrato.status)">
+                    {{ loja.contrato.status }}
+                  </span>
                 </div>
                 
-                <div *ngIf="getAllPendingInvoices().length === 0" class="text-center py-6 sm:py-8">
-                  <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+                <div class="space-y-2 text-xs">
+                  <div class="flex justify-between items-center py-2 border-b border-blue-50">
+                    <span class="text-blue-600">Número:</span>
+                    <span class="font-semibold text-blue-900">#{{ loja.numero }}</span>
                   </div>
-                  <p class="text-blue-900 font-semibold text-sm sm:text-base">Todas as faturas em dia!</p>
-                  <p class="text-blue-600 text-xs sm:text-sm mt-1">Parabéns pelo controle</p>
+                  <div class="flex justify-between items-center py-2 border-b border-blue-50">
+                    <span class="text-blue-600">Aluguel Mensal:</span>
+                    <span class="font-bold text-blue-900 text-sm">{{ loja.contrato.valorAluguel | currency:'BRL':'symbol':'1.2-2' }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2">
+                    <span class="text-blue-600">Vencimento:</span>
+                    <span class="font-semibold text-blue-900">Dia {{ loja.contrato.dataVencimento }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </section>
-
-          <!-- Atividade Recente removida conforme solicitado -->
-        </div>
+          </div>
+        </section>
+        
+        <!-- Pending Invoices Mobile -->
+        <section class="bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden" [@slideInRight]>
+          <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-semibold text-white flex items-center">
+                <svg class="w-4 h-4 mr-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Faturas Pendentes
+              </h3>
+              <span *ngIf="getAllPendingInvoices().length > 0" 
+                    class="bg-white/20 text-white text-xs px-2 py-1 rounded-full font-bold">
+                {{ getAllPendingInvoices().length }}
+              </span>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="space-y-3 max-h-64 overflow-y-auto">
+              <div *ngFor="let fatura of getAllPendingInvoices(); let i = index" 
+                   class="border border-orange-200 rounded-lg p-3 bg-orange-50 hover:shadow-md transition-all duration-300"
+                   [@staggerItem]="{value: '', params: {delay: i * 50}}">
+                
+                <div class="flex justify-between items-start mb-2">
+                  <div class="min-w-0 flex-1 mr-2">
+                    <p class="font-bold text-blue-900 text-sm break-words">{{ fatura.loja.nome }}</p>
+                    <p class="text-xs text-blue-600">Ref: {{ fatura.mesReferencia }}/{{ fatura.anoReferencia }}</p>
+                  </div>
+                  <span class="text-xs font-semibold px-2 py-1 rounded flex-shrink-0 ml-2"
+                        [ngClass]="getUrgencyClass(fatura.diasParaVencimento)">
+                    {{ fatura.diasParaVencimento }} dias
+                  </span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-xs text-blue-600">
+                    Vence: {{ fatura.dataVencimento | date:'dd/MM/yyyy' }}
+                  </span>
+                  <span class="font-bold text-blue-900 text-sm">
+                    {{ fatura.valorAluguel | currency:'BRL':'symbol':'1.2-2' }}
+                  </span>
+                </div>
+              </div>
+              
+              <div *ngIf="getAllPendingInvoices().length === 0" class="text-center py-6">
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                <p class="text-blue-900 font-semibold text-sm">Todas as faturas em dia!</p>
+                <p class="text-blue-600 text-xs mt-1">Parabéns pelo controle</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
 
@@ -409,19 +478,19 @@ import { forkJoin } from 'rxjs';
       </div>
     </div>
 
-    <!-- Error State -->
-    <div *ngIf="!loading && !portalData" class="text-center py-12 sm:py-16" [@fadeIn]>
+    <!-- Error State Mobile -->
+    <div *ngIf="!loading && !portalData" class="text-center py-12" [@fadeIn]>
       <div class="max-w-md mx-auto px-4">
-        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/>
           </svg>
         </div>
-        <h3 class="text-lg sm:text-xl font-bold text-blue-900 mb-2">Erro ao carregar</h3>
-        <p class="text-blue-600 mb-4 sm:mb-6 text-sm sm:text-base">Não foi possível carregar suas informações.</p>
+        <h3 class="text-lg font-bold text-blue-900 mb-2">Erro ao carregar</h3>
+        <p class="text-blue-600 mb-4 text-sm">Não foi possível carregar suas informações.</p>
         <button 
           (click)="loadPortalData()"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl transition-colors font-medium text-sm sm:text-base"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-colors font-medium text-sm w-full"
         >
           Tentar Novamente
         </button>
@@ -452,11 +521,15 @@ import { forkJoin } from 'rxjs';
                 style({ opacity: 1, transform: 'translateY(0)' }))
       ])
     ]),
-    trigger('logoAnimation', [
+    trigger('slideInLeft', [
       transition(':enter', [
-        style({ opacity: 0, transform: 'scale(0.8)' }),
-        animate('400ms 200ms ease-out', 
-                style({ opacity: 1, transform: 'scale(1)' }))
+        style({ opacity: 0, transform: 'translateX(-100%)' }),
+        animate('300ms ease-out', 
+                style({ opacity: 1, transform: 'translateX(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', 
+                style({ opacity: 0, transform: 'translateX(-100%)' }))
       ])
     ]),
     trigger('staggerIn', [
@@ -510,6 +583,8 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
   portalData: IPortalInquilinoData | null = null;
   loading = true;
   currentTime = new Date();
+  profileMenuOpen: boolean = false;
+  mobileMenuOpen: boolean = false;
   
   currentSection: 'dashboard' | 'faturas' | 'contratos' | 'lojas' | 'configuracoes' = 'dashboard';
   
@@ -556,6 +631,15 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
       icon: 'fas fa-cog'
     }
   ];
+
+  // Método para detectar mobile
+  isMobile(): boolean {
+    return window.innerWidth < 768;
+  }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
 
   get financialCards() {
     if (!this.portalData) return [];
@@ -613,6 +697,11 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
 
   toggleNotificationsMenu() {
     this.notificationsMenuOpen = !this.notificationsMenuOpen;
+    // No mobile, fecha outros menus quando abre notificações
+    if (this.isMobile() && this.notificationsMenuOpen) {
+      this.profileMenuOpen = false;
+      this.mobileMenuOpen = false;
+    }
   }
 
   closeNotificationsMenu() {
@@ -630,6 +719,7 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
 
   openNotificationsPanel() {
     this.showNotificationsPanel = true;
+    this.notificationsMenuOpen = false;
   }
 
   closeNotificationsPanel() {
@@ -799,6 +889,10 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
 
   navigateToSection(sectionId: string) {
     this.currentSection = sectionId as 'dashboard' | 'faturas' | 'contratos' | 'lojas' | 'configuracoes';
+    // Fecha menu mobile após navegação
+    if (this.isMobile()) {
+      this.mobileMenuOpen = false;
+    }
   }
 
   isSectionActive(sectionId: string): boolean {
@@ -815,7 +909,7 @@ export class TenantPortalComponent implements OnInit, OnDestroy {
     const ids = Array.from(new Set(invoices.map(f => String(f.efiCobrancaId))));
     if (ids.length === 0) return;
 
-    const requests = ids.map(id => this.http.get(`http://localhost:3010/api/efi/charge/${id}`));
+    const requests = ids.map(id => this.http.get(`${environment.apiBaseUrl}/api/efi/charge/${id}`));
     forkJoin(requests).subscribe({
       next: () => {
         // Recarrega os dados do portal após processar as cobranças

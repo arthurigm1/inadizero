@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { Router, type CanActivateFn } from '@angular/router';
+import { Router, type CanActivateFn, type CanActivateChildFn } from '@angular/router';
 import { AuthService } from './auth.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
@@ -8,7 +8,6 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   // Verifica se está autenticado
   if (!authService.isAuthenticated()) {
-    console.log('Usuário não autenticado, redirecionando para login...');
     router.navigate(['/login'], { 
       queryParams: { returnUrl: state.url }
     });
@@ -17,7 +16,6 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   // Verifica se o token é válido (não expirado)
   if (authService.isTokenExpired()) {
-    console.log('Token expirado, redirecionando para login...');
     authService.logout(); // Limpa o token expirado
     router.navigate(['/login'], { 
       queryParams: { 
@@ -31,10 +29,14 @@ export const authGuard: CanActivateFn = (route, state) => {
   // Verifica roles se necessário
   const requiredRole = route.data?.['role'];
   if (requiredRole && !authService.hasRole(requiredRole)) {
-    console.log('Usuário não tem permissão, redirecionando...');
     router.navigate(['/unauthorized']);
     return false;
   }
 
   return true;
+};
+
+// Garante que rotas filhas (como dashboards dentro do MainLayout) também sejam protegidas
+export const authChildGuard: CanActivateChildFn = (route, state) => {
+  return authGuard(route, state);
 };

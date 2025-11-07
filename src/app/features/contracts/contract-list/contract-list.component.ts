@@ -449,11 +449,11 @@ export class ContractListComponent implements OnInit {
 
   openRescindModal(contract: Contract) {
     // TODO: Implementar modal de rescisão
-    console.log('Rescindir contrato:', contract.id);
+    // Removido log de ação (rescindir contrato)
   }
 
   openRenewModal(contract: Contract) {
     // TODO: Implementar modal de renovação
-    console.log('Renovar contrato:', contract.id);
+    // Removido log de ação (renovar contrato)
   }
 }

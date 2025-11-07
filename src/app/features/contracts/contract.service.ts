@@ -17,12 +17,13 @@ import {
   ContractDetailResponse
 } from './contract.interfaces';
 import { AuthService } from '../../auth/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContractService {
-  private apiUrl = 'http://localhost:3010/api/contrato';
+  private apiUrl = `${environment.apiBaseUrl}/api/contrato`;
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -111,12 +112,12 @@ export class ContractService {
   // Métodos auxiliares para obter dados para selects
   getStores(): Observable<StoreOption[]> {
     const headers = this.getAuthHeaders();
-    return this.http.get<StoreOption[]>('http://localhost:3010/api/loja/empresa', { headers });
+    return this.http.get<StoreOption[]>(`${environment.apiBaseUrl}/api/loja/empresa`, { headers });
   }
 
   getTenants(): Observable<TenantOption[]> {
     const headers = this.getAuthHeaders();
-    return this.http.get<TenantOption[]>('http://localhost:3000/api/inquilino/empresa', { headers });
+    return this.http.get<TenantOption[]>(`${environment.apiBaseUrl}/api/inquilino/empresa`, { headers });
   }
 
   // Método para obter estatísticas dos contratos

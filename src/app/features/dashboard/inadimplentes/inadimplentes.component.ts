@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { AuthService } from '../../../auth/auth.service';
 import { HttpClientModule } from '@angular/common/http';
 import jsPDF from 'jspdf';
+import { environment } from '../../../../environments/environment';
 
 interface Paginacao {
   paginaAtual: number;
@@ -225,7 +226,7 @@ export class InadimplentesComponent implements OnInit {
   error: string | null = null;
 
   limite = 10;
-  private EMPRESA_API_URL = 'http://localhost:3010/api/empresa/inadimplentes';
+  private EMPRESA_API_URL = `${environment.apiBaseUrl}/api/empresa/inadimplentes`;
 
   @ViewChild('exportArea') exportAreaRef!: ElementRef<HTMLDivElement>;
 

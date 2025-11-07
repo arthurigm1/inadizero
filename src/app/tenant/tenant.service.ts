@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { IPortalInquilinoData } from './tenant.interfaces';
+import { environment } from '../../environments/environment';
 
 export interface Tenant {
   id: string;
@@ -37,8 +38,8 @@ export interface TenantLoginData {
   providedIn: 'root',
 })
 export class TenantService {
-  private apiUrl = 'http://localhost:3010/api/usuario';
-  private notificationApiUrl = 'http://localhost:3010/api/notificacao';
+  private apiUrl = `${environment.apiBaseUrl}/api/usuario`;
+  private notificationApiUrl = `${environment.apiBaseUrl}/api/notificacao`;
   private currentTenantSubject = new BehaviorSubject<Tenant | null>(null);
   public currentTenant$ = this.currentTenantSubject.asObservable();
 
@@ -142,8 +143,38 @@ export class TenantService {
     this.router.navigate(['/tenant/login']);
   }
 
+  private isTokenExpired(token: string): boolean {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        // Não é um JWT válido, assume não expirado para evitar falsos negativos
+        return false;
+      }
+      const payload = JSON.parse(atob(parts[1]));
+      const exp = payload?.exp;
+      if (!exp || typeof exp !== 'number') {
+        // Sem claim exp: considere não expirado
+        return false;
+      }
+      const now = Math.floor(Date.now() / 1000);
+      return exp <= now;
+    } catch {
+      // Em caso de erro no parse, considerar não expirado
+      return false;
+    }
+  }
+
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('tenantToken');
+    const token = localStorage.getItem('tenantToken');
+    if (!token) {
+      return false;
+    }
+    if (this.isTokenExpired(token)) {
+      // Token expirado: desloga e bloqueia acesso
+      this.logout();
+      return false;
+    }
+    return true;
   }
 
   getCurrentTenant(): Tenant | null {
@@ -157,7 +188,10 @@ export class TenantService {
       'Content-Type': 'application/json'
     });
 
-    return this.http.get<{success: boolean, message: string, data: IPortalInquilinoData}>('http://localhost:3010/api/portal-inquilino/dados', { headers })
+    return this.http.get<{success: boolean, message: string, data: IPortalInquilinoData}>(
+      `${environment.apiBaseUrl}/api/portal-inquilino/dados`,
+      { headers }
+    )
       .pipe(
         map(response => response.data),
         catchError(error => {

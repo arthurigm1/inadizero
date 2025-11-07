@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 export interface User {
   id: number;
@@ -51,8 +52,8 @@ interface EmpresasResponse {
 export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
-  private apiUrl = 'http://localhost:3010/api/usuario'; // Ajuste para sua URL
-  private empresaApiUrl = 'http://localhost:3010/api/empresa'; // URL para empresas
+  private apiUrl = `${environment.apiBaseUrl}/api/usuario`;
+  private empresaApiUrl = `${environment.apiBaseUrl}/api/empresa`;
 
   constructor(private http: HttpClient, private router: Router) {
     this.currentUserSubject = new BehaviorSubject<User | null>(

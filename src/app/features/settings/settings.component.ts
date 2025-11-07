@@ -286,7 +286,7 @@ export class SettingsComponent {
 
   saveSettings() {
     // Aqui você implementaria a lógica para salvar as configurações
-    console.log('Configurações salvas:', this.settings);
+    // Removido log de salvamento (não necessário em produção)
     
     // Simular salvamento com feedback visual
     const button = event?.target as HTMLButtonElement;

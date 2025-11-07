@@ -69,10 +69,16 @@ import { AuthService } from '../../auth/auth.service';
         <div class="flex items-center justify-between">
           <div>
             <p class="text-gray-600 text-xs sm:text-sm">Total de Lojas</p>
-            <p class="text-xl sm:text-2xl font-bold text-blue-900">{{ stores.length }}</p>
+            <p class="text-xl sm:text-2xl font-bold text-blue-900">{{ totalItems }}</p>
           </div>
           <div class="bg-blue-100 p-2 sm:p-3 rounded-lg">
-            <i class="fas fa-store text-blue-600 text-lg sm:text-xl"></i>
+            <!-- Ícone SVG: grade (total) -->
+            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-blue-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <rect x="3" y="3" width="6" height="6" rx="1"></rect>
+              <rect x="11" y="3" width="6" height="6" rx="1"></rect>
+              <rect x="3" y="11" width="6" height="6" rx="1"></rect>
+              <rect x="11" y="11" width="6" height="6" rx="1"></rect>
+            </svg>
           </div>
         </div>
       </div>
@@ -84,7 +90,11 @@ import { AuthService } from '../../auth/auth.service';
             <p class="text-xl sm:text-2xl font-bold text-red-600">{{ occupiedCount }}</p>
           </div>
           <div class="bg-red-100 p-2 sm:p-3 rounded-lg">
-            <i class="fas fa-door-closed text-red-600 text-lg sm:text-xl"></i>
+            <!-- Ícone SVG: círculo com X (ocupadas) -->
+            <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="10" cy="10" r="9" class="text-red-600" fill="currentColor"></circle>
+              <path d="M7 7 L13 13 M13 7 L7 13" stroke="white" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
           </div>
         </div>
       </div>
@@ -96,7 +106,11 @@ import { AuthService } from '../../auth/auth.service';
             <p class="text-xl sm:text-2xl font-bold text-green-600">{{ vacantCount }}</p>
           </div>
           <div class="bg-green-100 p-2 sm:p-3 rounded-lg">
-            <i class="fas fa-door-open text-green-600 text-lg sm:text-xl"></i>
+            <!-- Ícone SVG: círculo com check (vagas) -->
+            <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="10" cy="10" r="9" class="text-green-600" fill="currentColor"></circle>
+              <path d="M6 10 L9 13 L14 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+            </svg>
           </div>
         </div>
       </div>
@@ -104,11 +118,15 @@ import { AuthService } from '../../auth/auth.service';
       <div class="bg-white backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-blue-200 hover:border-blue-400 transition-all duration-300">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-gray-600 text-xs sm:text-sm">Em Manutenção</p>
-            <p class="text-xl sm:text-2xl font-bold text-amber-600">{{ maintenanceCount }}</p>
+            <p class="text-gray-600 text-xs sm:text-sm">Lojas Inativas</p>
+            <p class="text-xl sm:text-2xl font-bold text-amber-600">{{ inactiveCount }}</p>
           </div>
           <div class="bg-amber-100 p-2 sm:p-3 rounded-lg">
-            <i class="fas fa-tools text-amber-600 text-lg sm:text-xl"></i>
+            <!-- Ícone SVG: círculo com traço (inativas) -->
+            <svg class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="10" cy="10" r="9" class="text-amber-600" fill="currentColor"></circle>
+              <rect x="5" y="9" width="10" height="2" rx="1" fill="white"></rect>
+            </svg>
           </div>
         </div>
       </div>
@@ -226,7 +244,7 @@ import { AuthService } from '../../auth/auth.service';
            [ngClass]="{
              'border-l-4 border-red-400': store.status === 'OCUPADA',
              'border-l-4 border-green-400': store.status === 'VAGA',
-             'border-l-4 border-amber-400': store.status === 'MANUTENCAO'
+             'border-l-4 border-amber-400': store.status === 'INATIVA'
            }"
            [@cardHover]
            (click)="viewStoreDetails(store)">
@@ -242,9 +260,9 @@ import { AuthService } from '../../auth/auth.service';
             <span [ngClass]="{
               'bg-red-500': store.status === 'OCUPADA',
               'bg-green-500': store.status === 'VAGA',
-              'bg-amber-500': store.status === 'MANUTENCAO'
+              'bg-amber-500': store.status === 'INATIVA'
             }" class="px-2 sm:px-3 py-1 sm:py-1 rounded-full text-xs font-semibold text-white shadow whitespace-nowrap">
-              {{ store.status === 'OCUPADA' ? 'Ocupada' : store.status === 'VAGA' ? 'Vaga' : 'Manutenção' }}
+              {{ store.status === 'OCUPADA' ? 'Ocupada' : store.status === 'VAGA' ? 'Vaga' : 'Inativa' }}
             </span>
           </div>
           
@@ -257,6 +275,11 @@ import { AuthService } from '../../auth/auth.service';
             <div class="flex items-center text-blue-700">
               <i class="fas fa-calendar-plus w-4 sm:w-5 text-blue-500 mr-2 sm:mr-3 text-sm"></i>
               <span class="text-sm">{{ store.criadoEm | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+            <div *ngIf="store.m2 !== undefined" class="flex items-center text-blue-700">
+              <i class="fas fa-ruler-combined w-4 sm:w-5 text-blue-500 mr-2 sm:mr-3 text-sm"></i>
+              <span class="text-sm">{{ store.m2 }} m²</span>
             </div>
             
             <div class="flex items-center text-blue-700">
@@ -382,6 +405,21 @@ import { AuthService } from '../../auth/auth.service';
             {{ getFieldError('localizacao') }}
           </div>
         </div>
+        <!-- Metragem (m²) -->
+        <div class="mb-4">
+          <label for="m2" class="block text-sm font-medium text-blue-700 mb-1">Metragem (m²)</label>
+          <input
+            type="number"
+            id="m2"
+            formControlName="m2"
+            min="0"
+            class="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-blue-50 text-blue-900 text-sm sm:text-base"
+            placeholder="Ex.: 42"
+          />
+          <div *ngIf="getFieldError('m2')" class="text-red-500 text-xs sm:text-sm mt-1">
+            {{ getFieldError('m2') }}
+          </div>
+        </div>
 
         <!-- Erro de criação -->
         <div *ngIf="createError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
@@ -489,6 +527,25 @@ import { AuthService } from '../../auth/auth.service';
             {{ getEditFieldError('localizacao') }}
           </div>
         </div>
+        <!-- Metragem (m²) -->
+        <div>
+          <label for="editm2" class="block text-sm font-semibold text-blue-700 mb-2">
+            <i class="fas fa-ruler-combined text-blue-600 mr-2"></i>
+            Metragem (m²)
+          </label>
+          <input
+            id="editm2"
+            type="number"
+            formControlName="m2"
+            min="0"
+            class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm sm:text-base"
+            placeholder="Ex.: 42"
+          />
+          <div *ngIf="getEditFieldError('m2')" class="text-red-500 text-xs sm:text-sm mt-2 flex items-center">
+            <i class="fas fa-exclamation-circle mr-1"></i>
+            {{ getEditFieldError('m2') }}
+          </div>
+        </div>
 
         <!-- Status -->
         <div>
@@ -504,7 +561,7 @@ import { AuthService } from '../../auth/auth.service';
             <option value="" class="bg-white">Selecione o status</option>
             <option value="VAGA" class="bg-white">Vaga</option>
             <option value="OCUPADA" class="bg-white">Ocupada</option>
-            <option value="MANUTENCAO" class="bg-white">Manutenção</option>
+            <option value="INATIVA" class="bg-white">Inativa</option>
           </select>
           <div *ngIf="getEditFieldError('status')" class="text-red-500 text-xs sm:text-sm mt-2 flex items-center">
             <i class="fas fa-exclamation-circle mr-1"></i>
@@ -575,13 +632,7 @@ import { AuthService } from '../../auth/auth.service';
             <p class="text-blue-600 text-sm sm:text-base">Loja #{{ selectedStore.numero }}</p>
           </div>
           <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full lg:w-auto">
-            <span [ngClass]="{
-              'bg-green-500': selectedStore.status === 'OCUPADA',
-              'bg-red-500': selectedStore.status === 'VAGA',
-              'bg-yellow-500': selectedStore.status === 'MANUTENCAO'
-            }" class="px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-semibold text-white whitespace-nowrap">
-              {{ selectedStore.status === 'OCUPADA' ? 'Ocupada' : selectedStore.status === 'VAGA' ? 'Vaga' : 'Manutenção' }}
-            </span>
+
             <div class="flex flex-wrap gap-2">
               <button 
                 (click)="openEditModal(selectedStore)"
@@ -622,9 +673,24 @@ import { AuthService } from '../../auth/auth.service';
                 <span class="text-blue-600 text-sm sm:text-base w-24 flex-shrink-0">Localização:</span>
                 <span class="text-blue-900 text-sm sm:text-base flex-1">{{ selectedStore.localizacao }}</span>
               </div>
+              <div *ngIf="selectedStore.m2 !== undefined" class="flex flex-col sm:flex-row">
+                <span class="text-blue-600 text-sm sm:text-base w-24 flex-shrink-0">Metragem:</span>
+                <span class="text-blue-900 text-sm sm:text-base flex-1">{{ selectedStore.m2 }} m²</span>
+              </div>
               <div class="flex flex-col sm:flex-row">
                 <span class="text-blue-600 text-sm sm:text-base w-24 flex-shrink-0">Status:</span>
-                <span class="text-blue-900 text-sm sm:text-base flex-1">{{ selectedStore.status === 'OCUPADA' ? 'Ocupada' : selectedStore.status === 'VAGA' ? 'Vaga' : 'Manutenção' }}</span>
+                <span class="flex-1">
+                  <span
+                    class="text-white text-xs sm:text-sm px-2 py-1 rounded-full"
+                    [ngClass]="{
+                      'bg-green-500': selectedStore?.status === 'VAGA',
+                      'bg-red-500': selectedStore?.status === 'OCUPADA',
+                      'bg-amber-500': selectedStore?.status === 'INATIVA'
+                    }"
+                  >
+                    {{ selectedStore?.status === 'OCUPADA' ? 'Ocupada' : selectedStore?.status === 'VAGA' ? 'Vaga' : 'Inativa' }}
+                  </span>
+                </span>
               </div>
               <div class="flex flex-col sm:flex-row">
                 <span class="text-blue-600 text-sm sm:text-base w-24 flex-shrink-0">Criado em:</span>
@@ -753,6 +819,59 @@ import { AuthService } from '../../auth/auth.service';
     </div>
   </div>
 
+  <!-- Modal de Vincular Inquilino -->
+  <div *ngIf="showTenantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" [@fadeIn]>
+    <div class="bg-white rounded-xl p-4 sm:p-6 max-w-md w-full mx-auto border border-blue-200">
+      <div class="flex items-center mb-3 sm:mb-4">
+        <i class="fas fa-user-plus text-green-600 text-xl sm:text-2xl mr-2 sm:mr-3"></i>
+        <h3 class="text-lg sm:text-xl font-bold text-blue-900">Vincular Inquilino</h3>
+      </div>
+      <p class="text-blue-600 mb-4 sm:mb-6 text-sm sm:text-base">
+        Selecione um inquilino para vincular à loja
+        <span class="inline-flex items-center px-2 py-0.5 bg-blue-100 text-blue-800 rounded-md font-semibold text-sm ml-1">
+          {{ currentStoreForTenant?.nome }}
+        </span>.
+      </p>
+
+      <!-- Loading Tenants -->
+      <div *ngIf="loadingTenants" class="flex items-center py-4">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+        <span class="ml-3 text-blue-600 text-sm">Carregando inquilinos...</span>
+      </div>
+
+      <!-- Error Tenants -->
+      <div *ngIf="tenantError && !loadingTenants" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+        <p class="text-red-600 text-sm">{{ tenantError }}</p>
+      </div>
+
+      <!-- Select Tenant -->
+      <div *ngIf="!loadingTenants" class="space-y-3">
+        <label class="block text-sm font-medium text-blue-700">Inquilino</label>
+        <select [(ngModel)]="selectedTenant" class="w-full bg-white border border-blue-200 rounded-lg px-4 py-2 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-sm">
+          <option [ngValue]="null">Selecione um inquilino</option>
+          <option *ngFor="let t of tenants" [ngValue]="t.id">{{ t.nome }} - {{ t.email }}</option>
+        </select>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 mt-4">
+        <button 
+          (click)="closeTenantModal()"
+          [disabled]="assigningTenant"
+          class="px-3 sm:px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors disabled:opacity-50 text-sm sm:text-base">
+          Cancelar
+        </button>
+        <button 
+          (click)="onAssignTenant()"
+          [disabled]="!selectedTenant || assigningTenant"
+          class="px-3 sm:px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 text-sm sm:text-base">
+          <span *ngIf="!assigningTenant">Vincular</span>
+          <span *ngIf="assigningTenant">Vinculando...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal de Confirmação - Desvincular Inquilino -->
   <div *ngIf="showUnlinkTenantModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" [@fadeIn]>
     <div class="bg-white rounded-xl p-4 sm:p-6 max-w-md w-full mx-auto border border-blue-200">
@@ -851,8 +970,8 @@ export class StoresComponent implements OnInit {
     return this.stores.filter(s => s.status === 'VAGA').length;
   }
 
-  get maintenanceCount(): number {
-    return this.stores.filter(s => s.status === 'MANUTENCAO').length;
+  get inactiveCount(): number {
+    return this.stores.filter(s => s.status === 'INATIVA').length;
   }
   
   // Propriedades de paginação
@@ -869,12 +988,14 @@ export class StoresComponent implements OnInit {
       nome: ['', [Validators.required, Validators.minLength(1)]],
       numero: ['', [Validators.required, Validators.minLength(1)]],
       localizacao: ['', [Validators.required, Validators.minLength(1)]],
+      m2: [null, [Validators.min(0)]],
     });
     
     this.editForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(1)]],
       numero: ['', [Validators.required, Validators.minLength(1)]],
       localizacao: ['', [Validators.required, Validators.minLength(1)]],
+      m2: [null, [Validators.min(0)]],
       status: ['', [Validators.required]],
     });
 
@@ -976,6 +1097,7 @@ export class StoresComponent implements OnInit {
         nome: formData.nome,
         numero: formData.numero,
         localizacao: formData.localizacao,
+        m2: formData.m2 != null && formData.m2 !== '' ? Number(formData.m2) : undefined,
       };
 
       this.storeService.createStore(createData).subscribe({
@@ -998,6 +1120,7 @@ export class StoresComponent implements OnInit {
       nome: '',
       numero: '',
       localizacao: '',
+      m2: null,
     });
     this.createError = null;
   }
@@ -1016,6 +1139,7 @@ export class StoresComponent implements OnInit {
       nome: store.nome,
       numero: store.numero,
       localizacao: store.localizacao,
+      m2: store.m2 ?? null,
       status: store.status
     });
     this.editError = null;
@@ -1039,18 +1163,20 @@ export class StoresComponent implements OnInit {
         nome: formData.nome,
         numero: formData.numero,
         localizacao: formData.localizacao,
+        m2: formData.m2 != null && formData.m2 !== '' ? Number(formData.m2) : undefined,
         status: formData.status
       };
 
-      this.storeService.updateStore(this.editingStore.id, updateData).subscribe({
+      const editedStoreId = this.editingStore.id;
+      this.storeService.updateStore(editedStoreId, updateData).subscribe({
         next: (updatedStore) => {
           this.editing = false;
           this.closeEditModal();
           this.loadStores(); // Recarrega a lista de lojas
           
           // Se estamos na visualização de detalhes, atualiza os dados da loja selecionada
-          if (this.viewMode === 'details' && this.selectedStore && this.selectedStore.id === this.editingStore!.id) {
-            this.loadStoreDetails(this.editingStore!.id);
+          if (this.viewMode === 'details' && this.selectedStore && this.selectedStore.id === editedStoreId) {
+            this.loadStoreDetails(editedStoreId);
           }
         },
         error: (err) => {
@@ -1070,6 +1196,9 @@ export class StoresComponent implements OnInit {
       if (field.errors?.['minlength']) {
         return `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} deve ter pelo menos ${field.errors['minlength'].requiredLength} caracteres`;
       }
+      if (field.errors?.['min']) {
+        return `Valor mínimo é ${field.errors['min'].min}`;
+      }
     }
     return null;
   }
@@ -1082,6 +1211,9 @@ export class StoresComponent implements OnInit {
       }
       if (field.errors?.['minlength']) {
         return `Mínimo de ${field.errors['minlength'].requiredLength} caracteres`;
+      }
+      if (field.errors?.['min']) {
+        return `Valor mínimo é ${field.errors['min'].min}`;
       }
     }
     return null;

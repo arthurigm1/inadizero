@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Enum para status da loja
-export const statusLojaEnum = z.enum(['VAGA', 'OCUPADA', 'MANUTENCAO']);
+export const statusLojaEnum = z.enum(['VAGA', 'OCUPADA', 'INATIVA']);
 
 // Schema para criação de loja
 export const criarLojaSchema = z.object({

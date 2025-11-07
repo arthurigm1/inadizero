@@ -786,7 +786,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.authService.register(userData).subscribe({
         next: (user) => {
           this.isLoading = false;
-          console.log('Usuário registrado com sucesso:', user);
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {

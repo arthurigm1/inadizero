@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { AuthService } from '../../../auth/auth.service';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../../environments/environment';
 
 interface Tenant {
   id: string;
@@ -410,7 +411,7 @@ export class NotificacoesComponent implements OnInit {
   sendResult: string | null = null;
   sendError: string | null = null;
 
-  private NOTIF_API_URL = 'http://localhost:3010/api/notificacao';
+  private NOTIF_API_URL = `${environment.apiBaseUrl}/api/notificacao`;
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -702,7 +703,7 @@ export class NotificacoesComponent implements OnInit {
       return;
     }
 
-    const url = 'http://localhost:3010/api/usuario/inquilinos';
+    const url = `${environment.apiBaseUrl}/api/usuario/inquilinos`;
     const params = this.buildTenantSearchParams();
 
     this.http.get<TenantsResponse | { sucesso?: boolean; inquilinos?: Tenant[] } | Tenant[]>(url, { headers, params })

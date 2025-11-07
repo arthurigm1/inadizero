@@ -5,6 +5,7 @@ import { ContractService } from '../contract.service';
 import { Contract, UpdateContractRequest, ContractStatus, StoreOption, TenantOption } from '../contract.interfaces';
 import { PdfGeneratorService, ContractData } from '../../../services/pdf-generator.service';
 import { StoreService, Tenant } from '../../stores/store.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contract-edit',
@@ -291,9 +292,7 @@ export class ContractEditComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('🚀 Iniciando ContractEditComponent...');
     if (this.contractToEdit) {
-      console.log('📋 Contrato recebido:', this.contractToEdit);
       this.contract = this.contractToEdit;
       this.createForm();
       this.setupFormValidation();
@@ -403,21 +402,20 @@ export class ContractEditComponent implements OnInit {
       inquilinoId: formValue.inquilinoId
     };
 
-    this.contractService.updateContract(this.contract.id, updateData).subscribe({
-      next: (contract) => {
-        console.log('Contrato atualizado com sucesso:', contract);
-        this.saving = false;
-        // Atualizar o contrato local com os dados retornados
-        this.contract = contract;
-        // Emitir o evento para fechar o modal
-        this.onSave.emit(contract);
-      },
-      error: (error) => {
-        console.error('Erro ao atualizar contrato:', error);
-        this.saving = false;
-        // TODO: Mostrar mensagem de erro para o usuário
-      }
-    });
+    this.contractService.updateContract(this.contract.id, updateData)
+      .pipe(finalize(() => { this.saving = false; }))
+      .subscribe({
+        next: (response) => {
+          // Alguns backends podem retornar um envelope { contrato: Contract }
+          const updated = (response as any)?.contrato ?? response;
+          this.contract = updated as Contract;
+          this.onSave.emit(this.contract);
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar contrato:', error);
+          // TODO: Mostrar mensagem de erro para o usuário
+        }
+      });
   }
 
   generatePdf() {
@@ -462,11 +460,8 @@ export class ContractEditComponent implements OnInit {
   }
 
   loadTenants() {
-    console.log('🔍 Iniciando carregamento de inquilinos...');
     this.storeService.getTenants().subscribe({
       next: (tenants: Tenant[]) => {
-        console.log('✅ Inquilinos carregados:', tenants);
-        console.log('📊 Quantidade de inquilinos:', tenants.length);
         this.tenants = tenants;
       },
       error: (error: any) => {

@@ -3,13 +3,15 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../../auth/auth.service';
+
 import { FaturaResponse } from '../../interfaces/invoice.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InvoiceService {
-  private apiUrl = 'http://localhost:3010/api/fatura';
+  private apiUrl = `${environment.apiBaseUrl}/api/fatura`;
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

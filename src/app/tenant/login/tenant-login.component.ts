@@ -10,6 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { trigger, transition, style, animate, state } from '@angular/animations';
 import { TenantService } from '../tenant.service';
+import { environment } from '../../../environments/environment';
 
 interface NotificationMessage {
   type: 'success' | 'error' | 'info';
@@ -487,7 +488,7 @@ export class TenantLoginComponent {
     }
 
     const { email } = this.resetRequestForm.value;
-    const apiBaseUrl = 'http://localhost:3010/api';
+    const apiBaseUrl = `${environment.apiBaseUrl}/api`;
 
     this.isRequestingReset = true;
     this.http.post(`${apiBaseUrl}/usuario/solicitar-redefinicao-senha`, { email }).subscribe({

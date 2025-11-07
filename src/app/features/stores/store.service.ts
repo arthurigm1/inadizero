@@ -3,13 +3,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AuthService } from '../../auth/auth.service';
+import { environment } from '../../../environments/environment';
+
 
 export interface Store {
   id: string;
   nome: string;
   numero: string;
   localizacao: string;
-  status: 'VAGA' | 'OCUPADA' | 'MANUTENCAO';
+  m2?: number;
+  status: 'VAGA' | 'OCUPADA' | 'INATIVA';
   empresaId: string;
   criadoEm: string;
   contratos: any[];
@@ -31,13 +34,15 @@ export interface CreateStoreData {
   nome: string;
   numero: string;
   localizacao: string;
+  m2?: number;
 }
 
 export interface UpdateStoreData {
   nome?: string;
   numero?: string;
   localizacao?: string;
-  status?: 'VAGA' | 'OCUPADA' | 'MANUTENCAO';
+  m2?: number;
+  status?: 'VAGA' | 'OCUPADA' | 'INATIVA';
   inquilinoId?: string | null;
   vincularInquilino?: {
     inquilinoId: string | null;
@@ -82,7 +87,7 @@ export interface PaginationParams {
   providedIn: 'root'
 })
 export class StoreService {
-  private apiUrl = 'http://localhost:3010/api/loja/';
+  private apiUrl = `${environment.apiBaseUrl}/api/loja/`;
 
   constructor(
     private http: HttpClient,
@@ -213,7 +218,7 @@ export class StoreService {
       return throwError(() => new Error('Token de acesso não encontrado. Faça login novamente.'));
     }
 
-    const createUrl = 'http://localhost:3010/api/loja/criar';
+    const createUrl = `${environment.apiBaseUrl}/api/loja/criar`;
     
     return this.http.post<any>(createUrl, storeData, { headers })
       .pipe(
@@ -243,7 +248,7 @@ export class StoreService {
       return throwError(() => new Error('Token de acesso não encontrado. Faça login novamente.'));
     }
 
-    const updateUrl = `http://localhost:3010/api/loja/editar/${storeId}`;
+    const updateUrl = `${environment.apiBaseUrl}/api/loja/editar/${storeId}`;
     
     return this.http.put<any>(updateUrl, storeData, { headers })
       .pipe(
@@ -275,7 +280,7 @@ export class StoreService {
       return throwError(() => new Error('Token de acesso não encontrado. Faça login novamente.'));
     }
 
-    return this.http.get<TenantsResponse>('http://localhost:3010/api/usuario/inquilinos', { headers }).pipe(
+    return this.http.get<TenantsResponse>(`${environment.apiBaseUrl}/api/usuario/inquilinos`, { headers }).pipe(
       map(response => response.inquilinos),
       catchError(error => {
         let errorMessage = 'Erro ao buscar inquilinos';

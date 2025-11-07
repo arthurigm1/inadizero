@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IPortalInquilinoData, IFaturaInquilino, StatusFatura } from '../tenant.interfaces';
+import { environment } from '../../../environments/environment';
 
 // Interface para a resposta da API EFI
 interface EfiFaturaResponse {
@@ -403,7 +404,7 @@ export class TenantInvoicesComponent {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     });
-    const url = `http://localhost:3010/api/portal-inquilino/fatura-efi/${efiCobrancaId}`;
+    const url = `${environment.apiBaseUrl}/api/portal-inquilino/fatura-efi/${efiCobrancaId}`;
     return this.http.get<EfiFaturaResponse>(url, { headers: headers });
   }
 

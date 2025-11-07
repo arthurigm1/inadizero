@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractContro
 import { Router, RouterModule } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-redefinir-senha',
@@ -173,7 +174,7 @@ export class RedefinirSenhaComponent {
     this.successMessage = '';
 
     const novaSenha = this.resetForm.value['novaSenha'];
-    const url = 'http://localhost:3010/api/usuario/validar-redefinicao-senha';
+    const url = `${environment.apiBaseUrl}/api/usuario/validar-redefinicao-senha`;
 
     let headers = new HttpHeaders();
     headers = headers.set('Authorization', `Bearer ${this.token}`);

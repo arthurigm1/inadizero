@@ -6,6 +6,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { AuthService } from '../../auth/auth.service';
 import { Observable, throwError, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 // Schema de validação para criar inquilino
 interface CriarInquilinoData {
@@ -260,10 +261,7 @@ enum TipoUsuario {
             <i class="fas fa-plus mr-2"></i>
             Novo Inquilino
           </button>
-          <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold transition-all duration-300 w-full sm:w-auto">
-            <i class="fas fa-download mr-2"></i>
-            Exportar
-          </button>
+
         </div>
         
         <div class="flex flex-wrap gap-4">
@@ -488,7 +486,7 @@ export class UsersComponent implements OnInit {
     { value: 'pending', label: 'Pendente' }
   ];
   
-  private apiUrl = 'http://localhost:3010/api/usuario';
+  private apiUrl = `${environment.apiBaseUrl}/api/usuario`;
   
   constructor(
     private fb: FormBuilder,

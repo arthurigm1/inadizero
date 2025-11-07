@@ -406,18 +406,17 @@ loadContracts(): void {
       limit: this.pageSize
     };
 
-    console.log('Carregando contratos com filtros:', filters);
+    // Removido log de carregamento de filtros (desnecessário em produção)
     this.contractService.getCompanyContracts(filters).subscribe({
       next: (response: any) => {
-        console.log('Resposta da API de contratos:', response);
-        console.log('Tipo da resposta:', typeof response);
+        // Removidos logs de resposta da API (ruído em produção)
         
         // Extrair dados do objeto de resposta
         if (response && response.sucesso) {
           // Extrair array de contratos
           if (response.contratos && Array.isArray(response.contratos)) {
             this.contracts = response.contratos;
-            console.log('Contratos extraídos:', this.contracts);
+            // Removido log de contratos extraídos
           } else {
             console.warn('Array de contratos não encontrado na resposta');
             this.contracts = [];
@@ -427,8 +426,7 @@ loadContracts(): void {
           if (typeof response.totalContratos === 'number') {
             this.totalContracts = response.totalContratos;
             this.totalPages = Math.ceil(this.totalContracts / this.pageSize);
-            console.log('Total de contratos:', this.totalContracts);
-            console.log('Total de páginas:', this.totalPages);
+            // Removidos logs de totais calculados
           } else {
             this.totalContracts = 0;
             this.totalPages = 0;
@@ -453,28 +451,27 @@ loadContracts(): void {
 
 
   loadStores(): void {
-    console.log('Carregando lojas...');
+    // Removido log de carregamento de lojas
     this.contractService.getStores().subscribe({
       next: (response: any) => {
-        console.log('Resposta da API de lojas:', response);
-        console.log('Tipo da resposta:', typeof response);
+        // Removidos logs de resposta de lojas
         
         // Extrair o array de lojas do objeto de resposta
         let stores = [];
         if (response && response.lojas && Array.isArray(response.lojas)) {
           stores = response.lojas;
-          console.log('Array de lojas extraído com sucesso:', stores);
+          // Removido log de lojas extraídas
         } else if (Array.isArray(response)) {
           // Caso a API retorne diretamente um array (fallback)
           stores = response;
-          console.log('Resposta já é um array:', stores);
+          // Removido log redundante
         } else {
           console.warn('Formato de resposta inesperado para lojas:', response);
           stores = [];
         }
         
         this.stores = stores;
-        console.log('Lojas finais atribuídas:', this.stores);
+        // Removido log de lojas finais atribuídas
       },
       error: (error) => {
         console.error('Erro ao carregar lojas:', error);
@@ -485,12 +482,10 @@ loadContracts(): void {
 
 
   loadTenants(): void {
-    console.log('Carregando inquilinos...');
+    // Removido log de carregamento de inquilinos
     this.storeService.getTenants().subscribe({
       next: (tenants: Tenant[]) => {
-        console.log('Resposta da API de inquilinos:', tenants);
-        console.log('Tipo da resposta:', typeof tenants);
-        console.log('É array?', Array.isArray(tenants));
+        // Removidos logs de resposta de inquilinos
         
         // Garantir que sempre seja um array
         if (Array.isArray(tenants)) {
@@ -499,7 +494,7 @@ loadContracts(): void {
           console.warn('API retornou um objeto ao invés de array para inquilinos:', tenants);
           this.tenants = [];
         }
-        console.log('Inquilinos finais:', this.tenants);
+        // Removido log de inquilinos finais
       },
       error: (error) => {
         console.error('Erro ao carregar inquilinos:', error);
@@ -601,7 +596,7 @@ loadContracts(): void {
     this.isCreating = true;
     this.contractService.createContract(this.newContract).subscribe({
       next: (contract) => {
-        console.log('Contrato criado com sucesso:', contract);
+        // Removido log de sucesso na criação de contrato
         this.closeCreateModal();
         this.loadContracts();
         this.isCreating = false;
@@ -626,7 +621,7 @@ loadContracts(): void {
     if (confirm('Tem certeza que deseja excluir este contrato?')) {
       this.contractService.rescindContract(contract.id).subscribe({
         next: () => {
-          console.log('Contrato excluído com sucesso');
+          // Removido log de sucesso na exclusão de contrato
           this.loadContracts();
         },
         error: (error) => {
@@ -673,7 +668,7 @@ loadContracts(): void {
   }
 
   onContractSaved(contract: Contract): void {
-    console.log('Contrato salvo com sucesso:', contract);
+    // Removido log de sucesso ao salvar contrato
     this.closeEditModal();
     this.loadContracts();
   }

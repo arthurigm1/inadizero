@@ -11,9 +11,9 @@ import { ContractEditModalComponent } from '../contract-edit-modal/contract-edit
   standalone: true,
   imports: [CommonModule, ContractEditModalComponent],
   template: `
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50" [@fadeIn]>
+    <div class="min-h-screen" [@fadeIn]>
       <!-- Header -->
-      <div class="bg-white border-b border-blue-200 p-6">
+      <div class=" p-6">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-4">
             <button (click)="goBack()" 
