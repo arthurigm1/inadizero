@@ -30,19 +30,19 @@ interface EnviarPredefinidasPayload {
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="min-h-screen p-4 sm:p-6">
+    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-4 sm:p-6">
       <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="mb-8">
           <div class="flex items-center gap-3 mb-3">
-            <div class="p-2 bg-white rounded-lg border border-gray-200">
-              <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="p-2 bg-white rounded-xl border border-slate-200 shadow-sm">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.93 4.93l9.07 9.07-9.07 9.07L4.93 4.93z"/>
               </svg>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Central de Notificações</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Central de Notificações</h1>
           </div>
-          <p class="text-gray-600 text-sm sm:text-lg max-w-3xl">
+          <p class="text-slate-600 text-sm sm:text-lg max-w-3xl">
             Gerencie e envie notificações personalizadas para seus inquilinos através do sistema ou por e-mail.
           </p>
         </div>
@@ -50,21 +50,21 @@ interface EnviarPredefinidasPayload {
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
           <!-- Formulário Principal -->
           <div class="xl:col-span-2">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
               <!-- Header do Card -->
-              <div class="bg-gray-50 px-4 py-3">
+              <div class="bg-slate-50/80 backdrop-blur px-5 py-4 border-b border-slate-200">
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                    <div class="p-2 bg-gray-100 rounded-md">
-                      <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 bg-blue-100 rounded-lg">
+                      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                       </svg>
                     </div>
-                    <h2 class="text-xl font-semibold text-gray-900">Compor Notificação</h2>
+                    <h2 class="text-xl font-semibold text-slate-900">Compor Notificação</h2>
                   </div>
-                  <div class="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full">
+                  <div class="flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full">
                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span class="text-gray-700 text-sm font-medium">Online</span>
+                    <span class="text-emerald-700 text-sm font-medium">Online</span>
                   </div>
                 </div>
               </div>
@@ -135,38 +135,38 @@ interface EnviarPredefinidasPayload {
 
                 <!-- Assunto -->
                 <div class="space-y-2">
-                  <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <label class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                     </svg>
                     Assunto
-                    <span class="text-xs font-normal text-gray-500">(opcional)</span>
+                    <span class="text-xs font-normal text-slate-500">(opcional)</span>
                   </label>
                   <input 
                     type="text" 
                     class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                    [class]="isAssuntoValido() ? 'border-gray-200' : 'border-red-300 ring-2 ring-red-100'"
+                    [class]="isAssuntoValido() ? 'border-slate-200' : 'border-red-300 ring-2 ring-red-100'"
                     [(ngModel)]="form.assunto" 
                     name="assunto" 
                     [placeholder]="getDefaultSubject(form.tipo)"
                     maxlength="200" />
                   <div class="flex items-center justify-between">
-                    <div class="text-xs" [class]="isAssuntoValido() ? 'text-gray-500' : 'text-red-600'">
+                    <div class="text-xs" [class]="isAssuntoValido() ? 'text-slate-500' : 'text-red-600'">
                       {{ isAssuntoValido() ? 'Assunto válido' : 'Máximo 200 caracteres' }}
                     </div>
                     <div class="flex items-center gap-2">
-                      <div class="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div class="h-full bg-blue-500 transition-all duration-300" [style.width.%]="assuntoProgress"></div>
                       </div>
-                      <span class="text-xs text-gray-500 font-mono">{{ assuntoLength }}/200</span>
+                      <span class="text-xs text-slate-500 font-mono">{{ assuntoLength }}/200</span>
                     </div>
                   </div>
                 </div>
 
                 <!-- Mensagem -->
                 <div class="space-y-2">
-                  <label class="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <label class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                     </svg>
                     Mensagem
@@ -174,20 +174,20 @@ interface EnviarPredefinidasPayload {
                   <textarea 
                     rows="6"
                     class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
-                    [class]="isMensagemValida() ? 'border-gray-200' : 'border-red-300 ring-2 ring-red-100'"
+                    [class]="isMensagemValida() ? 'border-slate-200' : 'border-red-300 ring-2 ring-red-100'"
                     [(ngModel)]="form.mensagem" 
                     name="mensagem" 
                     placeholder="Escreva sua mensagem aqui..."
                     maxlength="500"></textarea>
                   <div class="flex items-center justify-between">
-                    <div class="text-xs" [class]="isMensagemValida() ? 'text-gray-500' : 'text-red-600'">
+                    <div class="text-xs" [class]="isMensagemValida() ? 'text-slate-500' : 'text-red-600'">
                       {{ isMensagemValida() ? 'Mensagem válida' : 'Mensagem é obrigatória (1-500 caracteres)' }}
                     </div>
                     <div class="flex items-center gap-2">
-                      <div class="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div class="h-full bg-blue-500 transition-all duration-300" [style.width.%]="mensagemProgress"></div>
                       </div>
-                      <span class="text-xs text-gray-500 font-mono">{{ mensagemLength }}/500</span>
+                      <span class="text-xs text-slate-500 font-mono">{{ mensagemLength }}/500</span>
                     </div>
                   </div>
                 </div>
@@ -250,15 +250,15 @@ interface EnviarPredefinidasPayload {
                 </div>
 
                 <!-- Preview -->
-                <div class="border border-gray-200 bg-gray-50 p-4 rounded-lg">
+                <div class="border border-slate-200 bg-slate-50 p-5 rounded-2xl">
                   <div class="flex items-center gap-2 mb-2">
-                    <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                     </svg>
-                    <span class="text-sm font-semibold text-gray-900">Prévia da Notificação</span>
+                    <span class="text-sm font-semibold text-slate-900">Prévia da Notificação</span>
                   </div>
-                  <div class="text-sm text-gray-800 space-y-1">
+                  <div class="text-sm text-slate-800 space-y-1">
                     <div><span class="font-medium">Tipo:</span> {{ getTipoLabel(form.tipo) }}</div>
                     <div><span class="font-medium">Assunto:</span> {{ (form.assunto || getDefaultSubject(form.tipo)) }}</div>
                     <div><span class="font-medium">Destinatário:</span> {{ destinatarioLabel }}</div>
@@ -270,36 +270,36 @@ interface EnviarPredefinidasPayload {
 
           <!-- Lista de Inquilinos -->
           <div class="xl:col-span-1">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden sticky top-6">
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden sticky top-6">
               <!-- Header do Card -->
-              <div class="bg-gray-50 px-4 py-3">
+              <div class="bg-slate-50/80 backdrop-blur px-5 py-4 border-b border-slate-200">
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                    <div class="p-2 bg-gray-100 rounded-md">
-                      <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 bg-blue-100 rounded-lg">
+                      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                       </svg>
                     </div>
-                    <h2 class="text-xl font-semibold text-gray-900">Lista de Inquilinos</h2>
+                    <h2 class="text-xl font-semibold text-slate-900">Lista de Inquilinos</h2>
                   </div>
-                  <span class="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
+                  <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
                     {{ filteredTenants.length }} {{ filteredTenants.length === 1 ? 'inquilino' : 'inquilinos' }}
                   </span>
                 </div>
               </div>
 
               <!-- Busca -->
-              <div class="p-4 sm:p-6 border-b border-gray-100">
+              <div class="p-4 sm:p-6 border-b border-slate-100">
                 <div class="space-y-4">
                   <div class="relative">
                     <input 
                       type="text" 
-                      class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                       [(ngModel)]="tenantSearchTerm" 
                       name="tenantSearch"
                       placeholder="Buscar inquilinos..."
                       (ngModelChange)="onTenantSearchChange()" />
-                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                       </svg>
@@ -309,13 +309,13 @@ interface EnviarPredefinidasPayload {
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input 
                       type="text" 
-                      class="px-3 py-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      class="px-3 py-2 border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       [(ngModel)]="tenantNameInput" 
                       name="tenantName"
                       placeholder="Nome" />
                     <input 
                       type="text" 
-                      class="px-3 py-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      class="px-3 py-2 border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
                       [(ngModel)]="tenantEmailInput" 
                       name="tenantEmail"
                       placeholder="Email" />
@@ -341,8 +341,8 @@ interface EnviarPredefinidasPayload {
               <!-- Lista -->
               <div class="p-4 max-h-96 overflow-y-auto">
                 <div *ngIf="loading" class="flex items-center justify-center py-8">
-                  <div class="flex items-center gap-3 text-gray-500">
-                    <svg class="animate-spin h-5 w-5 text-gray-600" viewBox="0 0 24 24">
+                  <div class="flex items-center gap-3 text-slate-500">
+                    <svg class="animate-spin h-5 w-5 text-slate-600" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                     </svg>
@@ -354,7 +354,7 @@ interface EnviarPredefinidasPayload {
                   {{ error }}
                 </div>
 
-                <div *ngIf="tenants.length === 0 && !loading && !error" class="text-center py-8 text-gray-500">
+                <div *ngIf="tenants.length === 0 && !loading && !error" class="text-center py-8 text-slate-500">
                   <svg class="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                   </svg>
@@ -363,18 +363,18 @@ interface EnviarPredefinidasPayload {
 
                 <div class="space-y-3">
                   <div *ngFor="let t of filteredTenants" 
-                       class="p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-50 transition-colors duration-200 cursor-pointer group"
-                       [class.border-gray-300]="selectedTenantId === t.id"
+                       class="p-4 border border-slate-200 rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-colors duration-200 cursor-pointer group"
+                       [class.border-slate-300]="selectedTenantId === t.id"
                        (click)="selectedTenantId = t.id">
                     <div class="flex items-center justify-between">
                       <div class="flex-1 min-w-0">
-                        <p class="text-gray-900 font-semibold truncate">{{ t.nome }}</p>
-                        <p class="text-gray-600 text-sm truncate">{{ t.email }}</p>
-                        <p *ngIf="t.telefone" class="text-gray-500 text-xs mt-1">{{ t.telefone }}</p>
+                        <p class="text-slate-900 font-semibold truncate">{{ t.nome }}</p>
+                        <p class="text-slate-600 text-sm truncate">{{ t.email }}</p>
+                        <p *ngIf="t.telefone" class="text-slate-500 text-xs mt-1">{{ t.telefone }}</p>
                       </div>
                       <div class="flex items-center gap-2">
-                        <div *ngIf="selectedTenantId === t.id" class="w-2 h-2 bg-gray-600 rounded-full"></div>
-                        <button class="px-3 py-1 bg-white border border-gray-200 text-gray-700 rounded-md text-sm font-medium hover:border-gray-300 hover:text-gray-800 transition-colors duration-200 group-hover:border-gray-300">
+                        <div *ngIf="selectedTenantId === t.id" class="w-2 h-2 bg-slate-600 rounded-full"></div>
+                        <button class="px-3 py-1 bg-white border border-slate-200 text-slate-700 rounded-md text-sm font-medium hover:border-slate-300 hover:text-slate-800 transition-colors duration-200 group-hover:border-slate-300">
                           Selecionar
                         </button>
                       </div>

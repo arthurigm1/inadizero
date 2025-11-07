@@ -218,9 +218,8 @@ interface AnalyticsData {
             <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
               <span class="text-sm font-bold text-white">AD</span>
             </div>
-            <div class="flex-1 min-w-0">
+            <div class="flex-0 min-w-0">
               <p class="text-sm font-semibold text-slate-900 truncate">Admin</p>
-              <p class="text-xs text-slate-500 truncate">admin&#64;inadizero.com</p>
             </div>
           </div>
         </div>
@@ -652,7 +651,7 @@ export class DashboardComponent implements OnInit {
   // Charts data and options - Versão mais profissional
   lineRecebChartOptions: any = {
     chart: {
-      type: 'area',
+      type: 'bar',
       height: 280,
       toolbar: { show: false },
       zoom: { enabled: false },
@@ -674,18 +673,11 @@ export class DashboardComponent implements OnInit {
       }
     },
     dataLabels: { enabled: false },
-    stroke: {
-      curve: 'smooth',
-      width: 3,
-      colors: ['#3b82f6']
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.4,
-        opacityTo: 0.1,
-        stops: [0, 90, 100]
+    plotOptions: {
+      bar: {
+        columnWidth: '55%',
+        borderRadius: 4,
+        borderRadiusApplication: 'end'
       }
     },
     colors: ['#3b82f6'],
@@ -711,7 +703,7 @@ export class DashboardComponent implements OnInit {
 
   aReceberChartOptions: any = {
     chart: {
-      type: 'area',
+      type: 'bar',
       height: 280,
       toolbar: { show: false },
       zoom: { enabled: false },
@@ -733,18 +725,11 @@ export class DashboardComponent implements OnInit {
       }
     },
     dataLabels: { enabled: false },
-    stroke: {
-      curve: 'smooth',
-      width: 3,
-      colors: ['#f59e0b']
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.4,
-        opacityTo: 0.1,
-        stops: [0, 90, 100]
+    plotOptions: {
+      bar: {
+        columnWidth: '55%',
+        borderRadius: 4,
+        borderRadiusApplication: 'end'
       }
     },
     colors: ['#f59e0b'],
