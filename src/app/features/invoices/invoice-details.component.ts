@@ -14,7 +14,17 @@ import { InvoiceService } from './invoice.service';
           <h2 class="text-3xl font-bold text-blue-900">Detalhes da Fatura</h2>
           <p class="text-gray-600 mt-1">Informações completas da fatura selecionada</p>
         </div>
-        <button (click)="onClose()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm">Voltar</button>
+        <div class="flex items-center gap-3">
+          <button
+            (click)="onEnviarEmail()"
+            [disabled]="sendingEmail || !invoiceId"
+            class="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-lg shadow-sm"
+          >
+            <i class="fas fa-envelope mr-2"></i>
+            {{ sendingEmail ? 'Enviando...' : 'Enviar por Email' }}
+          </button>
+          <button (click)="onClose()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm">Voltar</button>
+        </div>
       </div>
 
       <div *ngIf="loading" class="flex justify-center items-center py-12">
@@ -23,6 +33,9 @@ import { InvoiceService } from './invoice.service';
 
       <div *ngIf="error" class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
         {{error}}
+      </div>
+      <div *ngIf="emailMessage" class="p-4 rounded-lg border mt-2" [ngClass]="emailSuccess ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'">
+        {{ emailMessage }}
       </div>
 
       <div *ngIf="!loading && !error && detalhes" class="bg-white border border-blue-200 rounded-xl p-6 space-y-6">
@@ -108,6 +121,9 @@ export class InvoiceDetailsComponent implements OnInit {
   loading = false;
   error: string | null = null;
   detalhes: DetalhesData | null = null;
+  sendingEmail = false;
+  emailMessage: string | null = null;
+  emailSuccess: boolean | null = null;
 
   constructor(private invoiceService: InvoiceService) {}
 
@@ -115,6 +131,26 @@ export class InvoiceDetailsComponent implements OnInit {
     if (this.invoiceId) {
       this.fetchDetails(this.invoiceId);
     }
+  }
+
+  onEnviarEmail(): void {
+    if (!this.invoiceId) return;
+    this.emailMessage = null;
+    this.emailSuccess = null;
+    this.sendingEmail = true;
+    this.invoiceService.enviarFaturaPorEmail(this.invoiceId).subscribe({
+      next: (res) => {
+        const msg = res?.message || res?.mensagem || 'Fatura enviada por email com sucesso!';
+        this.emailMessage = msg;
+        this.emailSuccess = true;
+        this.sendingEmail = false;
+      },
+      error: (err) => {
+        this.emailMessage = err?.error?.message || err?.message || 'Falha ao enviar a fatura por email.';
+        this.emailSuccess = false;
+        this.sendingEmail = false;
+      }
+    });
   }
 
   fetchDetails(id: string): void {

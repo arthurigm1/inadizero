@@ -104,4 +104,24 @@ export class InvoiceService {
       })
     );
   }
+
+  // POST /fatura/:id/enviar-email - Envia a fatura por email ao inquilino (PIX/Boleto)
+  enviarFaturaPorEmail(id: string): Observable<any> {
+    const token = this.authService.token;
+    if (!token) {
+      return this.handleAuthError();
+    }
+
+    const headers = this.getAuthHeaders();
+
+    return this.http.post<any>(`${this.apiUrl}/${id}/enviar-email`, {}, { headers }).pipe(
+      catchError((error) => {
+        console.error('Erro ao enviar fatura por email:', error);
+        if (error.status === 401) {
+          return this.handleAuthError();
+        }
+        throw error;
+      })
+    );
+  }
 }

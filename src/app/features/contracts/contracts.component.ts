@@ -248,11 +248,27 @@ import { finalize } from 'rxjs/operators';
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Loja *</label>
-            <select [(ngModel)]="newContract.lojaId" name="lojaId" required 
-                    class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
-              <option value="">Selecione uma loja</option>
-              <option *ngFor="let store of stores" [value]="store.id">{{store.nome}}</option>
-            </select>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2">
+                <input type="text"
+                       [(ngModel)]="storeSearchQuery"
+                       name="storeSearchQuery"
+                       (ngModelChange)="onStoreSearchQueryChange($event)"
+                       placeholder="Buscar loja pelo nome"
+                       class="flex-1 bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-3 py-2 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm" />
+                <button type="button"
+                        (click)="clearStoreSearch()"
+                        class="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700">
+                  Limpar
+                </button>
+              </div>
+              <div class="text-xs text-gray-500" *ngIf="storeSearchLoading">Buscando lojas...</div>
+              <select [(ngModel)]="newContract.lojaId" name="lojaId" required 
+                      class="w-full bg-white backdrop-blur-sm border border-blue-200 rounded-lg px-4 py-3 text-blue-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-sm">
+                <option value="">Selecione uma loja</option>
+                <option *ngFor="let store of getModalStores()" [value]="store.id">{{store.nome}} - {{store.numero}}</option>
+              </select>
+            </div>
           </div>
 
           <div>
@@ -396,6 +412,12 @@ export class ContractsComponent implements OnInit {
   };
   stores: StoreOption[] = [];
   tenants: Tenant[] = [];
+  
+  // Busca de lojas no modal de novo contrato
+  public storeSearchQuery: string = '';
+  storeSearchResults: StoreOption[] = [];
+  storeSearchLoading: boolean = false;
+  private storeSearchDebounceHandle: any;
   
   // Filters
   filters: ContractFilters = {
@@ -546,6 +568,67 @@ loadContracts(): void {
         this.tenants = []; // Garantir que seja um array vazio em caso de erro
       }
     });
+  }
+
+  // Utilizado pelo select do modal: usa resultados filtrados se houver
+  getModalStores(): StoreOption[] {
+    return (this.storeSearchResults && this.storeSearchResults.length > 0) 
+      ? this.storeSearchResults 
+      : this.stores;
+  }
+
+  // Dispara a busca com debounce
+  onStoreSearchQueryChange(query: string): void {
+    this.storeSearchQuery = query || '';
+    this.debounceSearchStores();
+  }
+
+  private debounceSearchStores(): void {
+    if (this.storeSearchDebounceHandle) {
+      clearTimeout(this.storeSearchDebounceHandle);
+    }
+    const q = (this.storeSearchQuery || '').trim();
+    if (!q) {
+      this.storeSearchResults = [];
+      return;
+    }
+    this.storeSearchDebounceHandle = setTimeout(() => {
+      this.searchStoresByName(q);
+    }, 300);
+  }
+
+  private searchStoresByName(nome: string): void {
+    this.storeSearchLoading = true;
+    this.storeService.getStores({ page: 1, limit: 9, nome })
+      .subscribe({
+        next: (resp: any) => {
+          let lojas = [];
+          if (resp && Array.isArray(resp.lojas)) {
+            lojas = resp.lojas;
+          } else if (Array.isArray(resp)) {
+            lojas = resp;
+          } else {
+            lojas = [];
+          }
+          // Mapear para StoreOption
+          this.storeSearchResults = lojas.map((s: any) => ({
+            id: s.id,
+            nome: s.nome,
+            numero: s.numero
+          }));
+          this.storeSearchLoading = false;
+        },
+        error: (err) => {
+          console.error('Erro na busca de lojas por nome:', err);
+          this.storeSearchResults = [];
+          this.storeSearchLoading = false;
+        }
+      });
+  }
+
+  clearStoreSearch(): void {
+    this.storeSearchQuery = '';
+    this.storeSearchResults = [];
   }
 
   applyFilters(): void {
