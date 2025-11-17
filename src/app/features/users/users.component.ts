@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { Observable, throwError, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
-// Schema de validação para criar inquilino
+// Schema de validaÃ§Ã£o para criar inquilino
 interface CriarInquilinoData {
   nome: string;
   email: string;
@@ -29,9 +29,9 @@ interface ApiPaginationResponse {
 }
 
 enum TipoUsuario {
-  ADMIN_EMPRESA = 'ADMIN_EMPRESA',    // Usuário principal da empresa que pode criar outros usuários
-  FUNCIONARIO = 'FUNCIONARIO',        // Funcionário da empresa
-  INQUILINO = 'INQUILINO',            // Inquilino (pode ser criado por usuários da empresa)
+  ADMIN_EMPRESA = 'ADMIN_EMPRESA',    // UsuÃ¡rio principal da empresa que pode criar outros usuÃ¡rios
+  FUNCIONARIO = 'FUNCIONARIO',        // FuncionÃ¡rio da empresa
+  INQUILINO = 'INQUILINO',            // Inquilino (pode ser criado por usuÃ¡rios da empresa)
   VISITANTE = 'VISITANTE'             // Visitante
 }
 
@@ -83,7 +83,7 @@ enum TipoUsuario {
                 placeholder="Nome completo do inquilino"
               >
               <div *ngIf="createTenantForm.get('nome')?.invalid && createTenantForm.get('nome')?.touched" class="text-red-500 text-sm mt-1">
-                <span *ngIf="createTenantForm.get('nome')?.errors?.['required']">Nome é obrigatório!</span>
+                <span *ngIf="createTenantForm.get('nome')?.errors?.['required']">Nome Ã© obrigatÃ³rio!</span>
               </div>
             </div>
             
@@ -98,8 +98,8 @@ enum TipoUsuario {
                 placeholder="email@exemplo.com"
               >
               <div *ngIf="createTenantForm.get('email')?.invalid && createTenantForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
-                <span *ngIf="createTenantForm.get('email')?.errors?.['required']">Email é obrigatório!</span>
-                <span *ngIf="createTenantForm.get('email')?.errors?.['email']">Email inválido</span>
+                <span *ngIf="createTenantForm.get('email')?.errors?.['required']">Email Ã© obrigatÃ³rio!</span>
+                <span *ngIf="createTenantForm.get('email')?.errors?.['email']">Email invÃ¡lido</span>
               </div>
             </div>
             
@@ -111,15 +111,15 @@ enum TipoUsuario {
                 type="password"
                 formControlName="senha"
                 class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                placeholder="Senha (mínimo 6 caracteres)"
+                placeholder="Senha (mÃ­nimo 6 caracteres)"
               >
               <div *ngIf="createTenantForm.get('senha')?.invalid && createTenantForm.get('senha')?.touched" class="text-red-500 text-sm mt-1">
-                <span *ngIf="createTenantForm.get('senha')?.errors?.['required']">Senha é obrigatória!</span>
-                <span *ngIf="createTenantForm.get('senha')?.errors?.['minlength']">Senha deve ter no mínimo 6 caracteres</span>
+                <span *ngIf="createTenantForm.get('senha')?.errors?.['required']">Senha Ã© obrigatÃ³ria!</span>
+                <span *ngIf="createTenantForm.get('senha')?.errors?.['minlength']">Senha deve ter no mÃ­nimo 6 caracteres</span>
               </div>
             </div>
             
-            <!-- Botões -->
+            <!-- BotÃµes -->
             <div class="flex gap-3">
               <button
                 type="button"
@@ -144,7 +144,7 @@ enum TipoUsuario {
         </div>
       </div>
 
-      <!-- Notificação -->
+      <!-- NotificaÃ§Ã£o -->
       <div *ngIf="notification.show" class="fixed top-4 right-4 z-50" [@slideIn]>
         <div [ngClass]="{
           'bg-green-100 border-green-400': notification.type === 'success',
@@ -172,7 +172,7 @@ enum TipoUsuario {
         </div>
       </div>
 
-      <!-- Modal de confirmação de desativação -->
+      <!-- Modal de confirmaÃ§Ã£o de desativaÃ§Ã£o -->
       <div *ngIf="showDeactivateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
         <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-blue-200">
           <div class="flex justify-between items-center mb-6">
@@ -213,7 +213,7 @@ enum TipoUsuario {
         </div>
       </div>
 
-      <!-- Modal de confirmação de ativação -->
+      <!-- Modal de confirmaÃ§Ã£o de ativaÃ§Ã£o -->
       <div *ngIf="showActivateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
         <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-blue-200">
           <div class="flex justify-between items-center mb-6">
@@ -293,7 +293,7 @@ enum TipoUsuario {
             <option *ngFor="let status of statusTypes" [value]="status.value">{{ status.label }}</option>
           </select>
           
-          <!-- Botão limpar filtros -->
+          <!-- BotÃ£o limpar filtros -->
           <button 
             (click)="clearFilters()"
             class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 w-full sm:w-auto">
@@ -369,6 +369,24 @@ enum TipoUsuario {
                       </svg>
                       <span class="hidden sm:inline text-sm font-semibold">Ativar</span>
                     </button>
+                    <button
+                      class="p-2 rounded-full hover:bg-blue-50 text-blue-600 hover:text-blue-800 transition-colors duration-200 flex items-center gap-2"
+                      title="Editar"
+                      aria-label="Editar usuário"
+                      (click)="openEditModal(user)"
+                    >
+                      <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 4h2a2 2 0 012 2v2m-1 5l-7 7H4v-3l7-7m4-4l3 3" />
+                      </svg>
+                      <span class="hidden sm:inline text-sm font-semibold">Editar</span>
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -376,7 +394,7 @@ enum TipoUsuario {
                 <td colspan="6" class="px-6 py-10 text-center">
                   <div class="flex flex-col items-center text-blue-700">
                     <i class="fas fa-users-slash text-4xl mb-3"></i>
-                    <p class="text-sm">Nenhum usuário encontrado para os filtros atuais.</p>
+                  <p class="text-sm">Nenhum usuário encontrado para os filtros atuais.</p>
                     <button (click)="clearFilters()" class="mt-4 px-4 py-2 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 transition-colors">Limpar filtros</button>
                   </div>
                 </td>
@@ -386,6 +404,83 @@ enum TipoUsuario {
         </div>
       </div>
 
+      <!-- Modal de edição de usuário -->
+      <div
+        *ngIf="showEditModal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        [@fadeIn]
+      >
+        <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-blue-200">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-blue-700">Editar Usuário</h2>
+            <button (click)="closeEditModal()" class="text-gray-500 hover:text-blue-800 transition-colors">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+
+          <form [formGroup]="editForm" (ngSubmit)="onEditUser()">
+            <div class="mb-4">
+              <label for="edit-nome" class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+              <input
+                id="edit-nome"
+                type="text"
+                formControlName="nome"
+                class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                placeholder="Nome do usuário"
+              >
+              <div *ngIf="editForm.get('nome')?.invalid && editForm.get('nome')?.touched" class="text-red-500 text-sm mt-1">
+                <span *ngIf="editForm.get('nome')?.errors?.['minlength']">Nome deve ter no mínimo 2 caracteres</span>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="edit-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input
+                id="edit-email"
+                type="email"
+                formControlName="email"
+                class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                placeholder="email@exemplo.com"
+              >
+              <div *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
+                <span *ngIf="editForm.get('email')?.errors?.['email']">Email inválido</span>
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <label for="edit-tipo" class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+              <select id="edit-tipo" formControlName="tipo" class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 focus:outline-none focus:border-blue-500">
+                <option [ngValue]="null">(sem alteração)</option>
+                <option value="ADMIN_EMPRESA">Admin da Empresa</option>
+                <option value="FUNCIONARIO">Funcionário</option>
+                <option value="INQUILINO">Inquilino</option>
+                <option value="VISITANTE">Visitante</option>
+              </select>
+            </div>
+
+            <div class="flex gap-3">
+              <button
+                type="button"
+                (click)="closeEditModal()"
+                class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                [disabled]="isEditing || !hasEditChanges() || editForm.invalid"
+                class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span *ngIf="!isEditing">Salvar alterações</span>
+                <span *ngIf="isEditing" class="flex items-center justify-center">
+                  <i class="fas fa-spinner fa-spin mr-2"></i>
+                  Salvando...
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
       <!-- Pagination (estilo alinhado ao invoices/lojas) -->
       <div *ngIf="totalItems > 0" class="bg-blue-50 px-6 py-3 flex items-center justify-between border border-blue-200 rounded-lg mt-8" [@slideIn]>
         <!-- Mobile -->
@@ -394,7 +489,7 @@ enum TipoUsuario {
             Anterior
           </button>
           <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
-            Próximo
+            PrÃ³ximo
           </button>
         </div>
         <!-- Desktop -->
@@ -403,7 +498,7 @@ enum TipoUsuario {
             <p class="text-sm text-blue-700">
               Mostrando <span class="font-medium">{{(currentPage - 1) * itemsPerPage + 1}}</span> a 
               <span class="font-medium">{{currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage : totalItems}}</span> 
-              de <span class="font-medium">{{totalItems}}</span> usuários
+              de <span class="font-medium">{{totalItems}}</span> usuÃ¡rios
             </p>
           </div>
           <div>
@@ -429,12 +524,12 @@ enum TipoUsuario {
   `
 })
 export class UsersComponent implements OnInit {
-  // Propriedades do formulário
+  // Propriedades do formulÃ¡rio
   createTenantForm: FormGroup;
   showCreateTenantModal = false;
   isCreatingTenant = false;
   
-  // Propriedades da notificação
+  // Propriedades da notificaÃ§Ã£o
   notification = {
     show: false,
     type: 'success' as 'success' | 'error' | 'info',
@@ -442,26 +537,32 @@ export class UsersComponent implements OnInit {
     message: ''
   };
   
-  // Estado do diálogo de desativação
+  // Estado do diÃ¡logo de desativaÃ§Ã£o
   showDeactivateModal = false;
   isDeactivating = false;
   userToDeactivate: any | null = null;
 
-  // Estado do diálogo de ativação
+  // Estado do diÃ¡logo de ativaÃ§Ã£o
   showActivateModal = false;
   isActivating = false;
   userToActivate: any | null = null;
+  
+  // Estado de edição de usuário
+  showEditModal = false;
+  isEditing = false;
+  userToEdit: any | null = null;
+  editForm!: FormGroup;
   
   // Propriedades de filtro
   selectedTypeFilter: TipoUsuario | 'todos' = 'todos';
   selectedStatusFilter: 'active' | 'inactive' | 'pending' | 'todos' = 'todos';
   searchTerm = '';
   
-  // Lista de usuários original e filtrada
+  // Lista de usuÃ¡rios original e filtrada
   allUsers: any[] = [];
   users: any[] = [];
   
-  // Propriedades de paginação
+  // Propriedades de paginaÃ§Ã£o
   currentPage: number = 1;
   totalPages: number = 1;
   totalItems: number = 0;
@@ -469,16 +570,16 @@ export class UsersComponent implements OnInit {
   hasNextPage: boolean = false;
   hasPreviousPage: boolean = false;
   
-  // Tipos de usuário disponíveis
+  // Tipos de usuÃ¡rio disponÃ­veis
   userTypes: { value: TipoUsuario | 'todos'; label: string }[] = [
     { value: 'todos', label: 'Todos os tipos' },
     { value: TipoUsuario.ADMIN_EMPRESA, label: 'Admin da Empresa' },
-    { value: TipoUsuario.FUNCIONARIO, label: 'Funcionário' },
+    { value: TipoUsuario.FUNCIONARIO, label: 'FuncionÃ¡rio' },
     { value: TipoUsuario.INQUILINO, label: 'Inquilino' },
     { value: TipoUsuario.VISITANTE, label: 'Visitante' }
   ];
   
-  // Status disponíveis
+  // Status disponÃ­veis
   statusTypes: { value: 'active' | 'inactive' | 'pending' | 'todos'; label: string }[] = [
     { value: 'todos', label: 'Todos os status' },
     { value: 'active', label: 'Ativo' },
@@ -500,10 +601,16 @@ export class UsersComponent implements OnInit {
   }
   
   ngOnInit(): void {
+    // Inicializa o formulário de edição para evitar erros de template com objeto possivelmente nulo
+    this.editForm = this.fb.group({
+      nome: ['', [Validators.minLength(2)]],
+      email: ['', [Validators.email]],
+      tipo: [null]
+    });
     this.loadUsuariosDaEmpresa(1);
   }
   
-  // Métodos de filtro
+  // MÃ©todos de filtro
   applyFilters() {
     this.currentPage = 1;
     this.loadUsuariosDaEmpresa(1);
@@ -529,13 +636,13 @@ export class UsersComponent implements OnInit {
     this.loadUsuariosDaEmpresa(1);
   }
   
-  // Método para obter o rótulo do tipo de usuário
+  // MÃ©todo para obter o rÃ³tulo do tipo de usuÃ¡rio
   getUserTypeLabel(type: TipoUsuario): string {
     const typeObj = this.userTypes.find(t => t.value === type);
     return typeObj ? typeObj.label : type;
   }
   
-  // Métodos para o modal
+  // MÃ©todos para o modal
   openCreateTenantModal(): void {
     this.showCreateTenantModal = true;
     this.createTenantForm.reset();
@@ -546,7 +653,7 @@ export class UsersComponent implements OnInit {
     this.createTenantForm.reset();
   }
   
-  // Método para criar inquilino
+  // MÃ©todo para criar inquilino
   onCreateTenant(): void {
     if (this.createTenantForm.invalid) {
       this.createTenantForm.markAllAsTouched();
@@ -561,7 +668,7 @@ export class UsersComponent implements OnInit {
         this.isCreatingTenant = false;
         this.closeCreateTenantModal();
         this.showNotification('success', 'Sucesso!', 'Inquilino criado com sucesso!');
-        this.loadUsuariosDaEmpresa(this.currentPage); // Recarrega a página atual
+        this.loadUsuariosDaEmpresa(this.currentPage); // Recarrega a pÃ¡gina atual
       },
       error: (error) => {
         this.isCreatingTenant = false;
@@ -570,7 +677,7 @@ export class UsersComponent implements OnInit {
     });
   }
   
-  // Método para criar inquilino via API
+  // MÃ©todo para criar inquilino via API
   private criarInquilino(data: CriarInquilinoData): Observable<any> {
     try {
       const headers = this.getAuthHeaders();
@@ -579,7 +686,7 @@ export class UsersComponent implements OnInit {
           catchError((error) => {
             console.error('Erro ao criar inquilino:', error);
             if (error.status === 401) {
-              return throwError(() => new Error('Token de autenticação inválido ou expirado'));
+              return throwError(() => new Error('Token de autenticaÃ§Ã£o invÃ¡lido ou expirado'));
             }
             return throwError(() => new Error(error.error?.message || 'Erro ao criar inquilino'));
           })
@@ -589,7 +696,7 @@ export class UsersComponent implements OnInit {
     }
   }
   
-  // Método para listar usuários da empresa
+  // MÃ©todo para listar usuÃ¡rios da empresa
   private loadUsuariosDaEmpresa(page: number = 1): void {
     try {
       const headers = this.getAuthHeaders();
@@ -608,12 +715,12 @@ export class UsersComponent implements OnInit {
           params = params.set('ativo', 'false');
         }
       }
-      // Busca: usar q (genérico), ou nome/email específicos
+      // Busca: usar q (genÃ©rico), ou nome/email especÃ­ficos
       if (this.searchTerm && this.searchTerm.trim()) {
         const raw = this.searchTerm.trim();
         const lower = raw.toLowerCase();
 
-        // Suporte a prefixos explícitos: "nome:" e "email:"
+        // Suporte a prefixos explÃ­citos: "nome:" e "email:"
         if (lower.startsWith('email:')) {
           const emailValue = raw.slice(raw.indexOf(':') + 1).trim();
           if (emailValue) {
@@ -625,10 +732,10 @@ export class UsersComponent implements OnInit {
             params = params.set('nome', nomeValue);
           }
         } else if (/@/.test(raw)) {
-          // Heurística: se contém '@', tratar como filtro de email específico
+          // HeurÃ­stica: se contÃ©m '@', tratar como filtro de email especÃ­fico
           params = params.set('email', raw);
         } else {
-          // Busca genérica por qualquer termo (nome OU email)
+          // Busca genÃ©rica por qualquer termo (nome OU email)
           params = params.set('q', raw);
         }
       }
@@ -638,14 +745,14 @@ export class UsersComponent implements OnInit {
       this.http.get<ApiPaginationResponse>(`${this.apiUrl}/empresa/usuarios`, { headers, params })
         .pipe(
           catchError((error) => {
-            console.error('Erro ao carregar usuários:', error);
+            console.error('Erro ao carregar usuÃ¡rios:', error);
             if (error.status === 401) {
-              this.showNotification('error', 'Erro de Autenticação', 'Token inválido ou expirado. Faça login novamente.');
+              this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', 'Token invÃ¡lido ou expirado. FaÃ§a login novamente.');
             } else {
-              this.showNotification('error', 'Erro!', 'Erro ao carregar usuários da empresa');
+              this.showNotification('error', 'Erro!', 'Erro ao carregar usuÃ¡rios da empresa');
             }
             
-            // Retornar estrutura de fallback com paginação aninhada
+            // Retornar estrutura de fallback com paginaÃ§Ã£o aninhada
             return of({
               sucesso: false,
               paginacao: {
@@ -661,14 +768,14 @@ export class UsersComponent implements OnInit {
           })
         )
         .subscribe((response: ApiPaginationResponse) => {
-          // Atualizar propriedades de paginação
+          // Atualizar propriedades de paginaÃ§Ã£o
           this.currentPage = response.paginacao.paginaAtual;
           this.totalPages = response.paginacao.totalPaginas;
           this.totalItems = response.paginacao.totalUsuarios;
           this.hasNextPage = response.paginacao.temProximaPagina;
           this.hasPreviousPage = response.paginacao.temPaginaAnterior;
           
-          // Mapear usuários da resposta
+          // Mapear usuÃ¡rios da resposta
            if (response.usuarios && response.usuarios.length > 0) {
              this.users = response.usuarios.map((user: any) => ({
                id: user.id,
@@ -684,8 +791,8 @@ export class UsersComponent implements OnInit {
            }
         });
     } catch (error: any) {
-       this.showNotification('error', 'Erro de Autenticação', error.message);
-       // Definir valores padrão em caso de erro
+       this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', error.message);
+       // Definir valores padrÃ£o em caso de erro
        this.users = [];
        this.currentPage = 1;
        this.totalPages = 1;
@@ -695,7 +802,7 @@ export class UsersComponent implements OnInit {
      }
   }
   
-  // Método auxiliar para mapear tipos da API para o enum
+  // MÃ©todo auxiliar para mapear tipos da API para o enum
   private mapApiTypeToEnum(apiType: string): TipoUsuario {
     switch (apiType?.toUpperCase()) {
       case 'ADMIN_EMPRESA':
@@ -708,16 +815,16 @@ export class UsersComponent implements OnInit {
       case 'VISITANTE':
         return TipoUsuario.VISITANTE;
       default:
-        return TipoUsuario.VISITANTE; // Valor padrão
+        return TipoUsuario.VISITANTE; // Valor padrÃ£o
     }
   }
   
-  // Método para obter headers de autenticação
+  // MÃ©todo para obter headers de autenticaÃ§Ã£o
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.token;
     if (!token) {
-      this.showNotification('error', 'Erro de Autenticação', 'Token de acesso não encontrado. Faça login novamente.');
-      throw new Error('Token de autenticação não encontrado');
+      this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', 'Token de acesso nÃ£o encontrado. FaÃ§a login novamente.');
+      throw new Error('Token de autenticaÃ§Ã£o nÃ£o encontrado');
     }
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`,
@@ -725,7 +832,7 @@ export class UsersComponent implements OnInit {
     });
   }
   
-  // Métodos para notificação
+  // MÃ©todos para notificaÃ§Ã£o
   showNotification(type: 'success' | 'error' | 'info', title: string, message: string): void {
     this.notification = {
       type,
@@ -744,7 +851,7 @@ export class UsersComponent implements OnInit {
     this.notification.show = false;
   }
   
-  // Ações de desativação de usuário
+  // AÃ§Ãµes de desativaÃ§Ã£o de usuÃ¡rio
   openDeactivateModal(user: any): void {
     this.userToDeactivate = user;
     this.showDeactivateModal = true;
@@ -758,7 +865,7 @@ export class UsersComponent implements OnInit {
   
   confirmDeactivateUser(): void {
     if (!this.userToDeactivate?.id) {
-      this.showNotification('error', 'Erro', 'Usuário inválido para desativação.');
+      this.showNotification('error', 'Erro', 'UsuÃ¡rio invÃ¡lido para desativaÃ§Ã£o.');
       return;
     }
     try {
@@ -767,11 +874,11 @@ export class UsersComponent implements OnInit {
       this.http.patch(`${this.apiUrl}/desativar/${this.userToDeactivate.id}`, {}, { headers })
         .pipe(
           catchError((error) => {
-            console.error('Erro ao desativar usuário:', error);
+            console.error('Erro ao desativar usuÃ¡rio:', error);
             if (error.status === 401) {
-              this.showNotification('error', 'Erro de Autenticação', 'Token inválido ou expirado. Faça login novamente.');
+              this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', 'Token invÃ¡lido ou expirado. FaÃ§a login novamente.');
             } else {
-              const message = error?.error?.message || 'Erro ao desativar usuário';
+              const message = error?.error?.message || 'Erro ao desativar usuÃ¡rio';
               this.showNotification('error', 'Erro!', message);
             }
             return throwError(() => error);
@@ -781,7 +888,7 @@ export class UsersComponent implements OnInit {
           next: () => {
             this.isDeactivating = false;
             this.closeDeactivateModal();
-            this.showNotification('success', 'Sucesso!', 'Usuário desativado com sucesso!');
+            this.showNotification('success', 'Sucesso!', 'UsuÃ¡rio desativado com sucesso!');
             this.loadUsuariosDaEmpresa(this.currentPage);
           },
           error: () => {
@@ -790,11 +897,11 @@ export class UsersComponent implements OnInit {
         });
     } catch (error: any) {
       this.isDeactivating = false;
-      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao desativar usuário');
+      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao desativar usuÃ¡rio');
     }
   }
 
-  // Ações de ativação de usuário
+  // AÃ§Ãµes de ativaÃ§Ã£o de usuÃ¡rio
   openActivateModal(user: any): void {
     this.userToActivate = user;
     this.showActivateModal = true;
@@ -808,7 +915,7 @@ export class UsersComponent implements OnInit {
 
   confirmActivateUser(): void {
     if (!this.userToActivate?.id) {
-      this.showNotification('error', 'Erro', 'Usuário inválido para ativação.');
+      this.showNotification('error', 'Erro', 'UsuÃ¡rio invÃ¡lido para ativaÃ§Ã£o.');
       return;
     }
     try {
@@ -817,11 +924,11 @@ export class UsersComponent implements OnInit {
       this.http.patch(`${this.apiUrl}/ativar/${this.userToActivate.id}`, {}, { headers })
         .pipe(
           catchError((error) => {
-            console.error('Erro ao ativar usuário:', error);
+            console.error('Erro ao ativar usuÃ¡rio:', error);
             if (error.status === 401) {
-              this.showNotification('error', 'Erro de Autenticação', 'Token inválido ou expirado. Faça login novamente.');
+              this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', 'Token invÃ¡lido ou expirado. FaÃ§a login novamente.');
             } else {
-              const message = error?.error?.message || 'Erro ao ativar usuário';
+              const message = error?.error?.message || 'Erro ao ativar usuÃ¡rio';
               this.showNotification('error', 'Erro!', message);
             }
             return throwError(() => error);
@@ -831,7 +938,7 @@ export class UsersComponent implements OnInit {
           next: () => {
             this.isActivating = false;
             this.closeActivateModal();
-            this.showNotification('success', 'Sucesso!', 'Usuário ativado com sucesso!');
+            this.showNotification('success', 'Sucesso!', 'UsuÃ¡rio ativado com sucesso!');
             this.loadUsuariosDaEmpresa(this.currentPage);
           },
           error: () => {
@@ -840,11 +947,11 @@ export class UsersComponent implements OnInit {
         });
     } catch (error: any) {
       this.isActivating = false;
-      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao ativar usuário');
+      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao ativar usuÃ¡rio');
     }
   }
   
-  // Métodos de navegação de paginação
+  // MÃ©todos de navegaÃ§Ã£o de paginaÃ§Ã£o
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.loadUsuariosDaEmpresa(page);
@@ -887,5 +994,78 @@ export class UsersComponent implements OnInit {
     const end = Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
     
     return `${start} a ${end}`;
+  }
+  
+  // Métodos de edição de usuário
+  openEditModal(user: any): void {
+    this.userToEdit = user;
+    this.editForm = this.fb.group({
+      nome: [user?.nome || '', [Validators.minLength(2)]],
+      email: [user?.email || '', [Validators.email]],
+      tipo: [null]
+    });
+    this.showEditModal = true;
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.userToEdit = null;
+    this.isEditing = false;
+  }
+
+  hasEditChanges(): boolean {
+    if (!this.editForm || !this.userToEdit) return false;
+    const v = this.editForm.value as any;
+    const nomeChanged = (v.nome?.trim() ?? '') !== ((this.userToEdit.nome ?? '') as string).trim();
+    const emailChanged = (v.email?.trim() ?? '') !== ((this.userToEdit.email ?? '') as string).trim();
+    const tipoChanged = !!v.tipo;
+    return !!(nomeChanged || emailChanged || tipoChanged);
+  }
+
+  onEditUser(): void {
+    if (!this.editForm || !this.userToEdit?.id) {
+      this.showNotification('error','Erro','Formulário inválido ou usuário não selecionado.');
+      return;
+    }
+    const v = this.editForm.value as any;
+    const body: any = {};
+    if (v.nome && v.nome.trim() !== ((this.userToEdit.nome ?? '') as string).trim()) body.nome = v.nome.trim();
+    if (v.email && v.email.trim() !== ((this.userToEdit.email ?? '') as string).trim()) body.email = v.email.trim();
+    if (v.tipo) body.tipo = v.tipo;
+    if (Object.keys(body).length === 0) {
+      this.showNotification('info','Sem alterações','Nenhuma alteração detectada.');
+      return;
+    }
+    try {
+      const headers = this.getAuthHeaders();
+      this.isEditing = true;
+      this.http.patch(`${this.apiUrl}/editar/${this.userToEdit.id}`, body, { headers })
+        .pipe(
+          catchError((error) => {
+            console.error('Erro ao editar usuário:', error);
+            if (error.status === 401) {
+              this.showNotification('error','Erro de Autenticação','Token inválido ou expirado. Faça login novamente.');
+            } else {
+              const message = error?.error?.message || 'Erro ao editar usuário';
+              this.showNotification('error','Erro!', message);
+            }
+            return throwError(() => error);
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.isEditing = false;
+            this.closeEditModal();
+            this.showNotification('success','Sucesso!','Usuário atualizado com sucesso!');
+            this.loadUsuariosDaEmpresa(this.currentPage);
+          },
+          error: () => {
+            this.isEditing = false;
+          }
+        });
+    } catch (error: any) {
+      this.isEditing = false;
+      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao editar usuário');
+    }
   }
 }

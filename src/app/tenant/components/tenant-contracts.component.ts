@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
+import { PdfGeneratorService, ContractData } from '../../services/pdf-generator.service';
 
 @Component({
   selector: 'app-tenant-contracts',
@@ -226,11 +227,11 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
 
               <!-- Ações -->
               <div class="mt-6 flex justify-end space-x-3">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                <button (click)="openContractModal(loja)" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
                   <i class="fas fa-eye mr-2"></i>
                   Ver Contrato
                 </button>
-                <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                <button (click)="downloadContractPdf(loja)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
                   <i class="fas fa-download mr-2"></i>
                   Baixar PDF
                 </button>
@@ -260,6 +261,63 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
         </div>
       </div>
     </div>
+
+    <!-- Modal de Visualização de Contrato -->
+    <div *ngIf="showContractModal && selectedLoja" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+      <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-blue-100">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-blue-100">
+          <h3 class="text-xl font-bold text-blue-900">Detalhes do Contrato - Loja {{ selectedLoja?.numero }}</h3>
+          <button (click)="closeContractModal()" class="text-blue-600 hover:text-blue-800">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-blue-600/60">Loja</p>
+              <p class="font-medium text-blue-900">{{ selectedLoja?.nome }} ({{ selectedLoja?.numero }})</p>
+            </div>
+            <div>
+              <p class="text-sm text-blue-600/60">Localização</p>
+              <p class="font-medium text-blue-900">{{ selectedLoja?.localizacao }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-blue-600/60">Área</p>
+              <p class="font-medium text-blue-900">{{ selectedLoja?.area }} m²</p>
+            </div>
+            <div>
+              <p class="text-sm text-blue-600/60">Categoria</p>
+              <p class="font-medium text-blue-900">{{ selectedLoja?.categoria }}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-blue-600/60">Início</p>
+              <p class="font-medium text-blue-900">{{ selectedLoja?.contrato?.dataInicio | date:'dd/MM/yyyy' }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-blue-600/60">Fim</p>
+              <p class="font-medium text-blue-900">{{ selectedLoja?.contrato?.dataFim | date:'dd/MM/yyyy' }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-blue-600/60">Aluguel</p>
+              <p class="font-medium text-blue-900">{{ selectedLoja?.contrato?.valorAluguel | currency:'BRL':'symbol':'1.2-2' }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-blue-600/60">Status</p>
+              <p class="font-medium" [ngClass]="getStatusBadgeClass(selectedLoja!)">{{ getContractStatus(selectedLoja!) }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-4 border-t border-blue-100 flex justify-end gap-3">
+          <button (click)="downloadContractPdf(selectedLoja!)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+            <i class="fas fa-download mr-2"></i>
+            Baixar PDF
+          </button>
+          <button (click)="closeContractModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">Fechar</button>
+        </div>
+      </div>
+    </div>
   `,
   styles: [`
     .custom-scrollbar::-webkit-scrollbar {
@@ -280,6 +338,10 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
 })
 export class TenantContractsComponent {
   @Input() portalData: IPortalInquilinoData | null = null;
+  selectedLoja: ILojaInquilino | null = null;
+  showContractModal = false;
+
+  constructor(private pdfService: PdfGeneratorService) {}
   
   currentFilter: string = 'all';
 
@@ -424,5 +486,49 @@ export class TenantContractsComponent {
       return 'bg-amber-100 text-amber-800';
     }
     return 'bg-green-100 text-green-800';
+  }
+
+  // Ações dos botões
+  openContractModal(loja: ILojaInquilino) {
+    this.selectedLoja = loja;
+    this.showContractModal = true;
+  }
+
+  closeContractModal() {
+    this.showContractModal = false;
+    this.selectedLoja = null;
+  }
+
+  downloadContractPdf(loja: ILojaInquilino) {
+    const data: ContractData = {
+      id: (loja as any)?.contrato?.id || (loja as any)?.id || `${loja.numero}`,
+      loja,
+      inquilino: (this.portalData as any)?.inquilino || (loja as any)?.contrato?.inquilino || {},
+      valorAluguel: loja.contrato.valorAluguel,
+      dataInicio: String(loja.contrato.dataInicio),
+      dataFim: String(loja.contrato.dataFim),
+      reajusteAnual: Boolean((loja as any)?.contrato?.reajusteAnual),
+      percentualReajuste: Number((loja as any)?.contrato?.percentualReajuste || 0),
+      clausulas: (loja as any)?.contrato?.clausulas || '',
+      observacoes: (loja as any)?.contrato?.observacoes || '',
+      status: this.getContractStatus(loja)
+    };
+
+    this.pdfService.generateContractPdf(data).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `contrato_loja_${loja.numero}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Falha ao gerar PDF do contrato', err);
+        alert('Não foi possível gerar o PDF do contrato.');
+      }
+    });
   }
 }

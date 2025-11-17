@@ -214,30 +214,7 @@ import { IPortalInquilinoData, ILojaInquilino } from '../tenant.interfaces';
               <span class="text-sm">{{ getContractExpiryDate(loja) }}</span>
             </div>
 
-            <!-- Ações -->
-            <div class="flex justify-between space-x-2 pt-2">
-              <div class="flex space-x-2">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-                  <i class="fas fa-eye mr-1"></i>
-                  Detalhes
-                </button>
-                <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-                  <i class="fas fa-file-invoice mr-1"></i>
-                  Faturas
-                </button>
-              </div>
-              <div class="flex space-x-2">
-                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-                  <i class="fas fa-download mr-1"></i>
-                  Contrato
-                </button>
-                <button *ngIf="isNearExpiry(loja)" 
-                        class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-                  <i class="fas fa-redo mr-1"></i>
-                  Renovar
-                </button>
-              </div>
-            </div>
+          
           </div>
         </div>
 

@@ -458,7 +458,7 @@ interface AnalyticsData {
 
             <!-- Charts -->
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              <!-- Gráficos principais -->
+              <!-- Gráficos principais (linhas lado a lado) -->
               <div class="xl:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Recebimentos por mês -->
                 <div class="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
@@ -509,31 +509,8 @@ interface AnalyticsData {
                 </div>
               </div>
 
-              <!-- Gráficos laterais -->
+              <!-- Gráfico de Status das Lojas -->
               <div class="space-y-6">
-                <!-- Top inadimplentes -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
-                  <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-bold text-slate-900">Top Inadimplentes</h3>
-                    <div class="w-8 h-8 bg-rose-100 rounded-lg flex items-center justify-center">
-                      <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                      </svg>
-                    </div>
-                  </div>
-                  <apx-chart
-                    [series]="barTopChartOptions.series"
-                    [chart]="barTopChartOptions.chart"
-                    [xaxis]="barTopChartOptions.xaxis"
-                    [yaxis]="barTopChartOptions.yaxis"
-                    [plotOptions]="barTopChartOptions.plotOptions"
-                    [colors]="barTopChartOptions.colors"
-                    [grid]="barTopChartOptions.grid"
-                    [tooltip]="barTopChartOptions.tooltip"
-                  ></apx-chart>
-                </div>
-
-                <!-- Ocupação por status -->
                 <div class="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
                   <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-bold text-slate-900">Status das Lojas</h3>
@@ -658,6 +635,16 @@ export class DashboardComponent implements OnInit {
       background: 'transparent'
     },
     series: [{ name: 'Recebimentos', data: [] }],
+    dataLabels: { enabled: false },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        borderRadius: 4,
+        borderRadiusApplication: 'end',
+        columnWidth: '55%'
+      }
+    },
+    fill: { type: 'solid', opacity: 0.85 },
     xaxis: {
       categories: [],
       labels: {
@@ -670,14 +657,6 @@ export class DashboardComponent implements OnInit {
       labels: {
         style: { colors: '#64748b', fontSize: '12px' },
         formatter: (val: number) => this.formatCurrency(val)
-      }
-    },
-    dataLabels: { enabled: false },
-    plotOptions: {
-      bar: {
-        columnWidth: '55%',
-        borderRadius: 4,
-        borderRadiusApplication: 'end'
       }
     },
     colors: ['#3b82f6'],
@@ -703,17 +682,21 @@ export class DashboardComponent implements OnInit {
 
   aReceberChartOptions: any = {
     chart: {
-      type: 'bar',
+      type: 'line',
       height: 280,
       toolbar: { show: false },
+      animations: { enabled: true },
       zoom: { enabled: false },
       background: 'transparent'
     },
     series: [{ name: 'A Receber', data: [] }],
+    stroke: { curve: 'smooth', width: 4 },
+    markers: { size: 3 },
+    fill: { type: 'solid', opacity: 0.15 },
     xaxis: {
       categories: [],
       labels: {
-        style: { colors: '#64748b', fontSize: '12px' }
+        style: { colors: '#000000ff', fontSize: '12px' }
       },
       axisBorder: { show: false },
       axisTicks: { show: false }
@@ -725,14 +708,7 @@ export class DashboardComponent implements OnInit {
       }
     },
     dataLabels: { enabled: false },
-    plotOptions: {
-      bar: {
-        columnWidth: '55%',
-        borderRadius: 4,
-        borderRadiusApplication: 'end'
-      }
-    },
-    colors: ['#f59e0b'],
+    colors: ['#f50b0bff'],
     grid: {
       borderColor: '#f1f5f9',
       strokeDashArray: 5,
