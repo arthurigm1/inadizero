@@ -122,8 +122,11 @@ interface ResultadoInadimplentes {
                     <div class="text-blue-900 font-semibold text-base">{{ inq.nome || '—' }}</div>
                     <div class="mt-1 text-xs text-blue-600">{{ inq.lojaNome || '—' }}</div>
                   </div>
-                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                  <span *ngIf="!inq.pago && (inq.diasEmAtraso > 0)" class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                     Em atraso
+                  </span>
+                  <span *ngIf="inq.pago" class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Pago
                   </span>
                 </div>
 
@@ -149,7 +152,7 @@ interface ResultadoInadimplentes {
                   </div>
                   <div class="bg-white rounded-lg border border-blue-100 p-3">
                     <div class="text-xs text-blue-600">Dias em atraso</div>
-                    <div class="text-base font-semibold text-blue-900">{{ inq.diasEmAtraso || '—' }}</div>
+                    <div class="text-base font-semibold text-blue-900">{{ (!inq.pago && inq.diasEmAtraso) ? inq.diasEmAtraso : '—' }}</div>
                   </div>
                   <div class="bg-white rounded-lg border border-blue-100 p-3 col-span-2">
                     <div class="text-xs text-blue-600">Vencimento</div>
@@ -238,13 +241,16 @@ export class InadimplentesComponent implements OnInit {
 
   // Métricas calculadas
   get totalInadimplentes(): number {
-    return this.inquilinos.length;
+    return this.inquilinos.filter(i => !i.pago && Number(i.diasEmAtraso) > 0).length;
   }
   get totalValorFaturas(): number {
     return this.inquilinos.reduce((sum, i) => sum + (Number(i.valorFatura) || 0), 0);
   }
   get mediaDiasAtraso(): number | null {
-    const dias = this.inquilinos.map(i => Number(i.diasEmAtraso)).filter(n => !isNaN(n));
+    const dias = this.inquilinos
+      .filter(i => !i.pago)
+      .map(i => Number(i.diasEmAtraso))
+      .filter(n => !isNaN(n) && n > 0);
     if (dias.length === 0) return null;
     return Math.round(dias.reduce((a, b) => a + b, 0) / dias.length);
   }
@@ -304,7 +310,10 @@ export class InadimplentesComponent implements OnInit {
             lojaNome: item?.loja?.nome ?? item?.lojaNome ?? '—',
             valorFatura: item?.fatura?.valorAluguel ?? item?.valorFatura,
             diasEmAtraso: item?.fatura?.diasEmAtraso ?? item?.diasEmAtraso,
-            vencimento: item?.fatura?.vencimento ?? item?.vencimento
+            vencimento: item?.fatura?.vencimento ?? item?.vencimento,
+            pago: (item?.fatura?.paga === true) 
+              || (item?.paga === true) 
+              || (((item?.fatura?.status ?? item?.status)?.toString()?.toUpperCase?.()) === 'PAGO')
           }));
           this.paginacao = res?.paginacao || null;
           // Atualiza filtros refletidos pelo backend, se vierem

@@ -8,7 +8,7 @@ import { Observable, throwError, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
-// Schema de validaÃ§Ã£o para criar inquilino
+// Schema de validação para criar inquilino
 interface CriarInquilinoData {
   nome: string;
   email: string;
@@ -29,9 +29,9 @@ interface ApiPaginationResponse {
 }
 
 enum TipoUsuario {
-  ADMIN_EMPRESA = 'ADMIN_EMPRESA',    // UsuÃ¡rio principal da empresa que pode criar outros usuÃ¡rios
-  FUNCIONARIO = 'FUNCIONARIO',        // FuncionÃ¡rio da empresa
-  INQUILINO = 'INQUILINO',            // Inquilino (pode ser criado por usuÃ¡rios da empresa)
+  ADMIN_EMPRESA = 'ADMIN_EMPRESA',    // Usuário principal da empresa que pode criar outros usuários
+  FUNCIONARIO = 'FUNCIONARIO',        // Funcionário da empresa
+  INQUILINO = 'INQUILINO',            // Inquilino (pode ser criado por usuários da empresa)
   VISITANTE = 'VISITANTE'             // Visitante
 }
 
@@ -83,7 +83,7 @@ enum TipoUsuario {
                 placeholder="Nome completo do inquilino"
               >
               <div *ngIf="createTenantForm.get('nome')?.invalid && createTenantForm.get('nome')?.touched" class="text-red-500 text-sm mt-1">
-                <span *ngIf="createTenantForm.get('nome')?.errors?.['required']">Nome Ã© obrigatÃ³rio!</span>
+                <span *ngIf="createTenantForm.get('nome')?.errors?.['required']">Nome é obrigatório!</span>
               </div>
             </div>
             
@@ -98,8 +98,8 @@ enum TipoUsuario {
                 placeholder="email@exemplo.com"
               >
               <div *ngIf="createTenantForm.get('email')?.invalid && createTenantForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
-                <span *ngIf="createTenantForm.get('email')?.errors?.['required']">Email Ã© obrigatÃ³rio!</span>
-                <span *ngIf="createTenantForm.get('email')?.errors?.['email']">Email invÃ¡lido</span>
+                <span *ngIf="createTenantForm.get('email')?.errors?.['required']">Email é obrigatório!</span>
+                <span *ngIf="createTenantForm.get('email')?.errors?.['email']">Email inválido</span>
               </div>
             </div>
             
@@ -111,15 +111,15 @@ enum TipoUsuario {
                 type="password"
                 formControlName="senha"
                 class="w-full px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                placeholder="Senha (mÃ­nimo 6 caracteres)"
+                placeholder="Senha (maximo 6 caracteres)"
               >
               <div *ngIf="createTenantForm.get('senha')?.invalid && createTenantForm.get('senha')?.touched" class="text-red-500 text-sm mt-1">
-                <span *ngIf="createTenantForm.get('senha')?.errors?.['required']">Senha Ã© obrigatÃ³ria!</span>
-                <span *ngIf="createTenantForm.get('senha')?.errors?.['minlength']">Senha deve ter no mÃ­nimo 6 caracteres</span>
+                <span *ngIf="createTenantForm.get('senha')?.errors?.['required']">Senha é obrigatória!</span>
+                <span *ngIf="createTenantForm.get('senha')?.errors?.['minlength']">Senha deve ter no maximo 6 caracteres</span>
               </div>
             </div>
             
-            <!-- BotÃµes -->
+            <!-- Botões -->
             <div class="flex gap-3">
               <button
                 type="button"
@@ -144,7 +144,7 @@ enum TipoUsuario {
         </div>
       </div>
 
-      <!-- NotificaÃ§Ã£o -->
+      <!-- Notificação -->
       <div *ngIf="notification.show" class="fixed top-4 right-4 z-50" [@slideIn]>
         <div [ngClass]="{
           'bg-green-100 border-green-400': notification.type === 'success',
@@ -172,7 +172,7 @@ enum TipoUsuario {
         </div>
       </div>
 
-      <!-- Modal de confirmaÃ§Ã£o de desativaÃ§Ã£o -->
+      <!-- Modal de confirmação de desativação -->
       <div *ngIf="showDeactivateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
         <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-blue-200">
           <div class="flex justify-between items-center mb-6">
@@ -213,7 +213,7 @@ enum TipoUsuario {
         </div>
       </div>
 
-      <!-- Modal de confirmaÃ§Ã£o de ativaÃ§Ã£o -->
+      <!-- Modal de confirmação de ativação -->
       <div *ngIf="showActivateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" [@fadeIn]>
         <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-blue-200">
           <div class="flex justify-between items-center mb-6">
@@ -293,7 +293,7 @@ enum TipoUsuario {
             <option *ngFor="let status of statusTypes" [value]="status.value">{{ status.label }}</option>
           </select>
           
-          <!-- BotÃ£o limpar filtros -->
+          <!-- Botão limpar filtros -->
           <button 
             (click)="clearFilters()"
             class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 w-full sm:w-auto">
@@ -489,7 +489,7 @@ enum TipoUsuario {
             Anterior
           </button>
           <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 disabled:opacity-50">
-            PrÃ³ximo
+            Próximo
           </button>
         </div>
         <!-- Desktop -->
@@ -498,7 +498,7 @@ enum TipoUsuario {
             <p class="text-sm text-blue-700">
               Mostrando <span class="font-medium">{{(currentPage - 1) * itemsPerPage + 1}}</span> a 
               <span class="font-medium">{{currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage : totalItems}}</span> 
-              de <span class="font-medium">{{totalItems}}</span> usuÃ¡rios
+              de <span class="font-medium">{{totalItems}}</span> usuários
             </p>
           </div>
           <div>
@@ -524,12 +524,12 @@ enum TipoUsuario {
   `
 })
 export class UsersComponent implements OnInit {
-  // Propriedades do formulÃ¡rio
+  // Propriedades do formulário
   createTenantForm: FormGroup;
   showCreateTenantModal = false;
   isCreatingTenant = false;
   
-  // Propriedades da notificaÃ§Ã£o
+  // Propriedades da notificação
   notification = {
     show: false,
     type: 'success' as 'success' | 'error' | 'info',
@@ -537,12 +537,12 @@ export class UsersComponent implements OnInit {
     message: ''
   };
   
-  // Estado do diÃ¡logo de desativaÃ§Ã£o
+  // Estado do diálogo de desativação
   showDeactivateModal = false;
   isDeactivating = false;
   userToDeactivate: any | null = null;
 
-  // Estado do diÃ¡logo de ativaÃ§Ã£o
+  // Estado do diálogo de ativação
   showActivateModal = false;
   isActivating = false;
   userToActivate: any | null = null;
@@ -558,11 +558,11 @@ export class UsersComponent implements OnInit {
   selectedStatusFilter: 'active' | 'inactive' | 'pending' | 'todos' = 'todos';
   searchTerm = '';
   
-  // Lista de usuÃ¡rios original e filtrada
+  // Lista de usuários original e filtrada
   allUsers: any[] = [];
   users: any[] = [];
   
-  // Propriedades de paginaÃ§Ã£o
+  // Propriedades de paginação
   currentPage: number = 1;
   totalPages: number = 1;
   totalItems: number = 0;
@@ -570,16 +570,16 @@ export class UsersComponent implements OnInit {
   hasNextPage: boolean = false;
   hasPreviousPage: boolean = false;
   
-  // Tipos de usuÃ¡rio disponÃ­veis
+  // Tipos de usuário disponíveis
   userTypes: { value: TipoUsuario | 'todos'; label: string }[] = [
     { value: 'todos', label: 'Todos os tipos' },
     { value: TipoUsuario.ADMIN_EMPRESA, label: 'Admin da Empresa' },
-    { value: TipoUsuario.FUNCIONARIO, label: 'FuncionÃ¡rio' },
+    { value: TipoUsuario.FUNCIONARIO, label: 'Funcionario' },
     { value: TipoUsuario.INQUILINO, label: 'Inquilino' },
     { value: TipoUsuario.VISITANTE, label: 'Visitante' }
   ];
   
-  // Status disponÃ­veis
+  // Status disponíveis
   statusTypes: { value: 'active' | 'inactive' | 'pending' | 'todos'; label: string }[] = [
     { value: 'todos', label: 'Todos os status' },
     { value: 'active', label: 'Ativo' },
@@ -610,7 +610,7 @@ export class UsersComponent implements OnInit {
     this.loadUsuariosDaEmpresa(1);
   }
   
-  // MÃ©todos de filtro
+  // Métodos de filtro
   applyFilters() {
     this.currentPage = 1;
     this.loadUsuariosDaEmpresa(1);
@@ -636,13 +636,13 @@ export class UsersComponent implements OnInit {
     this.loadUsuariosDaEmpresa(1);
   }
   
-  // MÃ©todo para obter o rÃ³tulo do tipo de usuÃ¡rio
+  // Método para obter o rótulo do tipo de usuário
   getUserTypeLabel(type: TipoUsuario): string {
     const typeObj = this.userTypes.find(t => t.value === type);
     return typeObj ? typeObj.label : type;
   }
   
-  // MÃ©todos para o modal
+  // Métodos para o modal
   openCreateTenantModal(): void {
     this.showCreateTenantModal = true;
     this.createTenantForm.reset();
@@ -653,7 +653,7 @@ export class UsersComponent implements OnInit {
     this.createTenantForm.reset();
   }
   
-  // MÃ©todo para criar inquilino
+  // Método para criar inquilino
   onCreateTenant(): void {
     if (this.createTenantForm.invalid) {
       this.createTenantForm.markAllAsTouched();
@@ -668,7 +668,7 @@ export class UsersComponent implements OnInit {
         this.isCreatingTenant = false;
         this.closeCreateTenantModal();
         this.showNotification('success', 'Sucesso!', 'Inquilino criado com sucesso!');
-        this.loadUsuariosDaEmpresa(this.currentPage); // Recarrega a pÃ¡gina atual
+        this.loadUsuariosDaEmpresa(this.currentPage); // Recarrega a página atual
       },
       error: (error) => {
         this.isCreatingTenant = false;
@@ -677,7 +677,7 @@ export class UsersComponent implements OnInit {
     });
   }
   
-  // MÃ©todo para criar inquilino via API
+  // Método para criar inquilino via API
   private criarInquilino(data: CriarInquilinoData): Observable<any> {
     try {
       const headers = this.getAuthHeaders();
@@ -686,7 +686,7 @@ export class UsersComponent implements OnInit {
           catchError((error) => {
             console.error('Erro ao criar inquilino:', error);
             if (error.status === 401) {
-              return throwError(() => new Error('Token de autenticaÃ§Ã£o invÃ¡lido ou expirado'));
+              return throwError(() => new Error('Token de autenticação inválido ou expirado'));
             }
             return throwError(() => new Error(error.error?.message || 'Erro ao criar inquilino'));
           })
@@ -696,7 +696,7 @@ export class UsersComponent implements OnInit {
     }
   }
   
-  // MÃ©todo para listar usuÃ¡rios da empresa
+  // Método para listar usuários da empresa
   private loadUsuariosDaEmpresa(page: number = 1): void {
     try {
       const headers = this.getAuthHeaders();
@@ -715,12 +715,12 @@ export class UsersComponent implements OnInit {
           params = params.set('ativo', 'false');
         }
       }
-      // Busca: usar q (genÃ©rico), ou nome/email especÃ­ficos
+      // Busca: usar q (genérico), ou nome/email específicos
       if (this.searchTerm && this.searchTerm.trim()) {
         const raw = this.searchTerm.trim();
         const lower = raw.toLowerCase();
 
-        // Suporte a prefixos explÃ­citos: "nome:" e "email:"
+        // Suporte a prefixos explícitos: "nome:" e "email:"
         if (lower.startsWith('email:')) {
           const emailValue = raw.slice(raw.indexOf(':') + 1).trim();
           if (emailValue) {
@@ -732,10 +732,10 @@ export class UsersComponent implements OnInit {
             params = params.set('nome', nomeValue);
           }
         } else if (/@/.test(raw)) {
-          // HeurÃ­stica: se contÃ©m '@', tratar como filtro de email especÃ­fico
+          // Heurística: se contém '@', tratar como filtro de email específico
           params = params.set('email', raw);
         } else {
-          // Busca genÃ©rica por qualquer termo (nome OU email)
+          // Busca genérica por qualquer termo (nome OU email)
           params = params.set('q', raw);
         }
       }
@@ -745,14 +745,14 @@ export class UsersComponent implements OnInit {
       this.http.get<ApiPaginationResponse>(`${this.apiUrl}/empresa/usuarios`, { headers, params })
         .pipe(
           catchError((error) => {
-            console.error('Erro ao carregar usuÃ¡rios:', error);
+            console.error('Erro ao carregar usuários:', error);
             if (error.status === 401) {
-              this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', 'Token invÃ¡lido ou expirado. FaÃ§a login novamente.');
+              this.showNotification('error', 'Erro de Autenticação', 'Token inválido ou expirado. Faça login novamente.');
             } else {
-              this.showNotification('error', 'Erro!', 'Erro ao carregar usuÃ¡rios da empresa');
+              this.showNotification('error', 'Erro!', 'Erro ao carregar usuários da empresa');
             }
             
-            // Retornar estrutura de fallback com paginaÃ§Ã£o aninhada
+            // Retornar estrutura de fallback com paginação aninhada
             return of({
               sucesso: false,
               paginacao: {
@@ -768,14 +768,14 @@ export class UsersComponent implements OnInit {
           })
         )
         .subscribe((response: ApiPaginationResponse) => {
-          // Atualizar propriedades de paginaÃ§Ã£o
+          // Atualizar propriedades de paginação
           this.currentPage = response.paginacao.paginaAtual;
           this.totalPages = response.paginacao.totalPaginas;
           this.totalItems = response.paginacao.totalUsuarios;
           this.hasNextPage = response.paginacao.temProximaPagina;
           this.hasPreviousPage = response.paginacao.temPaginaAnterior;
           
-          // Mapear usuÃ¡rios da resposta
+          // Mapear usuários da resposta
            if (response.usuarios && response.usuarios.length > 0) {
              this.users = response.usuarios.map((user: any) => ({
                id: user.id,
@@ -791,8 +791,8 @@ export class UsersComponent implements OnInit {
            }
         });
     } catch (error: any) {
-       this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', error.message);
-       // Definir valores padrÃ£o em caso de erro
+       this.showNotification('error', 'Erro de Autenticação', error.message);
+       // Definir valores padrão em caso de erro
        this.users = [];
        this.currentPage = 1;
        this.totalPages = 1;
@@ -802,7 +802,7 @@ export class UsersComponent implements OnInit {
      }
   }
   
-  // MÃ©todo auxiliar para mapear tipos da API para o enum
+  // Método auxiliar para mapear tipos da API para o enum
   private mapApiTypeToEnum(apiType: string): TipoUsuario {
     switch (apiType?.toUpperCase()) {
       case 'ADMIN_EMPRESA':
@@ -815,16 +815,16 @@ export class UsersComponent implements OnInit {
       case 'VISITANTE':
         return TipoUsuario.VISITANTE;
       default:
-        return TipoUsuario.VISITANTE; // Valor padrÃ£o
+        return TipoUsuario.VISITANTE; // Valor padrão
     }
   }
   
-  // MÃ©todo para obter headers de autenticaÃ§Ã£o
+  // Método para obter headers de autenticação
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.token;
     if (!token) {
-      this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', 'Token de acesso nÃ£o encontrado. FaÃ§a login novamente.');
-      throw new Error('Token de autenticaÃ§Ã£o nÃ£o encontrado');
+      this.showNotification('error', 'Erro de Autenticação', 'Token de acesso não encontrado. Faça login novamente.');
+      throw new Error('Token de autenticação não encontrado');
     }
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`,
@@ -832,7 +832,7 @@ export class UsersComponent implements OnInit {
     });
   }
   
-  // MÃ©todos para notificaÃ§Ã£o
+  // Métodos para notificação
   showNotification(type: 'success' | 'error' | 'info', title: string, message: string): void {
     this.notification = {
       type,
@@ -851,7 +851,7 @@ export class UsersComponent implements OnInit {
     this.notification.show = false;
   }
   
-  // AÃ§Ãµes de desativaÃ§Ã£o de usuÃ¡rio
+  // Ações de desativação de usuário
   openDeactivateModal(user: any): void {
     this.userToDeactivate = user;
     this.showDeactivateModal = true;
@@ -865,7 +865,7 @@ export class UsersComponent implements OnInit {
   
   confirmDeactivateUser(): void {
     if (!this.userToDeactivate?.id) {
-      this.showNotification('error', 'Erro', 'UsuÃ¡rio invÃ¡lido para desativaÃ§Ã£o.');
+      this.showNotification('error', 'Erro', 'Usuário inválido para desativação.');
       return;
     }
     try {
@@ -874,11 +874,11 @@ export class UsersComponent implements OnInit {
       this.http.patch(`${this.apiUrl}/desativar/${this.userToDeactivate.id}`, {}, { headers })
         .pipe(
           catchError((error) => {
-            console.error('Erro ao desativar usuÃ¡rio:', error);
+            console.error('Erro ao desativar usuário:', error);
             if (error.status === 401) {
-              this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', 'Token invÃ¡lido ou expirado. FaÃ§a login novamente.');
+              this.showNotification('error', 'Erro de Autenticação', 'Token inválido ou expirado. Faça login novamente.');
             } else {
-              const message = error?.error?.message || 'Erro ao desativar usuÃ¡rio';
+              const message = error?.error?.message || 'Erro ao desativar usuário';
               this.showNotification('error', 'Erro!', message);
             }
             return throwError(() => error);
@@ -888,7 +888,7 @@ export class UsersComponent implements OnInit {
           next: () => {
             this.isDeactivating = false;
             this.closeDeactivateModal();
-            this.showNotification('success', 'Sucesso!', 'UsuÃ¡rio desativado com sucesso!');
+            this.showNotification('success', 'Sucesso!', 'Usuário desativado com sucesso!');
             this.loadUsuariosDaEmpresa(this.currentPage);
           },
           error: () => {
@@ -897,11 +897,11 @@ export class UsersComponent implements OnInit {
         });
     } catch (error: any) {
       this.isDeactivating = false;
-      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao desativar usuÃ¡rio');
+      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao desativar usuário');
     }
   }
 
-  // AÃ§Ãµes de ativaÃ§Ã£o de usuÃ¡rio
+  // Ações de ativação de usuário
   openActivateModal(user: any): void {
     this.userToActivate = user;
     this.showActivateModal = true;
@@ -915,7 +915,7 @@ export class UsersComponent implements OnInit {
 
   confirmActivateUser(): void {
     if (!this.userToActivate?.id) {
-      this.showNotification('error', 'Erro', 'UsuÃ¡rio invÃ¡lido para ativaÃ§Ã£o.');
+      this.showNotification('error', 'Erro', 'Usuário inválido para ativação.');
       return;
     }
     try {
@@ -924,11 +924,11 @@ export class UsersComponent implements OnInit {
       this.http.patch(`${this.apiUrl}/ativar/${this.userToActivate.id}`, {}, { headers })
         .pipe(
           catchError((error) => {
-            console.error('Erro ao ativar usuÃ¡rio:', error);
+            console.error('Erro ao ativar usuário:', error);
             if (error.status === 401) {
-              this.showNotification('error', 'Erro de AutenticaÃ§Ã£o', 'Token invÃ¡lido ou expirado. FaÃ§a login novamente.');
+              this.showNotification('error', 'Erro de Autenticação', 'Token inválido ou expirado. Faça login novamente.');
             } else {
-              const message = error?.error?.message || 'Erro ao ativar usuÃ¡rio';
+              const message = error?.error?.message || 'Erro ao ativar usuário';
               this.showNotification('error', 'Erro!', message);
             }
             return throwError(() => error);
@@ -938,7 +938,7 @@ export class UsersComponent implements OnInit {
           next: () => {
             this.isActivating = false;
             this.closeActivateModal();
-            this.showNotification('success', 'Sucesso!', 'UsuÃ¡rio ativado com sucesso!');
+            this.showNotification('success', 'Sucesso!', 'Usuário ativado com sucesso!');
             this.loadUsuariosDaEmpresa(this.currentPage);
           },
           error: () => {
@@ -947,11 +947,11 @@ export class UsersComponent implements OnInit {
         });
     } catch (error: any) {
       this.isActivating = false;
-      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao ativar usuÃ¡rio');
+      this.showNotification('error', 'Erro', error.message || 'Erro inesperado ao ativar usuário');
     }
   }
   
-  // MÃ©todos de navegaÃ§Ã£o de paginaÃ§Ã£o
+  // Métodos de navegação de paginação
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.loadUsuariosDaEmpresa(page);
